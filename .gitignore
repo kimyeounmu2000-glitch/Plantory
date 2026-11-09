@@ -1,0 +1,17 @@
+*.json
+!tests/legacy/package.json
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.p12
+*.zip
+*.log
+*.tmp
+__pycache__/
+node_modules/
+backups/
+downloads/
+profiles/
+work/

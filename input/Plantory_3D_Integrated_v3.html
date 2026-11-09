@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F4F6FA">
+<meta name="description" content="Plantory — 할 일과 약속을 한 곳에, 하루를 꽃으로 가꿔요.">
+<title>Plantory v3 · 3D 꽃과 나의 달력</title>
+
+<style>
+:root{color-scheme:light;--bg:#f5f6f7;--surface:#fff;--ink:#26313d;--muted:#76818e;--line:#e8ebee;--accent:#4d697f;--on-accent:#fff;--soft:#e9f0f4;--shadow:0 11px 32px rgba(40,57,72,.055);--radius:21px}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;height:100%;scrollbar-gutter:stable}body{font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;background:#e3e8e9;color:var(--ink);-webkit-font-smoothing:antialiased}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #86a6c3;outline-offset:2px}[hidden]{display:none!important}svg{display:block}.shell{max-width:510px;margin:0 auto;min-height:100vh;min-height:100dvh;background:var(--bg);position:relative;overflow-x:hidden;box-shadow:0 0 70px #192d3918}.shell:before{content:"";pointer-events:none;position:absolute;top:0;right:0;width:245px;height:260px;background:radial-gradient(circle,var(--soft),transparent 70%);opacity:.72}.topbar{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:calc(16px + env(safe-area-inset-top,0px)) 20px 8px;gap:8px;min-height:78px}.brand{font-size:23px;font-weight:850;letter-spacing:-1.4px}.brand span{color:var(--accent)}.top-actions{display:flex;gap:6px}.icon-btn{display:inline-grid;place-items:center;width:44px;height:44px;min-width:44px;border:1px solid var(--line);border-radius:15px;background:var(--surface);color:var(--ink)}.icon-btn:hover{background:var(--soft)}.icon-btn svg{width:21px;height:21px}.view-container{position:relative;min-height:calc(100dvh - 175px);min-width:0;width:100%;padding:14px 20px 118px;touch-action:pan-y}.screen{width:100%;min-width:0;min-height:calc(100dvh - 260px);animation:arrive .21s ease both}.screen[hidden]{display:none}.section-tag{font-weight:850;font-size:10px;letter-spacing:1.6px;color:var(--accent);text-transform:uppercase;margin:0 0 8px}.screen h1{font-size:28px;letter-spacing:-1.2px;line-height:1.25;margin:0 0 7px;font-weight:850}.subtitle{color:var(--muted);font-size:12px;line-height:1.65;margin:0 0 19px}.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:17px;margin-bottom:13px;min-width:0}.card h2,.h2{font-size:16px;font-weight:800;letter-spacing:-.5px;margin:0}.minor{font-size:12px;color:var(--muted)}.section-row{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-bottom:13px}.subtle-btn{border:0;background:var(--soft);color:var(--accent);padding:10px 13px;min-height:43px;border-radius:13px;font-size:12px;font-weight:800;white-space:nowrap}.plain-btn{border:0;background:transparent;color:var(--accent);font-weight:750;padding:9px 0;font-size:12px}.pill{display:inline-block;background:var(--soft);color:var(--accent);padding:5px 9px;border-radius:40px;font-size:11px;font-weight:800}.home-plant{background:linear-gradient(160deg,var(--surface),var(--soft));min-height:253px;display:flex;flex-direction:column;justify-content:center;align-items:center;overflow:hidden;position:relative}.plant-art{width:175px;max-width:70%;height:185px}.plant-message{position:relative;z-index:1;font-size:12px;color:var(--muted);text-align:center;margin:7px 0 4px}.plant-title{position:relative;z-index:1;font-weight:850;letter-spacing:-.5px;font-size:15px;margin-top:6px}.progress-meter{height:7px;border-radius:100px;background:#d8e1e5;overflow:hidden;margin-top:13px}.progress-meter>span{height:100%;display:block;width:0%;background:var(--accent);transition:width .25s}.progress-copy{font-size:12px;color:var(--muted);margin-top:8px}.entry-list{display:flex;flex-direction:column;gap:9px}.entry{background:color-mix(in srgb,var(--entry-color,#359E64) 13%,#FFFFFF);border-radius:17px;display:flex;align-items:center;gap:11px;min-width:0;min-height:66px;border:1px solid color-mix(in srgb,var(--entry-color,#359E64) 26%,#FFFFFF);padding:9px 10px 9px 11px;box-shadow:0 3px 12px #18273006}.entry-tint{height:42px;width:5px;border-radius:9px;flex:none}.entry-body{min-width:0;flex:1}.entry-title{font-size:13px;font-weight:800;line-height:1.4;overflow-wrap:anywhere}.entry-title.done{color:#9aa5ae;text-decoration:line-through}.entry-desc{font-size:11px;color:var(--muted);line-height:1.45;margin-top:3px;overflow-wrap:anywhere}.check{appearance:none;cursor:pointer;flex:none;margin:0;width:27px;height:27px;min-width:27px;border:2px solid #bbc5ce;border-radius:9px;background:var(--surface);display:grid;place-items:center}.check:checked{background:var(--accent);border-color:var(--accent)}.check:checked:after{content:"";width:10px;height:6px;border-left:2px solid white;border-bottom:2px solid white;transform:translateY(-2px) rotate(-45deg)}.edit-item{min-width:44px;width:44px;height:44px;display:grid;place-items:center;border:0;border-radius:12px;background:var(--bg);color:var(--muted)}.edit-item svg{width:17px;height:17px}.entry-symbol{font-size:16px;color:var(--muted);width:27px;text-align:center;flex:none}.empty{text-align:center;padding:27px 15px;color:var(--muted);font-size:12px;line-height:1.75;border:1px dashed #cbd3d8;border-radius:17px;background:#ffffff75}.empty strong{display:block;font-size:13px;color:var(--ink);margin-bottom:5px}.day-top{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-bottom:15px}.day-top h1{font-size:24px;margin:0}.arrow-pair{display:flex;gap:6px}.arrow-btn{width:45px;height:45px;min-width:45px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;display:grid;place-items:center}.arrow-btn svg{width:18px;height:18px}.month-card{padding:18px 12px 15px;touch-action:none}.month-title{font-size:18px;font-weight:850;letter-spacing:-.5px}.month-top{display:flex;align-items:center;justify-content:space-between;gap:5px;padding:0 5px 14px}.month-control{display:flex;gap:7px}.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;min-width:0}.weekday{text-align:center;color:#8994a1;font-size:11px;font-weight:750;padding:7px 0 10px}.weekday:first-child{color:#bb756d}.calendar-day{border:0;background:transparent;min-width:0;min-height:52px;padding:5px 1px;border-radius:12px;color:var(--ink);display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:flex-start}.calendar-day.outside{color:#bac2cb}.calendar-day.selected{background:var(--soft)}.calendar-day .number{font-size:12px;font-weight:750;display:grid;place-items:center;width:28px;height:28px;border-radius:11px}.calendar-day.selected .number{background:var(--accent);color:var(--on-accent)}.calendar-day.today:not(.selected) .number{outline:1.5px solid var(--accent)}.calendar-day .colors{display:flex;justify-content:center;gap:3px;min-height:5px}.calendar-day .colors i{width:5px;height:5px;border-radius:50%;display:block}.cal-footer{font-size:11px;color:var(--muted);margin-top:15px;border-top:1px solid var(--line);padding-top:13px;text-align:center}.month-summary{margin:18px 1px 10px;font-size:13px;font-weight:800}.stat-row{display:flex;align-items:center;justify-content:space-between;gap:10px}.stat{background:var(--soft);border-radius:16px;padding:13px;flex:1}.stat strong{font-size:20px;display:block}.stat small{color:var(--muted);font-size:11px}.fab{z-index:7;position:fixed;bottom:calc(90px + env(safe-area-inset-bottom,0px));left:calc(50% + min(255px,50vw) - 78px);border:0;width:55px;height:55px;border-radius:18px;color:var(--on-accent);background:var(--accent);box-shadow:0 9px 22px #1e3d4a29;display:grid;place-items:center}.fab svg{width:25px;height:25px}.garden-row{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.garden-day{min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:15px;padding:10px 2px;text-align:center;min-height:91px}.garden-day small{font-size:10px;color:var(--muted)}.garden-day span{display:block;font-size:24px;margin:6px 0}.garden-day b{display:block;font-size:10px}.species-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.species-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 10px;text-align:center;min-height:174px}.species-art{font-size:48px;filter:drop-shadow(0 5px 6px #26313d13)}.species-card h3{font-size:13px;margin:8px 0 5px}.species-card p{font-size:11px;color:var(--muted);line-height:1.65}.species-card.locked .species-art{filter:grayscale(1);opacity:.25}.status-note{color:var(--muted);font-size:11px;line-height:1.8}.overlay{position:fixed;inset:0;z-index:30;display:flex;align-items:flex-end;justify-content:center;background:#15202c7d;padding:0 0 env(safe-area-inset-bottom,0px)}.sheet{width:min(510px,100%);max-height:min(92dvh,820px);overflow-y:auto;overscroll-behavior:contain;background:var(--surface);border-radius:28px 28px 0 0;padding:24px 22px 28px;box-shadow:0 -10px 50px #15202c36}.sheethead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:19px}.sheethead h2{font-size:21px;margin:0;letter-spacing:-.7px}.close{width:44px;height:44px;min-width:44px;border:0;border-radius:14px;background:var(--bg);font-size:22px;color:var(--ink)}.type-group{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:5px;background:var(--bg);border-radius:15px;margin-bottom:16px}.type-group button{border:0;min-height:43px;background:transparent;color:var(--muted);font-weight:750;font-size:13px;border-radius:11px}.type-group button[aria-pressed=true]{background:var(--surface);color:var(--ink);box-shadow:0 2px 5px #19232b11}.field{display:block;font-size:12px;font-weight:800;margin:15px 0 7px}.control{width:100%;min-height:46px;border:1px solid #dce2e8;border-radius:14px;background:var(--surface);color:var(--ink);padding:11px 13px;outline-color:var(--accent)}textarea.control{min-height:72px;resize:vertical}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.palette{display:flex;flex-wrap:wrap;gap:9px;margin:8px 0 9px}.color-pick{width:40px;height:40px;border:3px solid transparent;border-radius:13px;display:grid;place-items:center}.color-pick.selected{outline:2px solid var(--ink);outline-offset:1px}.color-pick:after{content:"✓";color:white;font-size:16px;font-weight:850;opacity:0}.color-pick.selected:after{opacity:1}.color-inline{display:flex;align-items:center;gap:8px;margin-top:8px}.color-inline input[type=color]{width:48px;height:44px;border:1px solid var(--line);padding:4px;background:var(--surface);border-radius:12px}.setting-line{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-top:1px solid var(--line)}.setting-line span{font-size:12px;color:var(--muted)}.setting-line strong{font-size:13px}.small-outline{padding:9px 11px;background:var(--surface);border:1px solid var(--line);border-radius:11px;font-size:12px;font-weight:800;color:var(--ink);min-height:43px}.action-row{display:flex;gap:9px;margin-top:19px}.primary{border:0;background:var(--accent);color:var(--on-accent);border-radius:15px;padding:13px 17px;min-height:49px;font-size:13px;font-weight:850;flex:1}.secondary{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:15px;padding:13px 15px;min-height:49px;font-size:13px;font-weight:800}.danger{color:#b44b4b;border:1px solid #ecc9c9;background:#fff6f6;min-height:49px;padding:12px 13px;border-radius:15px;font-size:12px;font-weight:800}.helper{color:var(--muted);font-size:12px;line-height:1.8}.helper p{margin:0 0 13px}.helper strong{color:var(--ink)}.helper ul{padding-left:18px}.toast{position:fixed;z-index:60;bottom:calc(164px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);max-width:min(440px,88vw);padding:12px 15px;background:#293745;color:white;border-radius:13px;font-size:12px;text-align:center;box-shadow:0 7px 30px #15202c33}.tiny-badge{padding:4px 8px;font-size:10px;font-weight:750;border-radius:50px;background:var(--soft);color:var(--accent)}.label-tile{border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px}.streak{font-size:12px;color:var(--muted);line-height:1.8}.divider{height:1px;background:var(--line);margin:18px 0}.backup-row{display:flex;gap:10px;flex-wrap:wrap}.backup-row>*{flex:1}.clickable{cursor:pointer}input[type=checkbox].plain-check{width:18px;height:18px;accent-color:var(--accent)}
+@keyframes arrive{from{opacity:.84;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}@media(max-width:370px){.topbar{padding-left:14px;padding-right:14px}.view-container{padding-left:13px;padding-right:13px}.screen h1{font-size:25px}.calendar-day{min-height:47px}.card{padding:14px}.month-card{padding:14px 9px}}@media(min-width:511px){.fab{left:calc(50% + 177px)}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+
+/* Navigation v2: compact, accessible switcher above the content. */
+.view-container{min-height:calc(100dvh - 154px);padding-bottom:98px}
+.screen{min-height:calc(100dvh - 250px)}
+.compact-nav{position:relative;z-index:8;display:grid;grid-template-columns:minmax(0,1fr) minmax(100px,1.2fr) minmax(0,1fr);align-items:center;gap:6px;margin:5px 20px 5px;padding:5px;border:1px solid var(--line);border-radius:17px;background:color-mix(in srgb,var(--surface) 91%,var(--bg));box-shadow:0 4px 15px #152a3d08;min-height:54px}
+.nav-side{min-width:0;min-height:44px;border:0;background:transparent;color:var(--muted);border-radius:13px;font-size:12px;font-weight:750;white-space:nowrap;display:flex;gap:7px;align-items:center;justify-content:center}
+.nav-side span{font-size:22px;line-height:1}
+.nav-side:active,.nav-side:hover{background:var(--soft);color:var(--accent)}
+.nav-active{min-width:0;min-height:44px;border-radius:13px;background:var(--soft);color:var(--accent);font-size:13px;font-weight:850;letter-spacing:.6px;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 15%,transparent)}
+.compact-nav.recent-swipe .nav-active{animation:nav-flash 1s ease-out}
+@keyframes nav-flash{0%{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 23%,transparent)}100%{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 15%,transparent)}}
+.detail-nav{display:flex;align-items:center;justify-content:space-between;margin:5px 20px 7px;min-height:54px;gap:7px}
+.detail-nav button{min-height:45px;min-width:96px;padding:0 13px;border:1px solid var(--line);background:var(--surface);color:var(--accent);border-radius:13px;font-weight:800;font-size:12px}
+.detail-nav strong{font-size:13px;color:var(--ink)}.detail-spacer{width:96px}
+.home-discovery{margin:21px 0 8px}.home-discovery .section-row{padding:0 4px;margin-bottom:12px}.home-discovery h2{font-size:16px;margin:0;letter-spacing:-.5px}
+.home-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.home-link{position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;min-height:126px;min-width:0;padding:16px 13px;border:1px solid var(--line);border-radius:19px;background:var(--surface);box-shadow:var(--shadow);color:var(--ink);gap:6px}
+.home-link:active,.home-link:hover{background:color-mix(in srgb,var(--soft) 24%,var(--surface))}
+.home-link-icon{font-size:25px;line-height:1}.home-link strong{font-size:13px;font-weight:850}.home-link small{color:var(--muted);font-size:10px;line-height:1.5}
+.home-link-arrow{position:absolute;right:12px;top:12px;font-size:20px;color:var(--muted)}
+.fab{bottom:calc(25px + env(safe-area-inset-bottom,0px))}
+.toast{bottom:calc(95px + env(safe-area-inset-bottom,0px))}
+@media(max-width:370px){.compact-nav,.detail-nav{margin-left:13px;margin-right:13px}.nav-side{font-size:11px;gap:4px}.compact-nav{grid-template-columns:minmax(0,1fr) minmax(88px,1.15fr) minmax(0,1fr)}.home-links{gap:8px}.home-link{padding:13px 10px}}
+@media(prefers-reduced-motion:reduce){.compact-nav.recent-swipe .nav-active{animation:none}}
+
+/* Real, interactive low-poly WebGL plant (one shared context). */
+.home-plant{min-height:335px}
+.plant-art{width:235px;max-width:90%;height:238px;position:relative;z-index:1;touch-action:none}
+.plant3d-canvas{width:100%;height:100%;display:block;touch-action:none;cursor:grab;outline:0}
+.plant3d-canvas:active{cursor:grabbing}
+.preview-trigger{position:relative;z-index:1;margin:12px 0 0;min-height:43px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:9px 13px;font-size:12px;font-weight:800}
+.preview-hero{background:linear-gradient(155deg,#f2f7f2,#e8f2ed);border-radius:22px;display:flex;align-items:center;justify-content:center;min-height:300px;margin-top:11px}
+.preview-art{width:270px;height:290px;max-width:100%;touch-action:none}
+.preview-controls{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.preview-controls button{background:#f6f7f7;border:1px solid #d9e0e3;border-radius:12px;min-height:44px;padding:9px 12px;font-size:12px;color:#344455;font-weight:800;flex:1}
+.preview-controls button[aria-pressed=true]{background:#e1f0e8;color:#225c44;border:2px solid #568d73}
+.preview-note{text-align:center;font-size:11px;color:#667d70;line-height:1.7;margin:9px 0 0}
+.species-3d{display:block;width:95px;height:96px;object-fit:contain;margin:0 auto}
+.garden-day img{display:block;width:45px;height:45px;object-fit:contain;margin:2px auto}
+@media(prefers-reduced-motion:reduce){.plant3d-canvas{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="shell" id="app">
+  <header class="topbar">
+    <div class="brand" aria-label="Plantory">Plantory<span>.</span></div>
+    <div class="top-actions">
+      <button class="icon-btn" id="goToday" aria-label="오늘로 돌아가기" title="오늘로 이동"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v5m10-5v5M3 10h18"/><circle cx="12" cy="15" r="2"/></svg></button>
+      <button class="icon-btn" id="helpOpen" aria-label="사용 방법" title="사용 방법"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 0c0 2-2.5 2.5-2.5 4m0 4h.01"/></svg></button>
+      <button class="icon-btn" id="settingsOpen" aria-label="설정" title="설정"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41m0-14.14l-1.41 1.41M6.34 17.66l-1.41 1.41"/></svg></button>
+    </div>
+  </header>
+  <nav class="compact-nav" id="compactNav" aria-label="DAY HOME MONTH 화면 이동">
+    <button class="nav-side" type="button" id="navPrev" data-nav="day" aria-label="DAY 화면 이동"><span aria-hidden="true">‹</span> DAY</button>
+    <div class="nav-active" id="navCurrent" aria-live="polite">HOME</div>
+    <button class="nav-side" type="button" id="navNext" data-nav="month" aria-label="MONTH 화면 이동">MONTH <span aria-hidden="true">›</span></button>
+  </nav>
+  <div class="detail-nav" id="detailNav" hidden>
+    <button type="button" id="backHome" aria-label="홈 화면으로 돌아가기">‹ HOME</button>
+    <strong id="detailName">나의 정원</strong>
+    <span aria-hidden="true" class="detail-spacer"></span>
+  </div>
+  <main class="view-container" id="gestureSurface">
+    <section class="screen" data-screen="day" hidden aria-label="일간 일정">
+      <div class="section-tag">DAY · 나의 하루</div>
+      <div class="day-top"><h1 id="dayTitle">오늘</h1><div class="arrow-pair"><button class="arrow-btn" id="prevDay" aria-label="이전 날짜"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m14 5-7 7 7 7"/></svg></button><button class="arrow-btn" id="nextDay" aria-label="다음 날짜"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10 5 7 7-7 7"/></svg></button></div></div>
+      <p class="subtitle" id="daySubtitle">선택한 날짜의 할 일과 예약을 한눈에 확인해요.</p>
+      <div class="card"><div class="section-row"><h2>이날의 기록</h2><button class="subtle-btn" data-action="new-day">+ 일정 등록</button></div><div class="entry-list" id="dayEntries"></div></div>
+      <div class="card"><div class="section-row"><h2>할 일 완료 현황</h2><span class="pill" id="dayRate">0 / 0</span></div><div class="progress-meter"><span id="dayBar"></span></div><p class="progress-copy" id="dayProgressText">할 일을 등록하면 진행 상황이 나타나요.</p></div>
+    </section>
+    <section class="screen" data-screen="home" aria-label="홈: 오늘의 할 일">
+      <div class="section-tag">HOME · 오늘의 정원</div><h1 id="homeHeading">오늘을 가꾸는 시간</h1><p class="subtitle" id="homeDate"></p>
+      <div class="card home-plant"><div class="plant-art" id="plantGraphic" role="img" aria-label="오늘의 3D 식물. 손가락으로 좌우 회전할 수 있어요"></div><div class="plant-title" id="plantStage">씨앗을 심을 준비가 됐어요</div><p class="plant-message" id="plantHint">할 일을 완료하면 식물이 자라요.</p><button class="preview-trigger" type="button" id="open3DPreview">3D 꽃 종류 · 성장 단계 미리보기 ↗</button></div>
+      <div class="card"><div class="section-row"><h2>오늘의 목표</h2><span class="pill" id="homeRate">0 / 0</span></div><div class="progress-meter"><span id="homeBar"></span></div><div class="progress-copy" id="homeProgress">오늘의 할 일을 등록해 보세요.</div></div>
+      <div class="card"><div class="section-row"><h2>오늘 할 일</h2><button class="subtle-btn" data-action="new-home">+ 추가</button></div><div class="entry-list" id="homeTasks"></div></div>
+      <div class="card"><div class="section-row"><h2>오늘 약속·예약</h2><button class="plain-btn" data-action="new-event-home">+ 일정 추가</button></div><div class="entry-list" id="homeEvents"></div></div>
+      <section class="home-discovery" aria-label="나의 정원과 식물 도감">
+        <div class="section-row"><h2>나의 정원</h2><span class="minor">기록을 모아보세요</span></div>
+        <div class="home-links">
+          <button class="home-link" data-nav="garden" type="button">
+            <span class="home-link-icon" aria-hidden="true">🌿</span>
+            <strong>7일의 정원</strong>
+            <small id="gardenPreviewCount">최근 성장 기록</small>
+            <span class="home-link-arrow" aria-hidden="true">›</span>
+          </button>
+          <button class="home-link" data-nav="collection" type="button">
+            <span class="home-link-icon" aria-hidden="true">🌸</span>
+            <strong>식물 도감</strong>
+            <small id="collectionPreviewCount">획득한 꽃 보기</small>
+            <span class="home-link-arrow" aria-hidden="true">›</span>
+          </button>
+        </div>
+      </section>
+    </section>
+    <section class="screen" data-screen="month" hidden aria-label="월간 캘린더">
+      <div class="section-tag">MONTH · 한 달의 계획</div><h1>월간 캘린더</h1><p class="subtitle">할 일과 약속을 한 달에서 확인하고, 날짜를 선택해 보세요.</p>
+      <div class="card month-card" id="monthGesture" aria-label="달력. 위로 밀면 다음 달, 아래로 밀면 이전 달">
+        <div class="month-top"><div><div class="month-title" id="monthTitle"></div><div class="minor" id="monthSubtitle"></div></div><div class="month-control"><button class="arrow-btn" id="prevMonth" aria-label="이전 달"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m14 5-7 7 7 7"/></svg></button><button class="arrow-btn" id="nextMonth" aria-label="다음 달"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10 5 7 7-7 7"/></svg></button></div></div>
+        <div class="cal-grid" id="monthGrid"></div><div class="cal-footer">↑ 다음 달 · ↓ 이전 달 · 날짜를 누르면 DAY로 이동</div>
+      </div>
+      <div class="card"><div class="section-row"><h2>이번 달 요약</h2><span class="tiny-badge">할 일 + 약속 통합</span></div><div class="stat-row"><div class="stat"><strong id="monthTaskCount">0</strong><small>할 일</small></div><div class="stat"><strong id="monthEventCount">0</strong><small>약속·예약</small></div><div class="stat"><strong id="monthRewardCount">0</strong><small>피운 꽃</small></div></div></div>
+    </section>
+    <section class="screen" data-screen="garden" hidden aria-label="7일 정원">
+      <div class="section-tag">GARDEN · 나의 기록</div><h1>7일의 정원</h1><p class="subtitle">바쁜 날도 쉬어가는 날도, 지난 기록은 사라지지 않아요.</p>
+      <div class="card"><div class="section-row"><h2>최근 7일</h2><span class="tiny-badge">오늘 포함</span></div><div class="garden-row" id="gardenDays"></div><p class="status-note" style="margin-top:13px">꽃은 그날의 할 일을 모두 끝냈을 때 획득해요. 할 일이 없는 날은 보상이 생기지 않아요.</p></div>
+      <div class="card"><div class="section-row"><h2>모은 꽃</h2><span class="pill" id="gardenTotal">0송이</span></div><p class="status-note" id="gardenSummary">꽃을 피우면 정원에 기록돼요.</p></div>
+    </section>
+    <section class="screen" data-screen="collection" hidden aria-label="식물 도감">
+      <div class="section-tag">COLLECTION · 꽃 도감</div><h1>나만의 식물 도감</h1><p class="subtitle">완성한 하루마다 세 종류 중 하나의 꽃이 랜덤으로 기록돼요.</p>
+      <div class="species-grid" id="speciesGrid"></div>
+      <p class="status-note" style="margin-top:15px">같은 꽃이 중복으로 나올 수 있고, 하루에는 최대 한 송이만 획득할 수 있어요.</p>
+    </section>
+  </main>
+  <button class="fab" id="fab" aria-label="할 일 또는 약속 등록" title="할 일 또는 약속 등록"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.5"><path d="M12 4v16M4 12h16"/></svg></button>
+
+</div>
+<!-- task/event editor -->
+<div class="overlay" id="editorOverlay" hidden><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="editorHeading"><div class="sheethead"><h2 id="editorHeading">새 기록 추가</h2><button class="close" type="button" data-close="editorOverlay" aria-label="닫기">×</button></div>
+  <div class="type-group"><button id="typeTask" aria-pressed="true" type="button">✓ 할 일</button><button id="typeEvent" aria-pressed="false" type="button">◷ 약속·예약</button></div>
+  <form id="editorForm"><label class="field" for="itemTitle">제목 *</label><input class="control" id="itemTitle" maxlength="90" placeholder="예: 운동하기" required autocomplete="off">
+  <div class="field-row"><div><label class="field" for="itemDate">날짜 *</label><input class="control" id="itemDate" type="date" required></div><div><label class="field" for="itemTime">시간 (선택)</label><input class="control" id="itemTime" type="time"></div></div>
+  <label class="field" for="itemNote">메모 (선택)</label><textarea class="control" id="itemNote" maxlength="500" placeholder="예약 장소, 준비물, 목표 등을 기록해 보세요."></textarea>
+  <label class="field">일정 카드 색상</label><div class="palette" id="entryPalette"></div><div class="color-inline"><input type="color" id="itemColor" aria-label="사용자 지정 색상"><span class="minor">직접 색상 선택</span></div>
+  <label style="display:flex;gap:9px;align-items:center;margin-top:13px;font-size:12px"><input type="checkbox" id="saveDefault" class="plain-check"> 이 색상을 같은 종류의 기본 색상으로 저장</label>
+  <div class="action-row"><button type="button" id="deleteItem" class="danger" hidden>삭제</button><button class="primary" type="submit" id="submitItem">저장하기</button></div></form>
+</section></div>
+<!-- settings -->
+<div class="overlay" id="settingsOverlay" hidden><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="settingsHeading"><div class="sheethead"><h2 id="settingsHeading">설정</h2><button class="close" data-close="settingsOverlay" aria-label="닫기">×</button></div>
+  <div class="section-tag">THEME</div><h3 style="font-size:15px;margin:5px 0 7px">계절 자동 테마</h3><p class="helper">봄·여름·가을·겨울의 기본 분위기가 날짜에 따라 자동 변경돼요. 사용자 지정 색상은 그대로 유지돼요.</p><div class="setting-line"><div><strong id="currentSeason">계절 테마</strong><br><span>배경색 및 강조색 개별 설정</span></div><span class="pill">자동</span></div>
+  <label class="field" for="backgroundColor">배경색 변경</label><div class="color-inline"><input type="color" id="backgroundColor"><button type="button" class="small-outline" id="resetBackground">계절 기본색</button></div>
+  <label class="field" for="accentColor">버튼 강조색 변경</label><div class="color-inline"><input type="color" id="accentColor"><button type="button" class="small-outline" id="resetAccent">계절 기본색</button></div>
+  <div class="divider"></div><div class="section-tag">DEFAULT COLORS</div><h3 style="font-size:15px;margin:6px 0">새 기록의 기본 색상</h3>
+  <div class="field-row"><div><label class="field" for="defaultTaskColor">할 일</label><input class="control" type="color" id="defaultTaskColor" style="padding:4px;height:48px"></div><div><label class="field" for="defaultEventColor">약속·예약</label><input class="control" type="color" id="defaultEventColor" style="padding:4px;height:48px"></div></div>
+  <div class="divider"></div><div class="section-tag">DATA</div><h3 style="font-size:15px;margin:6px 0">기록 백업·복원</h3><p class="helper">기록은 현재 기기에 저장돼요. 브라우저 데이터를 삭제하거나 기기를 바꾸기 전에 백업 파일을 내려받아 보관하세요.</p><div class="backup-row"><button type="button" id="exportData" class="secondary">JSON 백업 내려받기</button><button type="button" id="importDataBtn" class="secondary">백업 복원</button></div><input id="importData" type="file" accept="application/json,.json" hidden>
+  <div class="divider"></div><div class="section-tag">REMINDERS</div><p class="helper">현재 버전은 앱이 열려 있을 때만 시간 알림을 보여줄 수 있어요. 앱이 닫혔을 때의 푸시 알림은 서버 기능이 없어 아직 지원하지 않아요.</p><button type="button" id="helpFromSettings" class="small-outline">? 사용 방법 다시 보기</button>
+</section></div>
+<!-- development 3D preview; no collection rewards are modified -->
+<div class="overlay" id="plantPreviewOverlay" hidden>
+ <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="plantPreviewHeading">
+  <div class="sheethead"><h2 id="plantPreviewHeading">3D 꽃 미리보기</h2><button class="close" type="button" data-close="plantPreviewOverlay" aria-label="닫기">×</button></div>
+  <p class="helper">개발 중 모든 꽃을 볼 수 있어요. 여기서 선택해도 실제 꽃 획득 기록은 바뀌지 않아요.</p>
+  <div class="preview-hero"><div class="preview-art" id="plant3DPreviewCanvas"></div></div>
+  <p class="preview-note" id="previewCaption">손가락이나 마우스로 3D 꽃을 회전해 보세요.</p>
+  <label class="field">꽃 종류</label>
+  <div class="preview-controls" id="previewSpeciesButtons" role="group" aria-label="3D 꽃 종류">
+    <button type="button" data-plant="tulip">튤립</button><button type="button" data-plant="daisy">데이지</button><button type="button" data-plant="sunflower">해바라기</button>
+  </div>
+  <label class="field">성장 단계</label>
+  <div class="preview-controls" id="previewStageButtons" role="group" aria-label="성장 단계">
+    <button type="button" data-stage="0">화분</button><button type="button" data-stage="1">새싹</button><button type="button" data-stage="2">잎</button><button type="button" data-stage="3">개화</button>
+  </div>
+  <div class="preview-controls"><button type="button" id="rotate3DPreview">↻ 꽃 90° 회전</button><button type="button" id="reset3DPreview">오늘의 식물로 돌아가기</button></div>
+  <p class="helper" style="margin-top:16px">실제 식물 획득은 오늘의 할 일을 모두 완료했을 때 하루 한 번만 발생해요.</p>
+ </section>
+</div>
+<!-- help -->
+<div class="overlay" id="helpOverlay" hidden><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="helpHeading"><div class="sheethead"><h2 id="helpHeading">Plantory 사용 방법</h2><button class="close" data-close="helpOverlay" aria-label="닫기">×</button></div>
+<div class="helper"><p><strong>1. HOME</strong>은 오늘 할 일과 성장하는 식물을 보여줘요. 할 일은 개수 제한 없이 등록할 수 있어요.</p><p><strong>2. DAY</strong>에서는 날짜별 할 일·약속을 색상 카드로 확인해요.</p><p><strong>3. MONTH</strong>에서는 한 달의 일정을 확인해요. 좌우로 밀면 DAY → HOME → MONTH가 원형으로 연결되고, 월 달력 안에서 위·아래로 밀면 달을 바꿀 수 있어요. 화살표로도 이동할 수 있어요.</p><p><strong>4. 식물</strong>은 오늘 등록한 할 일을 모두 완료하면 꽃이 피고, 세 종류 중 하나를 하루에 한 번 획득해요. 약속은 식물 성장에 포함되지 않아요.</p><p><strong>5. 색상</strong>은 기록마다 선택할 수 있고 기본색으로 저장할 수 있어요. 계절 배경과 별개로 유지돼요.</p><p><strong>6. 백업</strong>은 설정에서 JSON 파일로 내보내거나 불러올 수 있어요.</p><p><strong>제한:</strong> WebGL 3D를 사용해 식물을 회전하고 성장 단계를 볼 수 있어요. 일부 브라우저에서 WebGL이 차단되면 2D 대체 그림이 표시돼요. 닫힌 앱에 보내는 푸시 알림과 여러 기기 자동 동기화도 아직 제공하지 않아요.</p></div><button class="primary" id="helpDone" style="width:100%">시작하기</button>
+</section></div>
+<div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
+<script>
+/* Plantory procedural low-poly 3D renderer. WebGL1, no CDN dependency.
+   Copyright (c) 2026 Plantory prototype. Uses hand-built 3D meshes.
+   One WebGL canvas is reused between HOME and the development preview dialog. */
+(function(global){'use strict';
+const C={pot:[.76,.52,.38],rim:[.82,.61,.46],soil:[.36,.27,.22],stem:[.20,.47,.31],leaf:[.25,.60,.39],leaf2:[.39,.73,.48],shadow:[.82,.87,.85]};
+const rad=Math.PI/180;
+function copy(c,k=1){return c.map(x=>Math.min(1,x*k))}
+class Mesh{
+ constructor(){this.v=[]}
+ tri(a,b,c,col){const ab=b.map((v,i)=>v-a[i]),ac=c.map((v,i)=>v-a[i]);let n=[ab[1]*ac[2]-ab[2]*ac[1],ab[2]*ac[0]-ab[0]*ac[2],ab[0]*ac[1]-ab[1]*ac[0]];let m=Math.hypot(...n)||1;n=n.map(v=>v/m);for(const p of [a,b,c])this.v.push(...p,...n,...col)}
+ quad(a,b,c,d,col){this.tri(a,b,c,col);this.tri(a,c,d,col)}
+ ring(x,y,z,r0,r1,y0,y1,n,col,top=true){for(let i=0;i<n;i++){const a=i*2*Math.PI/n,b=(i+1)*2*Math.PI/n;const p=(r,h,t)=>[x+r*Math.cos(t),h,z+r*Math.sin(t)];const b0=p(r0,y0,a),b1=p(r0,y0,b),t0=p(r1,y1,a),t1=p(r1,y1,b);this.quad(b0,b1,t1,t0,copy(col,i%2===0?1:.92));if(top){this.tri([x,y1,z],t1,t0,copy(col,1.08))}}}
+ ellipsoid(center,scale,col,segments=10,rings=6,rotate=[0,0,0]){const [cx,cy,cz]=center,[sx,sy,sz]=scale;const [rx,ry,rz]=rotate;function rot(p){let [x,y,z]=p;let c=Math.cos(rx),s=Math.sin(rx);[y,z]=[y*c-z*s,y*s+z*c];c=Math.cos(ry);s=Math.sin(ry);[x,z]=[x*c+z*s,-x*s+z*c];c=Math.cos(rz);s=Math.sin(rz);[x,y]=[x*c-y*s,x*s+y*c];return [cx+x,cy+y,cz+z]}function v(a,b){return rot([sx*Math.sin(a)*Math.cos(b),sy*Math.cos(a),sz*Math.sin(a)*Math.sin(b)])}
+ for(let j=0;j<rings;j++){const theta=j*Math.PI/rings,theta2=(j+1)*Math.PI/rings;for(let i=0;i<segments;i++){const u=i*2*Math.PI/segments,u2=(i+1)*2*Math.PI/segments;const a=v(theta,u),b=v(theta2,u),c=v(theta2,u2),d=v(theta,u2);this.quad(a,b,c,d,copy(col,1+((j+i)%3-1)*.045))}}}
+}
+function makePlant(species='daisy',stage=3){const m=new Mesh();
+// Ground contact, terracotta pot & its low-poly clay lip.
+m.ellipsoid([0,-1.31,0],[.87,.045,.52],C.shadow,16,3);
+m.ring(0,0,0,.45,.61,-1.25,-.42,12,C.pot,false);
+m.ring(0,0,0,.61,.63,-.48,-.32,12,C.rim,false);
+m.ring(0,0,0,.54,.55,-.36,-.30,12,copy(C.soil,1.08),true);
+m.ring(0,0,0,.60,.65,-.34,-.25,12,copy(C.rim,1.03),false);
+if(stage===0)return m;
+const top=stage===1?-.02:stage===2?.70:1.02;
+m.ring(0,0,0,.048,stage===3?.035:.042,-.30,top,8,C.stem,false);
+function leaf(y,dir,rz=0,light=false){let start=[0,y,0],tip=[dir*.54,y+.14+rz,.04],midx=dir*.29,midy=y+.13+rz*.6;const sideA=[midx,midy,.14],sideB=[midx,midy,-.14],ridge=[midx,midy+.09,.025];const c=light?C.leaf2:C.leaf;m.tri(start,sideA,ridge,c);m.tri(start,ridge,sideB,copy(c,.88));m.tri(sideA,tip,ridge,copy(c,1.05));m.tri(ridge,tip,sideB,copy(c,.92));m.tri(start,tip,sideA,copy(c,.75));m.tri(start,sideB,tip,copy(c,.70))}
+if(stage===1){leaf(-.15,-1,0,true);leaf(-.08,1,-.025,false)}
+else{leaf(-.07,-1,-.03);leaf(.17,1,-.02,true);leaf(.33,-1,-.06,true);if(stage===3){leaf(.49,1,-.01);leaf(.64,-1,-.04)}}
+if(stage!==3)return m;
+if(species==='tulip'){
+ const centerY=1.06;
+ // fuller tulip bloom: low-poly 3D bulb gives the cup volume.
+ m.ellipsoid([0,1.12,0],[.24,.29,.23],[.96,.47,.57],12,7);
+ // six faceted petals form a vertical cup instead of a flat sprite.
+ for(let i=0;i<6;i++){const a=i*Math.PI/3;const r=(d,h,offset=0)=>[(.13+d)*Math.cos(a+offset),h,(.13+d)*Math.sin(a+offset)];const bottom=[.08*Math.cos(a),.79,.08*Math.sin(a)];const left=r(.13,1.02,-.34),right=r(.13,1.02,.34);const shoulder=r(.12,1.24),peak=r(.02,1.42+(i%2)*.035);const pet=i%2?[.94,.43,.53]:[.99,.61,.67];m.tri(bottom,right,shoulder,copy(pet,.90));m.tri(bottom,shoulder,left,pet);m.tri(left,shoulder,peak,copy(pet,1.02));m.tri(shoulder,right,peak,copy(pet,.94));}
+ m.ellipsoid([0,1.03,0],[.095,.13,.095],[.84,.32,.38],8,4);
+}else{
+ const cy=1.08,petals=species==='sunflower'?13:10;
+ const golden=species==='sunflower';
+ // petals are angled toward the viewer (XY plane), with real depth and lighting.
+ for(let i=0;i<petals;i++){
+  const a=i*Math.PI*2/petals+(.1),c=Math.cos(a),s=Math.sin(a);
+  const r=golden?.34:.27,len=golden?.59:.46;
+  const base=[c*.19,cy+s*.19,.02],tip=[c*len,cy+s*len,-.04];
+  const p1=[c*r-s*(golden?.15:.14),cy+s*r+c*(golden?.15:.14),.04];
+  const p2=[c*r+s*(golden?.15:.14),cy+s*r-c*(golden?.15:.14),.04];
+  const peak=[c*(r+.05),cy+s*(r+.05),.13];
+  const color=golden?(i%2?[.98,.62,.15]:[.99,.72,.21]):(i%2?[.95,.95,.98]:[1,1,.97]);
+  m.tri(base,p1,peak,copy(color,.94));m.tri(base,peak,p2,color);m.tri(p1,tip,peak,copy(color,1.00));m.tri(peak,tip,p2,copy(color,.88));
+ }
+ const r=golden?.285:.205;
+ m.ellipsoid([0,cy,.12],[r,r,.12],golden?[.44,.27,.16]:[.98,.76,.22],14,7);
+ if(golden){for(let j=0;j<10;j++){const a=j*Math.PI*2/10,rr=j%2?.17:.11;m.ellipsoid([rr*Math.cos(a),cy+rr*Math.sin(a),.238],[.025,.026,.023],[.66,.44,.24],6,4)}}
+ }
+ return m;
+}
+function shader(gl,type,source){const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s}
+function m4mul(a,b){const o=new Float32Array(16);for(let r=0;r<4;r++)for(let c=0;c<4;c++)for(let k=0;k<4;k++)o[c*4+r]+=a[k*4+r]*b[c*4+k];return o}
+function perspective(fov,aspect,near,far){const f=1/Math.tan(fov/2),nf=1/(near-far);return new Float32Array([f/aspect,0,0,0,0,f,0,0,0,0,(far+near)*nf,-1,0,0,2*far*near*nf,0])}
+function norm(v){let m=Math.hypot(...v)||1;return v.map(x=>x/m)}
+function lookAt(eye,target){const z=norm(eye.map((x,i)=>x-target[i]));const x=norm([z[2],0,-z[0]]),y=[z[1]*x[2]-z[2]*x[1],z[2]*x[0]-z[0]*x[2],z[0]*x[1]-z[1]*x[0]];return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-x.reduce((s,v,i)=>s+v*eye[i],0),-y.reduce((s,v,i)=>s+v*eye[i],0),-z.reduce((s,v,i)=>s+v*eye[i],0),1])}
+const VERT=`attribute vec3 p;attribute vec3 n;attribute vec3 c;uniform mat4 mvp;uniform float spin;varying vec3 col;void main(){float co=cos(spin),si=sin(spin);vec3 pos=vec3(co*p.x+si*p.z,p.y,-si*p.x+co*p.z);vec3 normal=vec3(co*n.x+si*n.z,n.y,-si*n.x+co*n.z);float diff=max(0.0,dot(normalize(normal),normalize(vec3(-0.45,0.83,0.65))));float shade=0.76+0.28*diff;col=c*shade;gl_Position=mvp*vec4(pos,1.0);}`;
+const FRAG=`precision mediump float;varying vec3 col;void main(){gl_FragColor=vec4(col,1.0);}`;
+function make(){const canvas=document.createElement('canvas');canvas.className='plant3d-canvas';canvas.setAttribute('aria-label','회전할 수 있는 입체 식물');canvas.setAttribute('role','img');
+let gl=canvas.getContext('webgl',{antialias:true,alpha:true,preserveDrawingBuffer:true,powerPreference:'low-power'});
+const ctx=!gl?canvas.getContext('2d',{alpha:true}):null;
+if(!gl&&!ctx)throw Error('3D 렌더링에 필요한 Canvas를 사용할 수 없습니다');
+let program=null,loc=null,buffer=null,vertices=new Float32Array(),count=0;
+if(gl){program=gl.createProgram();gl.attachShader(program,shader(gl,gl.VERTEX_SHADER,VERT));gl.attachShader(program,shader(gl,gl.FRAGMENT_SHADER,FRAG));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));loc={p:gl.getAttribLocation(program,'p'),n:gl.getAttribLocation(program,'n'),c:gl.getAttribLocation(program,'c'),mvp:gl.getUniformLocation(program,'mvp'),spin:gl.getUniformLocation(program,'spin')};buffer=gl.createBuffer();gl.enable(gl.DEPTH_TEST);gl.disable(gl.CULL_FACE)}
+let species='daisy',stage=0,angle=.25,dragX=null,last=0,frame=0,visible=true,animate=true;
+function upload(){vertices=new Float32Array(makePlant(species,stage).v);if(gl){gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,vertices,gl.STATIC_DRAW);gl.vertexAttribPointer(loc.p,3,gl.FLOAT,false,36,0);gl.vertexAttribPointer(loc.n,3,gl.FLOAT,false,36,12);gl.vertexAttribPointer(loc.c,3,gl.FLOAT,false,36,24);for(const l of [loc.p,loc.n,loc.c])gl.enableVertexAttribArray(l)}return vertices.length/9}
+function set(spec,st){species=['tulip','daisy','sunflower'].includes(spec)?spec:'daisy';stage=Math.max(0,Math.min(3,Number(st)||0));count=upload();draw()}
+function resize(force){if(!canvas.isConnected&&!force)return;const box=canvas.getBoundingClientRect();const ratio=Math.min(1.65,global.devicePixelRatio||1),w=Math.max(90,Math.round((box.width||260)*ratio)),h=Math.max(90,Math.round((box.height||260)*ratio));if(w!==canvas.width||h!==canvas.height){canvas.width=w;canvas.height=h}if(gl)gl.viewport(0,0,canvas.width,canvas.height)}
+function drawSoftware(){
+ // Perspective-projected triangles of the SAME 3D mesh: genuine 3D geometry,
+ // depth sorting, camera rotation and directional faceted lighting without WebGL.
+ const W=canvas.width,H=canvas.height,co=Math.cos(angle),si=Math.sin(angle),f=1/Math.tan(37*rad/2),scale=.5*H*f;
+ ctx.clearRect(0,0,W,H);const faces=[];
+ for(let i=0;i<vertices.length;i+=27){let pts=[],normal=null,color=null,depth=0;
+  for(let j=0;j<3;j++){const k=i+j*9,ox=vertices[k],oy=vertices[k+1],oz=vertices[k+2];const x=co*ox+si*oz,z=-si*ox+co*oz;
+   const cz=5.55-.173*oy-.985*z,cy=.985*oy-.173*z;
+   pts.push([W*.5+x*scale/cz,H*.5-cy*scale/cz]);depth+=cz;
+   if(!normal){normal=[co*vertices[k+3]+si*vertices[k+5],vertices[k+4],-si*vertices[k+3]+co*vertices[k+5]];color=[vertices[k+6],vertices[k+7],vertices[k+8]]}
+  }
+  const shade=.76+.28*Math.max(0,normal[0]*-.45+normal[1]*.83+normal[2]*.65);
+  faces.push({pts,depth:depth/3,fill:`rgb(${color.map(c=>Math.round(Math.max(0,Math.min(1,c*shade))*255)).join(',')})`});
+ }
+ faces.sort((a,b)=>b.depth-a.depth);for(const face of faces){ctx.beginPath();ctx.moveTo(...face.pts[0]);ctx.lineTo(...face.pts[1]);ctx.lineTo(...face.pts[2]);ctx.closePath();ctx.fillStyle=face.fill;ctx.fill()}
+}
+function draw(){if(gl?.isContextLost())return;resize(true);if(ctx){drawSoftware();return}gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.useProgram(program);gl.bindBuffer(gl.ARRAY_BUFFER,buffer);const p=perspective(37*rad,canvas.width/canvas.height,.1,35),v=lookAt([0,1.0,5.5],[0,.03,0]);gl.uniformMatrix4fv(loc.mvp,false,m4mul(p,v));gl.uniform1f(loc.spin,angle);gl.drawArrays(gl.TRIANGLES,0,count)}
+function animateLoop(t){if(!document.hidden&&canvas.isConnected&&visible&&animate&&dragX===null&&t-last>(ctx?55:34)){angle+=.006;draw();last=t}frame=requestAnimationFrame(animateLoop)}
+canvas.addEventListener('pointerdown',e=>{dragX=e.clientX;canvas.setPointerCapture?.(e.pointerId)});canvas.addEventListener('pointermove',e=>{if(dragX===null)return;angle+=(e.clientX-dragX)*.012;dragX=e.clientX;draw()});canvas.addEventListener('pointerup',()=>{dragX=null});canvas.addEventListener('pointercancel',()=>{dragX=null});
+if(gl)canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();visible=false});
+function mount(parent){parent.replaceChildren(canvas);draw()}
+function snapshot(spec,st){const old=[species,stage,angle];const target=canvas.parentNode,oldStyle=canvas.style.cssText;const tmp=document.createElement('div');tmp.style.cssText='position:fixed;width:175px;height:180px;left:-9999px;top:0;pointer-events:none';document.body.append(tmp);tmp.append(canvas);canvas.style.width='175px';canvas.style.height='180px';animate=false;angle=.32;set(spec,st);resize(true);draw();const url=canvas.toDataURL('image/png');if(target)target.append(canvas);canvas.style.cssText=oldStyle;tmp.remove();angle=old[2];set(old[0],old[1]);animate=true;return url}
+function rotate(d){angle+=d;draw()}
+count=upload();draw();frame=requestAnimationFrame(animateLoop);
+return {canvas,mount,set,snapshot,rotate,draw,engine:gl?'WebGL':'3D software renderer',setVisible:v=>visible=!!v,get stage(){return stage},get species(){return species},dispose:()=>{cancelAnimationFrame(frame);if(gl){gl.deleteBuffer(buffer);gl.deleteProgram(program)}}}
+}
+global.Plantory3D={create:make};
+})(window);
+
+</script>
+<script>
+(()=>{'use strict';
+const STORE='plantory_full_mvp_v2', LEGACY='plantory_calendar_prototype_v1';
+const $=id=>document.getElementById(id), $$=sel=>Array.from(document.querySelectorAll(sel));
+const PALETTE=['#359E64','#4B89AC','#8B5BB7','#D98A36','#C85E65','#4A7A83','#A35A94','#687585'];
+const SPECIES=[{id:'daisy',name:'데이지',emoji:'🌼',description:'맑은 하루의 꽃'},{id:'tulip',name:'튤립',emoji:'🌷',description:'반짝이는 하루의 꽃'},{id:'sunflower',name:'해바라기',emoji:'🌻',description:'빛을 닮은 하루의 꽃'}];
+let plant3d=null;
+try{plant3d=window.Plantory3D.create();plant3d.mount(document.getElementById('plantGraphic'))}
+catch(e){console.warn('3D 렌더러 미지원, SVG 대체 그림 표시:',e)}
+let previewKind='tulip',previewStep=3;
+const previewCaptions=['화분과 흙','새싹','잎 성장','완전 개화'];
+const previewNames={tulip:'튤립',daisy:'데이지',sunflower:'해바라기'};
+const plantThumbs=Object.create(null);
+function thumb(kind){if(plantThumbs[kind])return plantThumbs[kind];if(!plant3d)return null;try{return plantThumbs[kind]=plant3d.snapshot(kind,3)}catch(e){console.warn('3D 썸네일 실패:',e);return null}}
+function updatePreview(){if(plant3d)plant3d.set(previewKind,previewStep);
+ document.querySelectorAll('[data-plant]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.plant===previewKind)));
+ document.querySelectorAll('[data-stage]').forEach(el=>el.setAttribute('aria-pressed',String(Number(el.dataset.stage)===previewStep)));
+ document.getElementById('previewCaption').textContent=previewNames[previewKind]+' · '+previewCaptions[previewStep]+' · 화면을 드래그해 360° 회전';
+}
+function openPreview(kind='tulip',step=3){previewKind=kind;previewStep=step;overlayOpen('plantPreviewOverlay');if(plant3d){plant3d.mount(document.getElementById('plant3DPreviewCanvas'));updatePreview()}else{document.getElementById('previewCaption').textContent='이 기기에서는 WebGL을 실행할 수 없어요.'}}
+function restoreHome3D(){if(!plant3d)return;plant3d.mount(document.getElementById('plantGraphic'));const k=today(),spec=data.awards[k]||'daisy';plant3d.set(spec,stage())}
+const SEASONS={spring:{name:'봄',background:'#FFF4EC',accent:'#A65F64'},summer:{name:'여름',background:'#E4FCF9',accent:'#446491'},autumn:{name:'가을',background:'#F1F2EF',accent:'#576D77'},winter:{name:'겨울',background:'#FFF1E2',accent:'#935A48'}};
+const pad=n=>String(n).padStart(2,'0');const dayKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const fromKey=s=>{const [y,m,d]=String(s).split('-').map(Number);return new Date(y,m-1,d)};
+const plusDays=(key,n)=>{const d=fromKey(key);d.setDate(d.getDate()+n);return dayKey(d)};
+const today=()=>dayKey(new Date());const readable=k=>fromKey(k).toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'long'});
+const defaultData=()=>({version:2,items:[],awards:{},settings:{defaultTaskColor:'#359E64',defaultEventColor:'#C85E65',background:null,accent:null,hasOnboarded:false}});
+const validHex=s=>typeof s==='string'&&/^#[\da-fA-F]{6}$/.test(s);
+const validDate=s=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(s||''))return false;const d=fromKey(s);return Number.isFinite(d.getTime())&&dayKey(d)===s};
+const sanitizeItem=x=>({id:String(x.id||makeId()).slice(0,100),type:x.type==='event'?'event':'task',date:x.date,title:String(x.title||'').slice(0,90),time:/^([01]\d|2[0-3]):[0-5]\d$/.test(x.time||'')?x.time:'',note:String(x.note||'').slice(0,500),done:x.type==='task'?Boolean(x.done):false,color:validHex(x.color)?x.color:null});
+function makeId(){return globalThis.crypto?.randomUUID?.()||`id-${Date.now()}-${Math.random().toString(36).slice(2)}`}
+function normalize(input){const base=defaultData();if(!input||typeof input!=='object'||!Array.isArray(input.items))throw Error('백업 데이터 형식이 올바르지 않아요.');const items=input.items.filter(x=>x&&validDate(x.date)&&typeof x.title==='string'&&['task','event'].includes(x.type)).slice(0,15000).map(sanitizeItem);const rawAwards=(input.awards&&typeof input.awards==='object'&&!Array.isArray(input.awards))?input.awards:{};const awards={};for(const [k,v] of Object.entries(rawAwards)){if(validDate(k)&&SPECIES.some(s=>s.id===v))awards[k]=v}const inputSettings=input.settings||{};const settings={...base.settings,defaultTaskColor:validHex(inputSettings.defaultTaskColor)?inputSettings.defaultTaskColor:base.settings.defaultTaskColor,defaultEventColor:validHex(inputSettings.defaultEventColor)?inputSettings.defaultEventColor:base.settings.defaultEventColor,background:validHex(inputSettings.background)?inputSettings.background:null,accent:validHex(inputSettings.accent)?inputSettings.accent:null,hasOnboarded:!!inputSettings.hasOnboarded};return {version:2,items,awards,settings}}
+let data=defaultData(),persistError=false,legacyMigrated=false;
+try{const latest=localStorage.getItem(STORE);if(latest)data=normalize(JSON.parse(latest));else {const old=localStorage.getItem(LEGACY);if(old){const source=JSON.parse(old);if(source&&Array.isArray(source.items)&&!source.isDemo){data.items=source.items.filter(x=>x&&validDate(x.date)&&['task','event'].includes(x.type)&&typeof x.title==='string').map(sanitizeItem);data.settings.hasOnboarded=true;legacyMigrated=true;localStorage.setItem(STORE,JSON.stringify(data))}}}}catch(e){persistError=true;console.warn('저장소 읽기 실패:',e)}
+let view='home',selected=today(),month=new Date(fromKey(today()).getFullYear(),fromKey(today()).getMonth(),1),editorType='task',editId=null,editingColor=null,focusReturn=null,toaster=null;
+function notify(s){const t=$('toast');t.textContent=s;t.hidden=false;clearTimeout(toaster);toaster=setTimeout(()=>t.hidden=true,3400)}
+function persist(){try{localStorage.setItem(STORE,JSON.stringify(data));return true}catch(e){notify('저장하지 못했어요. 저장 공간 또는 브라우저 설정을 확인해 주세요.');console.warn(e);return false}}
+function setVar(name,v){document.documentElement.style.setProperty(name,v)}
+function hexLuminance(hex){const rgb=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722}
+function paintTheme(){const m=new Date().getMonth(),season=m<=1||m===11?'winter':m<=4?'spring':m<=7?'summer':'autumn';const palette=SEASONS[season];const bg=data.settings.background||palette.background,accent=data.settings.accent||palette.accent;setVar('--bg',bg);setVar('--accent',accent);setVar('--soft',colorMix(accent,'#FFFFFF',.88));setVar('--on-accent',hexLuminance(accent)>.22?'#182532':'#FFFFFF');$('currentSeason').textContent=`현재 ${palette.name} 테마`;$('backgroundColor').value=bg;$('accentColor').value=accent;$('defaultTaskColor').value=data.settings.defaultTaskColor;$('defaultEventColor').value=data.settings.defaultEventColor;document.querySelector('meta[name=theme-color]').content=bg}
+function colorMix(a,b,k){const parse=s=>[1,3,5].map(i=>parseInt(s.slice(i,i+2),16));const u=parse(a),v=parse(b);return '#'+u.map((n,i)=>Math.round(n*(1-k)+v[i]*k).toString(16).padStart(2,'0')).join('')}
+function newEl(tag,cls,content){const el=document.createElement(tag);if(cls)el.className=cls;if(content!==undefined)el.textContent=content;return el}
+function svgLeaf(){return `<svg viewBox="0 0 200 190" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="pot" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#D5AF87"/><stop offset="1" stop-color="#AD7F61"/></linearGradient></defs><ellipse cx="100" cy="176" rx="62" ry="8" fill="#879b8b" opacity=".17"/><path d="M57 123L143 123 133 173 68 173Z" fill="url(#pot)"/><path d="M57 123H100V173H68Z" fill="#E0B893" opacity=".66"/><path d="M100 123H143L133 173H100Z" fill="#A4755D" opacity=".5"/><rect x="54" y="116" width="92" height="17" rx="4" fill="#CC9B77"/><rect x="59" y="117" width="83" height="6" rx="3" fill="#EBC39E"/><ellipse cx="100" cy="117" rx="40" ry="5" fill="#775B49"/>__PLANT__</svg>`}
+function plantSvg(stage){let art='';if(stage>=1)art+='<path d="M100 116V72" stroke="#457A57" stroke-width="5" stroke-linecap="round"/><path d="M98 94C70 93 64 79 65 68c21-1 33 9 33 26Z" fill="#88BE87"/><path d="M102 82C105 65 119 60 137 64c-2 13-19 20-35 18Z" fill="#4F9A6E"/>';
+if(stage>=2)art+='<path d="M100 75V40" stroke="#457A57" stroke-width="5" stroke-linecap="round"/><path d="M100 65C80 66 70 55 73 42c17-2 27 5 27 23Z" fill="#77B984"/><path d="M102 54C109 36 120 30 139 32c-4 19-20 25-37 22Z" fill="#4F9A6E"/>';
+if(stage>=3)art+='<path d="M100 45V27" stroke="#457A57" stroke-width="5" stroke-linecap="round"/>'+Array.from({length:6},(_,i)=>{const a=i*Math.PI/3;return `<ellipse cx="${(100+Math.cos(a)*15).toFixed(2)}" cy="${(24+Math.sin(a)*15).toFixed(2)}" rx="12" ry="15" fill="${i%2?'#F3D0A5':'#FFE2BA'}" transform="rotate(${i*60} ${100+Math.cos(a)*15} ${24+Math.sin(a)*15})"/>`}).join('')+'<circle cx="100" cy="24" r="9" fill="#D59A5B"/>';
+return svgLeaf().replace('__PLANT__',art)}
+const daily=k=>data.items.filter(x=>x.date===k);
+const ordered=arr=>arr.slice().sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99')||a.title.localeCompare(b.title));
+function progress(k){const t=daily(k).filter(x=>x.type==='task');return {count:t.length,done:t.filter(x=>x.done).length}}
+function stage(){const p=progress(today());if(!p.count||!p.done)return 0;if(p.done===p.count)return 3;if(p.done/p.count<.5)return 1;return 2}
+function renderEntries(target,arr,type){const root=$(target);root.replaceChildren();const content=type?arr.filter(x=>x.type===type):arr;if(!content.length){const empty=newEl('div','empty');empty.append(newEl('strong','',type==='task'?'오늘의 할 일이 없어요':type==='event'?'약속·예약이 없어요.':'등록한 기록이 없어요.'),newEl('span','','+ 버튼으로 간편하게 추가해 보세요.'));root.append(empty);return}
+for(const item of ordered(content)){const e=newEl('div','entry');e.dataset.id=item.id;const stripe=newEl('span','entry-tint');const entryColor=item.color||(item.type==='task'?data.settings.defaultTaskColor:data.settings.defaultEventColor);e.style.setProperty('--entry-color',entryColor);stripe.style.backgroundColor=entryColor;e.append(stripe);if(item.type==='task'){const checkbox=newEl('input','check');checkbox.type='checkbox';checkbox.checked=!!item.done;checkbox.setAttribute('aria-label',`${item.title} 완료 표시`);checkbox.addEventListener('change',()=>toggleDone(item.id,checkbox.checked));e.append(checkbox)}else e.append(newEl('span','entry-symbol','◷'));
+const body=newEl('div','entry-body');body.append(newEl('div','entry-title'+(item.done?' done':''),item.title));const d=[item.type==='task'?'할 일':'약속·예약'];if(item.time)d.unshift(item.time);body.append(newEl('div','entry-desc',d.join(' · ')));if(item.note)body.append(newEl('div','entry-desc',item.note));e.append(body);const edit=newEl('button','edit-item');edit.type='button';edit.setAttribute('aria-label',`${item.title} 수정`);edit.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m15 5 4 4M4 20l4-1 12-12a2.7 2.7 0 0 0-4-4L4 15l0 5Z"/></svg>';edit.addEventListener('click',()=>openEditor(item));e.append(edit);root.append(e)} }
+function renderHome(){const now=today(),p=progress(now),s=stage();$('homeDate').textContent=fromKey(now).toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'long'});if(plant3d){if($('plantPreviewOverlay').hidden)restoreHome3D()}else{$('plantGraphic').innerHTML=plantSvg(s)}$('plantStage').textContent=data.awards[now]?'오늘도 꽃을 피웠어요!':s===0?'작은 씨앗부터 시작해요':s===1?'새싹이 자라고 있어요':s===2?'잎이 풍성해졌어요':'오늘의 꽃이 활짝 피었어요';$('plantHint').textContent=p.count?`할 일 ${p.done}/${p.count}개 완료`:'할 일을 등록하면 식물이 자라요';$('homeRate').textContent=`${p.done} / ${p.count}`;$('homeProgress').textContent=p.count?`${Math.round(p.done/p.count*100)}% 달성 · ${p.count-p.done}개 남았어요`:'오늘은 어떤 일을 해볼까요?';$('homeBar').style.width=(p.count?`${p.done/p.count*100}%`:'0%');renderEntries('homeTasks',daily(now),'task');renderEntries('homeEvents',daily(now),'event')}
+function renderDay(){const p=progress(selected);$('dayTitle').textContent=readable(selected);$('daySubtitle').textContent=selected===today()?'오늘의 할 일과 약속을 함께 확인해요.':`${selected}의 기록이에요.`;$('dayRate').textContent=`${p.done} / ${p.count}`;$('dayBar').style.width=(p.count?`${p.done/p.count*100}%`:'0%');$('dayProgressText').textContent=!p.count?'등록한 할 일이 없어요.':p.done===p.count?'등록한 할 일을 모두 완료했어요.':`${p.count-p.done}개의 할 일이 남았어요.`;renderEntries('dayEntries',daily(selected))}
+function renderMonth(){const y=month.getFullYear(),m=month.getMonth(),mo=month.getMonth()+1,k=`${y}-${pad(mo)}`;$('monthTitle').textContent=`${y}년 ${mo}월`;const relevant=data.items.filter(x=>x.date.startsWith(k));$('monthSubtitle').textContent=`기록 ${relevant.length}개`;$('monthTaskCount').textContent=relevant.filter(x=>x.type==='task').length;$('monthEventCount').textContent=relevant.filter(x=>x.type==='event').length;$('monthRewardCount').textContent=Object.keys(data.awards).filter(x=>x.startsWith(k)).length;const grid=$('monthGrid');grid.replaceChildren();for(const x of ['일','월','화','수','목','금','토'])grid.append(newEl('div','weekday',x));const dayOne=new Date(y,m,1),first=dayOne.getDay(),total=new Date(y,m+1,0).getDate(),cells=Math.ceil((first+total)/7)*7;for(let i=0;i<cells;i++){const n=i-first+1,d=new Date(y,m,n),date=dayKey(d),outside=d.getMonth()!==m,btn=newEl('button','calendar-day'+(outside?' outside':'')+(date===selected?' selected':'')+(date===today()?' today':''));btn.type='button';btn.setAttribute('aria-label',`${readable(date)} 기록 보기`);btn.append(newEl('span','number',String(d.getDate())));const dotbox=newEl('div','colors');const palette=[...new Set(daily(date).map(x=>x.color||(x.type==='task'?data.settings.defaultTaskColor:data.settings.defaultEventColor)))].slice(0,3);for(const color of palette){const dot=newEl('i');dot.style.backgroundColor=color;dotbox.append(dot)}btn.append(dotbox);btn.addEventListener('click',()=>{if(Date.now()<suppressClickUntil)return;selected=date;month=new Date(d.getFullYear(),d.getMonth(),1);go('day')});grid.append(btn)}}
+function renderGarden(){const holder=$('gardenDays');holder.replaceChildren();for(let n=6;n>=0;n--){const k=plusDays(today(),-n),p=progress(k),el=newEl('div','garden-day');const label=fromKey(k).toLocaleDateString('ko-KR',{weekday:'short'});el.append(newEl('small','',label));const award=data.awards[k];const gardenArt=newEl('span','',award?'':p.count===0?'·':p.done===0?'🌱':p.done<p.count?'🌿':'🌼');if(award){const url=thumb(award);if(url){const im=newEl('img');im.src=url;im.alt=(SPECIES.find(x=>x.id===award)?.name||'꽃')+' 3D 꽃';gardenArt.append(im)}else gardenArt.textContent=SPECIES.find(x=>x.id===award)?.emoji||'🌸'}el.append(gardenArt);el.append(newEl('b','',p.count?`${p.done}/${p.count}`:'쉬는 날'));holder.append(el)}const total=Object.keys(data.awards).length;$('gardenTotal').textContent=`${total}송이`;$('gardenPreviewCount').textContent=total?`모은 꽃 ${total}송이`:'최근 7일 기록';$('gardenSummary').textContent=total?`지금까지 꽃 ${total}송이를 피웠어요. 지난 꽃은 사라지지 않아요.`:'오늘의 할 일을 모두 완료하면 첫 꽃을 획득해요.'}
+function renderCollection(){const container=$('speciesGrid');container.replaceChildren();for(const s of SPECIES){const dates=Object.keys(data.awards).filter(k=>data.awards[k]===s.id).sort(),count=dates.length;const item=newEl('div','species-card'+(!count?' locked':''));const art=newEl('div','species-art');const url=thumb(s.id);if(url){const im=newEl('img','species-3d');im.src=url;im.alt=(count?s.name:'아직 발견하지 않은 꽃')+' 3D 모형';art.append(im)}else art.textContent=count?s.emoji:'❔';item.append(art);item.append(newEl('h3','',count?s.name:'아직 발견하지 않은 꽃'));item.append(newEl('p','',count?`${s.description}\n획득 ${count}회 · 첫 발견 ${dates[0]}`:'할 일을 완료해 만나보세요.'));const previewBtn=newEl('button','small-outline','3D 미리보기');previewBtn.type='button';previewBtn.setAttribute('aria-label',s.name+' 꽃의 3D 개발 미리보기');previewBtn.addEventListener('click',()=>openPreview(s.id,3));item.append(previewBtn);container.append(item)}$('collectionPreviewCount').textContent=`발견 ${SPECIES.filter(s=>Object.values(data.awards).includes(s.id)).length} / ${SPECIES.length}종`}
+function render(){paintTheme();renderHome();renderDay();renderMonth();renderGarden();renderCollection()}
+function go(next){
+ if(!['day','home','month','garden','collection'].includes(next))return;
+ view=next;
+ $$('.screen').forEach(e=>e.hidden=e.dataset.screen!==next);
+ const cycle=['day','home','month'],main=cycle.includes(next);
+ $('compactNav').hidden=!main;$('detailNav').hidden=main;
+ if(main){
+  const i=cycle.indexOf(next),prev=cycle[(i+2)%3],after=cycle[(i+1)%3];
+  $('navPrev').dataset.nav=prev;$('navPrev').innerHTML='<span aria-hidden="true">‹</span> '+prev.toUpperCase();$('navPrev').setAttribute('aria-label',prev.toUpperCase()+' 화면 이동');
+  $('navCurrent').textContent=next.toUpperCase();
+  $('navNext').dataset.nav=after;$('navNext').innerHTML=after.toUpperCase()+' <span aria-hidden="true">›</span>';$('navNext').setAttribute('aria-label',after.toUpperCase()+' 화면 이동');
+ }else{
+  $('detailName').textContent=next==='garden'?'7일의 정원':'식물 도감';
+ }
+ $('fab').hidden=!main;
+ render();document.querySelector('.shell').scrollLeft=0;window.scrollTo({left:0,top:0,behavior:'instant'});
+}
+let swipeFlashTimer;
+function cyclic(direction){const order=['day','home','month'];if(!order.includes(view))return;go(order[(order.indexOf(view)+direction+3)%3]);const bar=$('compactNav');bar.classList.remove('recent-swipe');void bar.offsetWidth;bar.classList.add('recent-swipe');clearTimeout(swipeFlashTimer);swipeFlashTimer=setTimeout(()=>bar.classList.remove('recent-swipe'),1100)}
+function changeMonth(step){month=new Date(month.getFullYear(),month.getMonth()+step,1);renderMonth()}
+function changeDay(step){selected=plusDays(selected,step);renderDay()}
+function rewardToday(){const k=today(),p=progress(k);if(!data.awards[k]&&p.count>0&&p.done===p.count){let idx=Math.floor(Math.random()*SPECIES.length);try{const a=new Uint32Array(1);crypto.getRandomValues(a);idx=a[0]%SPECIES.length}catch(e){}data.awards[k]=SPECIES[idx].id;notify(`오늘 꽃이 피었어요! ${SPECIES[idx].name}을(를) 획득했어요.`);return true}return false}
+function toggleDone(id,done){const item=data.items.find(i=>i.id===id);if(!item||item.type!=='task')return;const previous=item.done;item.done=done;if(item.date===today()&&done)rewardToday();if(!persist()){item.done=previous;render();return}render()}
+function overlayOpen(id){focusReturn=document.activeElement;$(id).hidden=false;document.body.style.overflow='hidden';const f=$(id).querySelector('input:not([type=file]),button');setTimeout(()=>f?.focus(),0)}
+function overlayClose(id){if(id==='plantPreviewOverlay')restoreHome3D();$(id).hidden=true;if($$('.overlay:not([hidden])').length===0)document.body.style.overflow='';focusReturn?.focus?.()}
+function closeTop(){const open=$$('.overlay:not([hidden])');if(open.length)overlayClose(open[open.length-1].id)}
+function selectType(t){editorType=t;$('typeTask').setAttribute('aria-pressed',String(t==='task'));$('typeEvent').setAttribute('aria-pressed',String(t==='event'));$('itemTitle').placeholder=t==='task'?'예: 운동하기':'예: 치과 예약';if(!editId)editingColor=data.settings[t==='task'?'defaultTaskColor':'defaultEventColor'];renderPalette()}
+function renderPalette(){const pal=$('entryPalette');pal.replaceChildren();for(const color of PALETTE){const b=newEl('button','color-pick'+(editingColor.toLowerCase()===color.toLowerCase()?' selected':''));b.type='button';b.style.backgroundColor=color;b.title=color;b.setAttribute('aria-label',`${color} 색상`);b.setAttribute('aria-pressed',String(editingColor.toLowerCase()===color.toLowerCase()));b.addEventListener('click',()=>{editingColor=color;$('itemColor').value=color;renderPalette()});pal.append(b)}$('itemColor').value=editingColor}
+function openEditor(item,kind){editId=item?.id||null;const t=item?.type||kind||'task';editingColor=item?.color||data.settings[t==='task'?'defaultTaskColor':'defaultEventColor'];$('editorHeading').textContent=item?'기록 수정':'새로운 기록';$('itemTitle').value=item?.title||'';$('itemDate').value=item?.date||(view==='day'?selected:today());$('itemTime').value=item?.time||'';$('itemNote').value=item?.note||'';$('deleteItem').hidden=!item;$('saveDefault').checked=false;selectType(t);if(item){editingColor=item.color||data.settings[t==='task'?'defaultTaskColor':'defaultEventColor'];renderPalette()}overlayOpen('editorOverlay')}
+function saveEditor(event){event.preventDefault();const title=$('itemTitle').value.trim(),date=$('itemDate').value,time=$('itemTime').value,note=$('itemNote').value.trim();if(!title||!validDate(date)){notify('제목과 날짜를 확인해 주세요.');return}const old=editId?data.items.find(x=>x.id===editId):null;const oldCopy=old?{...old}:null;const next={id:editId||makeId(),type:editorType,title,date,time,note,color:editingColor,done:old?.type==='task'&&editorType==='task'?old.done:false};if(old)Object.assign(old,next);else data.items.push(next);const previousDefault=data.settings[editorType==='task'?'defaultTaskColor':'defaultEventColor'];if($('saveDefault').checked)data.settings[editorType==='task'?'defaultTaskColor':'defaultEventColor']=editingColor;
+if(!persist()){if(old)Object.assign(old,oldCopy);else data.items=data.items.filter(x=>x.id!==next.id);data.settings[editorType==='task'?'defaultTaskColor':'defaultEventColor']=previousDefault;return}selected=date;month=new Date(fromKey(date).getFullYear(),fromKey(date).getMonth(),1);overlayClose('editorOverlay');render();notify(editId?'기록을 수정했어요.':'기록을 저장했어요.')}
+function deleteEditor(){if(!editId||!confirm('이 기록을 삭제할까요?'))return;const copy=data.items.slice();data.items=data.items.filter(x=>x.id!==editId);if(!persist()){data.items=copy;return}overlayClose('editorOverlay');render();notify('기록을 삭제했어요.')}
+function setThemeValue(key,v){const prev=data.settings[key];data.settings[key]=v;if(!persist()){data.settings[key]=prev;return}paintTheme()}
+function openHelp(){if(!$('settingsOverlay').hidden)overlayClose('settingsOverlay');overlayOpen('helpOverlay')}
+function exportBackup(){const exported={...data,exportedAt:new Date().toISOString()};const blob=new Blob([JSON.stringify(exported,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`plantory-backup-${today()}.json`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);notify('백업 파일 다운로드를 시작했어요.')}
+async function importBackup(e){const file=e.target.files?.[0];e.target.value='';if(!file)return;if(file.size>4*1024*1024){notify('백업 파일은 4MB 이하여야 해요.');return}let next;try{next=normalize(JSON.parse(await file.text()))}catch(err){notify('올바른 Plantory 백업 파일이 아니에요.');return}if(!confirm(`현재 기록 ${data.items.length}개를 백업 기록 ${next.items.length}개로 교체할까요? 기존 기록은 되돌릴 수 없어요.`))return;const old=data;data=next;data.settings.hasOnboarded=true;if(!persist()){data=old;return}selected=today();month=new Date(fromKey(today()).getFullYear(),fromKey(today()).getMonth(),1);overlayClose('settingsOverlay');go('home');notify('백업에서 기록을 복원했어요.')}
+// Swipe gestures: left/right cycles DAY-HOME-MONTH. Vertical swipe is month-only, within the month card.
+let start=null,suppressClickUntil=0;
+const surface=$('gestureSurface');
+surface.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;if(e.target.closest('input,textarea,select,button'))return;start={x:e.clientX,y:e.clientY,id:e.pointerId,insideMonth:!!e.target.closest('#monthGesture')}});
+surface.addEventListener('pointerup',e=>{if(!start||e.pointerId!==start.id)return;const dx=e.clientX-start.x,dy=e.clientY-start.y,vertical=Math.abs(dy)>Math.abs(dx)*1.3,horizontal=Math.abs(dx)>Math.abs(dy)*1.3;if(['day','home','month'].includes(view)&&horizontal&&Math.abs(dx)>=65){suppressClickUntil=Date.now()+300;cyclic(dx<0?1:-1)}else if(view==='month'&&start.insideMonth&&vertical&&Math.abs(dy)>=65){suppressClickUntil=Date.now()+300;changeMonth(dy<0?1:-1)}start=null});surface.addEventListener('pointercancel',()=>start=null);
+// If a browser suppresses pointerup during a touch gesture, use touchstart/end as an accessibility fallback.
+let touch=null;surface.addEventListener('touchstart',e=>{if(!e.touches.length||e.target.closest('input,textarea,select,button'))return;touch={x:e.touches[0].clientX,y:e.touches[0].clientY,insideMonth:!!e.target.closest('#monthGesture')}},{passive:true});surface.addEventListener('touchend',e=>{if(!touch||!e.changedTouches.length)return;if(Date.now()<suppressClickUntil){touch=null;return}const dx=e.changedTouches[0].clientX-touch.x,dy=e.changedTouches[0].clientY-touch.y;if(['day','home','month'].includes(view)&&Math.abs(dx)>=65&&Math.abs(dx)>Math.abs(dy)*1.3){suppressClickUntil=Date.now()+300;cyclic(dx<0?1:-1)}else if(view==='month'&&touch.insideMonth&&Math.abs(dy)>=65&&Math.abs(dy)>Math.abs(dx)*1.3){suppressClickUntil=Date.now()+300;changeMonth(dy<0?1:-1)}touch=null},{passive:true});
+$$('[data-nav]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.nav)));
+ $('backHome').addEventListener('click',()=>go('home'));
+$('fab').addEventListener('click',()=>openEditor());
+$$('[data-action]').forEach(b=>b.addEventListener('click',()=>{const kind=b.dataset.action==='new-event-home'?'event':'task';openEditor(null,kind)}));
+$('prevDay').addEventListener('click',()=>changeDay(-1));$('nextDay').addEventListener('click',()=>changeDay(1));
+$('prevMonth').addEventListener('click',()=>changeMonth(-1));$('nextMonth').addEventListener('click',()=>changeMonth(1));
+$('goToday').addEventListener('click',()=>{selected=today();month=new Date(fromKey(today()).getFullYear(),fromKey(today()).getMonth(),1);go('home')});
+$('typeTask').addEventListener('click',()=>selectType('task'));$('typeEvent').addEventListener('click',()=>selectType('event'));
+$('itemColor').addEventListener('input',e=>{editingColor=e.target.value;renderPalette()});
+$('editorForm').addEventListener('submit',saveEditor);$('deleteItem').addEventListener('click',deleteEditor);
+$('open3DPreview').addEventListener('click',()=>openPreview(data.awards[today()]||'tulip',3));
+$$('[data-plant]').forEach(el=>el.addEventListener('click',()=>{previewKind=el.dataset.plant;updatePreview()}));
+$$('[data-stage]').forEach(el=>el.addEventListener('click',()=>{previewStep=Number(el.dataset.stage);updatePreview()}));
+$('rotate3DPreview').addEventListener('click',()=>plant3d?.rotate(Math.PI/2));
+$('reset3DPreview').addEventListener('click',()=>{previewKind=data.awards[today()]||'tulip';previewStep=stage();updatePreview()});
+$('helpOpen').addEventListener('click',openHelp);$('helpDone').addEventListener('click',()=>{data.settings.hasOnboarded=true;persist();overlayClose('helpOverlay')});
+$('settingsOpen').addEventListener('click',()=>{paintTheme();overlayOpen('settingsOverlay')});$('helpFromSettings').addEventListener('click',openHelp);
+$('backgroundColor').addEventListener('input',e=>setThemeValue('background',e.target.value));$('accentColor').addEventListener('input',e=>setThemeValue('accent',e.target.value));
+$('resetBackground').addEventListener('click',()=>setThemeValue('background',null));$('resetAccent').addEventListener('click',()=>setThemeValue('accent',null));
+$('defaultTaskColor').addEventListener('input',e=>setThemeValue('defaultTaskColor',e.target.value));$('defaultEventColor').addEventListener('input',e=>setThemeValue('defaultEventColor',e.target.value));
+$('exportData').addEventListener('click',exportBackup);$('importDataBtn').addEventListener('click',()=>$('importData').click());$('importData').addEventListener('change',importBackup);
+$$('[data-close]').forEach(b=>b.addEventListener('click',()=>overlayClose(b.dataset.close)));
+$$('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)overlayClose(el.id)}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeTop()});
+render();if(!data.settings.hasOnboarded)setTimeout(openHelp,350);if(legacyMigrated)setTimeout(()=>notify('이전 캘린더 기록을 가져왔어요.'),650);if(persistError)setTimeout(()=>notify('기기 저장소에 접근하지 못해 기록 보존이 제한될 수 있어요.'),850);
+
+})();
+</script>
+</body></html>

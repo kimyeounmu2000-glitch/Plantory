@@ -1,0 +1,9 @@
+{
+  "name": "plantory",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.cjs",
+    "test": "node --test tests.mjs"
+  }
+}
