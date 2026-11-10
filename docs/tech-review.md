@@ -19,3 +19,7 @@
 ## Official baseline
 
 The integrated HTML in app/ is the baseline. The seed-garden notes above describe the earlier prototype. Integrated browser checks live in tests/. Review against the current main commit.
+
+## 2026-11-10 Codex 검토 지침
+
+OpenAI 공식 문서의 [저장소별 Codex 코드 검토 규칙](https://developers.openai.com/blog/custom-code-review-rules-for-codex)을 기존 AGENTS.md에 적용했다. 실행본 재생성, 표시와 저장의 구분, 테스트 범위, 개인정보와 3D 자원 해제를 PR 검토 기준으로 삼는다. 저장소 문서만 사용하므로 설치가 필요 없다. 자동 검토 설정과 테스트 실행은 별도이며, 지침 자체는 검사를 강제하지 않는다.
