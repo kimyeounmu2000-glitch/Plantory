@@ -24,9 +24,6 @@ jobs:
           python scripts/integrate-plantory.py $output
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           $file = 'Plantory_3D_Integrated_original_models.html'
-          # Compare HTML content across checkout and generator newline conventions.
-          $generated = [IO.File]::ReadAllText((Join-Path $output $file)).Replace("`r`n", "`n")
-          $tracked = [IO.File]::ReadAllText((Join-Path (Resolve-Path app) $file)).Replace("`r`n", "`n")
-          if (-not [string]::Equals($generated, $tracked, [StringComparison]::Ordinal)) {
+          if ((Get-FileHash "$output/$file").Hash -ne (Get-FileHash "app/$file").Hash) {
             throw 'Generated HTML differs from app HTML. Regenerate it with python scripts/integrate-plantory.py.'
           }

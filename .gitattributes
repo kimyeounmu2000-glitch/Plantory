@@ -1,0 +1,3 @@
+# The generator embeds the Three.js file as raw bytes and emits the Windows HTML verbatim.
+models/vendor/three.module.js -text
+app/Plantory_3D_Integrated_original_models.html -text
