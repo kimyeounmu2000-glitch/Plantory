@@ -19,10 +19,14 @@ for(const n of [1,2,3,5,10]){
 }
 await seed(6,2,{[date]:2});await p.locator('#homeTasks .check').first().uncheck();assert.equal((await state()).growth[date],2);
 await seed(0);assert.deepEqual((await state()).awards,{});
+assert.equal(await p.locator('#plantStage').textContent(),'작은 씨앗부터 시작해요');
+await seed(1);assert.equal(await p.locator('#plantStage').textContent(),'새싹이 자라고 있어요');
+assert.deepEqual((await state()).awards,{});
 p.on('dialog',d=>d.accept());
 await seed(2,1);await p.locator('#homeTasks .edit-item').nth(1).click();await p.locator('#deleteItem').click();assert((await state()).awards[date]);
 const award=(await state()).awards[date];await p.locator('#homeTasks .edit-item').click();await p.locator('#deleteItem').click();assert.equal((await state()).awards[date],award);assert.equal((await state()).growth[date],3);
 await seed(1);await p.locator('#homeTasks .edit-item').click();await p.locator('#deleteItem').click();assert.deepEqual((await state()).awards,{});
+assert.equal(await p.locator('#plantStage').textContent(),'작은 씨앗부터 시작해요');
 await seed(1);const before=await state();await p.evaluate(()=>{Storage.prototype.setItem=function(){throw Error('TEST storage failure')}});
 await p.locator('#homeTasks .check').click();assert.deepEqual(await state(),before);assert.equal(await p.locator('#homeTasks .check').isChecked(),false);assert.match(await p.locator('#toast').textContent(),/저장하지 못/);
 await p.reload();await p.locator('#homeTasks .check').check();assert((await state()).awards[date]);

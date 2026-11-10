@@ -19,9 +19,9 @@ function normalizeGrowth(items, awards, saved = {}) {
  for (const date of Object.keys(awards)) growth[date] = 3;
  return growth;
 }
-function stage() {
+function stage(showPlantedSprout = true) {
  const k = today(), p = progress(k);
- return Math.max(data.growth[k] || 0, data.awards[k] ? 3 : 0, calculatedStage(p.count, p.done));
+ return Math.max(data.growth[k] || 0, data.awards[k] ? 3 : 0, calculatedStage(p.count, p.done), showPlantedSprout && p.count ? 1 : 0);
 }
 let growthTimer = null, growthPlaying = false;
 function cancelGrowth() { clearTimeout(growthTimer); growthPlaying = false; }
@@ -43,7 +43,7 @@ function commitTasks(change, message) {
  const before = structuredClone(data), previousStage = stage();
  change();
  const awarded = rewardToday(), k = today();
- data.growth[k] = stage();
+ data.growth[k] = stage(false);
  if (!persist()) { data = before; render(); return false; }
  render(); animateGrowth(previousStage, stage());
  if (awarded) notify(`오늘 꽃이 피었어요! ${SPECIES.find(s => s.id === data.awards[k]).name}을(를) 획득했어요.`);
