@@ -22,14 +22,31 @@ export function plant(canvas,stage,color='#eea38c'){
  function surface(point,rows,columns){const positions=[],indices=[];for(let i=0;i<=rows;i++)for(let j=0;j<=columns;j++)positions.push(...point(i/rows,j/columns));for(let i=0;i<rows;i++)for(let j=0;j<columns;j++){let a=i*(columns+1)+j,b=a+columns+1;indices.push(a,b,a+1,b,b+1,a+1)}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));g.setIndex(indices);g.computeVertexNormals();return g}
  function leaf(side,y,length,angle){const g=surface((t,v)=>{let a=v*Math.PI*2,w=Math.pow(Math.sin(Math.PI*t),.82)*.19;return [side*(t*length),y+t*.38+Math.sin(a)*w,Math.cos(a)*.045*Math.sin(Math.PI*t)+Math.sin(Math.PI*t)*.035]},9,8);const o=mesh(g,leafGreen,sprout);o.rotation.y=angle;return o}
  // Fully grown cactus is revealed only after completion, like all other species.
- if(stage===1&&color==='#73aa71'){
+ if(stage>0&&stage<=.34){
+  sprout.position.y=1.26;
+  const stem=new THREE.CatmullRomCurve3([
+   new THREE.Vector3(0,-.025,0),
+   new THREE.Vector3(-.028,.16,.008),
+   new THREE.Vector3(0,.32,0)
+  ]);
+  mesh(new THREE.TubeGeometry(stem,10,.041,10,false),green,sprout);
+  const leafShape=new THREE.SphereGeometry(1,24,16);
+  const left=mesh(leafShape,leafGreen,sprout);
+  left.position.set(-.195,.394,.025);
+  left.scale.set(.236,.125,.098);
+  left.rotation.set(.28,.12,-.39);
+  const right=mesh(leafShape,leafGreen,sprout);
+  right.position.set(.171,.418,-.024);
+  right.scale.set(.208,.118,.091);
+  right.rotation.set(-.18,-.24,.56);
+ }else if(stage===1&&color==='#73aa71'){
   sprout.position.y=1.26;const cactusGreen=material('#72aa75'),ribGreen=material('#8ebe83');
   const body=mesh(new THREE.CapsuleGeometry(.28,.90,6,14),cactusGreen,sprout);body.position.y=.70;
   for(const side of [-1,1]){const y=side<0?.42:.67;const curve=new THREE.CatmullRomCurve3([new THREE.Vector3(side*.15,y,0),new THREE.Vector3(side*.48,y+.04,0),new THREE.Vector3(side*.55,y+.34,0),new THREE.Vector3(side*.55,y+.54,0)]);mesh(new THREE.TubeGeometry(curve,12,.125,8,false),cactusGreen,sprout);const tip=mesh(new THREE.SphereGeometry(.125,10,6),cactusGreen,sprout);tip.position.set(side*.55,y+.54,0)}
   for(let i=0;i<8;i++){const a=i/8*Math.PI*2;const points=[.12,.25,.50,.85,1.10,1.28].map(y=>{const r=y<.25?.19:y>1.10?.19:.283;return new THREE.Vector3(Math.sin(a)*r,y,Math.cos(a)*r)});mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points),12,.009,4,false),ribGreen,sprout)}
   const spineMat=material('#f4e8c4');for(let row=0;row<4;row++)for(let i=0;i<8;i++){let a=i/8*Math.PI*2+row*.15;let spine=mesh(new THREE.ConeGeometry(.011,.065,4),spineMat,sprout);spine.position.set(Math.sin(a)*.30,.30+row*.23,Math.cos(a)*.30);spine.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),new THREE.Vector3(Math.sin(a),.2,Math.cos(a)).normalize())}
   const flowerMat=material('#ee9caa');for(let i=0;i<6;i++){let a=i/6*Math.PI*2;let petal=mesh(new THREE.SphereGeometry(1,8,6),flowerMat,sprout);petal.scale.set(.07,.045,.14);petal.position.set(Math.sin(a)*.10,1.45,Math.cos(a)*.10);petal.rotation.y=a}const center=mesh(new THREE.SphereGeometry(.075,10,6),material('#f4ce70'),sprout);center.position.y=1.49;
- }else if(stage>0){sprout.position.y=1.26;const tall=stage>.34,stemHeight=tall?1.25:.48;const curve=new THREE.CatmullRomCurve3([new THREE.Vector3(0,-.02,0),new THREE.Vector3(.015,stemHeight*.5,0),new THREE.Vector3(0,stemHeight,0)]);mesh(new THREE.TubeGeometry(curve,10,.042,8,false),green,sprout);leaf(-1,tall?.28:.12,tall?.62:.34,.08);leaf(1,tall?.72:.21,tall?.58:.30,-.12);
+ }else if(stage>0){sprout.position.y=1.26;const stemHeight=1.25;const curve=new THREE.CatmullRomCurve3([new THREE.Vector3(0,-.02,0),new THREE.Vector3(.015,stemHeight*.5,0),new THREE.Vector3(0,stemHeight,0)]);mesh(new THREE.TubeGeometry(curve,10,.042,8,false),green,sprout);leaf(-1,.28,.62,.08);leaf(1,.72,.58,-.12);
  if(stage===1){const bloom=new THREE.Group();bloom.position.y=stemHeight-.04;sprout.add(bloom);const isDaisy=color==='#f4d477',isBell=color==='#b7a6da',coral=isBell?'#b29bdb':'#ee725d';
  // 모든 줄기형 꽃의 기본 연결: 줄기 끝과 꽃받침, 꽃 아랫부분을 겹쳐 연결합니다.
  const baseColor=isBell?coral:isDaisy?'#fff0bc':color==='#f3c84d'?'#f4cc47':color==='#e7a93c'?'#edb843':coral;
