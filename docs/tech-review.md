@@ -19,3 +19,17 @@
 ## Official baseline
 
 The integrated HTML in app/ is the baseline. The seed-garden notes above describe the earlier prototype. Integrated browser checks live in tests/. Review against the current main commit.
+
+## 2026-11-10 공부방 통합 및 CSS 읽기 전용 검사
+
+검사 당시 GitHub main의 README, AGENTS, 기술 기록과 생성 입력을 확인했다. 실행 HTML은 커넥터에서 본문이 비어 있어 Git blob SHA 67cf15ed2e13be3784d085476767fa608ffc468b가 일치하는 로컬 main으로 분석했다. 공부방_자료정리_V1.3.md는 Codex 작업 폴더 검색에서 발견하지 못했고 원문은 미확인이다. 사용자가 전달한 V28 요약만 참고했다.
+
+| 우선순위 | 근거 및 제안 | 승인 후 검증 기준 |
+| --- | --- | --- |
+| 1 설명 글자 대비 | input/Plantory_3D_Integrated_v3.html 11~12행의 muted #76818e는 흰 배경 대비 약 3.96:1이다. 317행 paintTheme는 개인 배경 변경 시 본문·설명 글자색을 조정하지 않는다. 최소 색상 조정안을 제안한다. | 계절 4종과 개인 배경, 일정 카드에서 일반 글자 4.5:1 목표로 계산하고 실제 화면 확인 |
+| 2 키보드 포커스 | 동일 파일 42행 canvas outline:0 및 공통 포커스 대상에서 canvas 누락. 361~364행 모달 포커스 진입·복귀는 있으나 Tab 순환 처리는 확인되지 않았다. | 화분 포커스 표시, 모달 Tab/Shift+Tab 순환과 닫은 뒤 복귀를 브라우저 검증 |
+| 3 CSS 중복 | 12행과 후속 스타일의 view-container, screen, home-plant, plant-art, fab, toast 재선언. 최종 적용값을 보존하며 중복 정리 제안. | 320/390/510px 전후 스타일·화면 비교, 가로 넘침·모달 잘림 점검 |
+
+확정은 기존 기획·모델·데이터 보존이다. 위 3개는 제안이며 디자인·조작 개선 승인 대기다. 실제 모바일 터치, 계절별 전체 대비, 3D와 UI의 시각적 균형은 보류다. 디자인 시스템 전면 교체와 신규 패키지는 제외한다. 수행한 검사는 소스 분석과 색상 대비 계산이며 브라우저 실측·실기기 검사·사용자 테스트는 수행하지 않았다.
+
+이전 격주 일정 제안 이후 사용자가 월·수·금 코드 점검과 화·목·토 기술·경쟁 조사를 오전 10시(Asia/Seoul) 운영 일정으로 전달했다. 실제 예약과 실행 결과는 이번 작업에서 확인하지 않았다.
