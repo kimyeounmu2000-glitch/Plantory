@@ -333,11 +333,31 @@ const validDate=s=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(s||''))return false;const d=f
 const sanitizeItem=x=>({id:String(x.id||makeId()).slice(0,100),type:x.type==='event'?'event':'task',date:x.date,title:String(x.title||'').slice(0,90),time:/^([01]\d|2[0-3]):[0-5]\d$/.test(x.time||'')?x.time:'',note:String(x.note||'').slice(0,500),done:x.type==='task'?Boolean(x.done):false,color:validHex(x.color)?x.color:null});
 function makeId(){return globalThis.crypto?.randomUUID?.()||`id-${Date.now()}-${Math.random().toString(36).slice(2)}`}
 function normalize(input){const base=defaultData();if(!input||typeof input!=='object'||!Array.isArray(input.items))throw Error('백업 데이터 형식이 올바르지 않아요.');const items=input.items.filter(x=>x&&validDate(x.date)&&typeof x.title==='string'&&['task','event'].includes(x.type)).slice(0,15000).map(sanitizeItem);const rawAwards=(input.awards&&typeof input.awards==='object'&&!Array.isArray(input.awards))?input.awards:{};const awards={};for(const [k,v] of Object.entries(rawAwards)){if(validDate(k)&&SPECIES.some(s=>s.id===v))awards[k]=v}const inputSettings=input.settings||{};const settings={...base.settings,defaultTaskColor:validHex(inputSettings.defaultTaskColor)?inputSettings.defaultTaskColor:base.settings.defaultTaskColor,defaultEventColor:validHex(inputSettings.defaultEventColor)?inputSettings.defaultEventColor:base.settings.defaultEventColor,background:validHex(inputSettings.background)?inputSettings.background:null,accent:validHex(inputSettings.accent)?inputSettings.accent:null,hasOnboarded:!!inputSettings.hasOnboarded};return {version:2,items,awards,settings,growth:normalizeGrowth(items,awards,input.growth)}}
-let data=defaultData(),persistError=false,legacyMigrated=false;
-try{const latest=localStorage.getItem(STORE);if(latest)data=normalize(JSON.parse(latest));else {const old=localStorage.getItem(LEGACY);if(old){const source=JSON.parse(old);if(source&&Array.isArray(source.items)&&!source.isDemo){data.items=source.items.filter(x=>x&&validDate(x.date)&&['task','event'].includes(x.type)&&typeof x.title==='string').map(sanitizeItem);data.settings.hasOnboarded=true;legacyMigrated=true;localStorage.setItem(STORE,JSON.stringify(data))}}}}catch(e){persistError=true;console.warn('저장소 읽기 실패:',e)}
+let data=defaultData(),persistError=false,legacyMigrated=false,storageSnapshot=null;
+try{const latest=localStorage.getItem(STORE);storageSnapshot=latest;if(latest!==null)data=normalize(JSON.parse(latest));else {const old=localStorage.getItem(LEGACY);if(old){const source=JSON.parse(old);if(source&&Array.isArray(source.items)&&!source.isDemo){data.items=source.items.filter(x=>x&&validDate(x.date)&&['task','event'].includes(x.type)&&typeof x.title==='string').map(sanitizeItem);data.settings.hasOnboarded=true;legacyMigrated=true}}}}catch(e){persistError=true;console.warn('저장소 읽기 실패:',e)}
 let view='home',selected=today(),month=new Date(fromKey(today()).getFullYear(),fromKey(today()).getMonth(),1),editorType='task',editId=null,editingColor=null,focusReturn=null,toaster=null;
 function notify(s){const t=$('toast');t.textContent=s;t.hidden=false;clearTimeout(toaster);toaster=setTimeout(()=>t.hidden=true,3400)}
-function persist(){try{localStorage.setItem(STORE,JSON.stringify(data));return true}catch(e){notify('저장하지 못했어요. 저장 공간 또는 브라우저 설정을 확인해 주세요.');console.warn(e);return false}}
+// Writes are called only inside storageMutation's origin-wide lock.
+function persist(){
+ if(persistError){notify('기존 기록을 읽지 못해 저장을 중단했어요. 원본은 보존됩니다.');return false}
+ try{
+  if(localStorage.getItem(STORE)!==storageSnapshot){notify('다른 탭에서 기록이 변경됐어요. 새로고침 후 다시 시도해 주세요.');return false}
+  const next=JSON.stringify(data);localStorage.setItem(STORE,next);storageSnapshot=next;return true;
+ }catch(e){notify('저장하지 못했어요. 저장 공간 또는 브라우저 설정을 확인해 주세요.');console.warn(e);return false}
+}
+// Serialize the entire edit, including rollback, so async lock waits never share partial state.
+let storageQueue=Promise.resolve();
+function storageMutation(action){return function(...args){
+ args[0]?.preventDefault?.();
+ const run=async()=>{
+  if(persistError){notify('기존 기록을 읽지 못해 저장을 중단했어요. 원본은 보존됩니다.');return}
+  if(!navigator.locks){notify('안전한 저장을 지원하지 않는 환경이에요. 최신 브라우저의 HTTPS 주소로 열어 주세요.');return}
+  try{await navigator.locks.request(STORE+'-write',()=>action(...args))}
+  catch(e){notify('저장 작업을 완료하지 못했어요. 다시 시도해 주세요.');console.warn(e)}
+ };
+ storageQueue=storageQueue.then(run,run);return storageQueue;
+}}
+
 function setVar(name,v){document.documentElement.style.setProperty(name,v)}
 function hexLuminance(hex){const rgb=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722}
 function paintTheme(){const m=new Date().getMonth(),season=m<=1||m===11?'winter':m<=4?'spring':m<=7?'summer':'autumn';const palette=SEASONS[season];const bg=data.settings.background||palette.background,accent=data.settings.accent||palette.accent;setVar('--bg',bg);setVar('--accent',accent);setVar('--soft',colorMix(accent,'#FFFFFF',.88));setVar('--on-accent',hexLuminance(accent)>.22?'#182532':'#FFFFFF');$('currentSeason').textContent=`현재 ${palette.name} 테마`;$('backgroundColor').value=bg;$('accentColor').value=accent;$('defaultTaskColor').value=data.settings.defaultTaskColor;$('defaultEventColor').value=data.settings.defaultEventColor;document.querySelector('meta[name=theme-color]').content=bg}
@@ -472,6 +492,13 @@ surface.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!
 surface.addEventListener('pointerup',e=>{if(!start||e.pointerId!==start.id)return;const dx=e.clientX-start.x,dy=e.clientY-start.y,vertical=Math.abs(dy)>Math.abs(dx)*1.3,horizontal=Math.abs(dx)>Math.abs(dy)*1.3;if(['day','home','month'].includes(view)&&horizontal&&Math.abs(dx)>=65){suppressClickUntil=Date.now()+300;cyclic(dx<0?1:-1)}else if(view==='month'&&start.insideMonth&&vertical&&Math.abs(dy)>=65){suppressClickUntil=Date.now()+300;changeMonth(dy<0?1:-1)}start=null});surface.addEventListener('pointercancel',()=>start=null);
 // If a browser suppresses pointerup during a touch gesture, use touchstart/end as an accessibility fallback.
 let touch=null;surface.addEventListener('touchstart',e=>{if(!e.touches.length||e.target.closest('input,textarea,select,button,#plantGraphic,.preview-art'))return;touch={x:e.touches[0].clientX,y:e.touches[0].clientY,insideMonth:!!e.target.closest('#monthGesture')}},{passive:true});surface.addEventListener('touchend',e=>{if(!touch||!e.changedTouches.length)return;if(Date.now()<suppressClickUntil){touch=null;return}const dx=e.changedTouches[0].clientX-touch.x,dy=e.changedTouches[0].clientY-touch.y;if(['day','home','month'].includes(view)&&Math.abs(dx)>=65&&Math.abs(dx)>Math.abs(dy)*1.3){suppressClickUntil=Date.now()+300;cyclic(dx<0?1:-1)}else if(view==='month'&&touch.insideMonth&&Math.abs(dy)>=65&&Math.abs(dy)>Math.abs(dx)*1.3){suppressClickUntil=Date.now()+300;changeMonth(dy<0?1:-1)}touch=null},{passive:true});
+// Every mutation entry point shares the same lock; reads and previews remain unchanged.
+toggleDone=storageMutation(toggleDone);
+saveEditor=storageMutation(saveEditor);
+deleteEditor=storageMutation(deleteEditor);
+setThemeValue=storageMutation(setThemeValue);
+importBackup=storageMutation(importBackup);
+if(legacyMigrated)storageMutation(persist)();
 $$('[data-nav]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.nav)));
  $('backHome').addEventListener('click',()=>go('home'));
 $('fab').addEventListener('click',()=>openEditor());
@@ -487,7 +514,7 @@ $$('[data-plant]').forEach(el=>el.addEventListener('click',()=>{previewKind=el.d
 $$('[data-stage]').forEach(el=>el.addEventListener('click',()=>{previewStep=Number(el.dataset.stage);updatePreview()}));
 $('rotate3DPreview').addEventListener('click',()=>plant3d?.rotate(Math.PI/2));
 $('reset3DPreview').addEventListener('click',()=>{previewKind=data.awards[today()]||'tulip';previewStep=stage();updatePreview()});
-$('helpOpen').addEventListener('click',openHelp);$('helpDone').addEventListener('click',()=>{data.settings.hasOnboarded=true;persist();overlayClose('helpOverlay')});
+$('helpOpen').addEventListener('click',openHelp);$('helpDone').addEventListener('click',storageMutation(()=>{const previous=data.settings.hasOnboarded;data.settings.hasOnboarded=true;if(!persist())data.settings.hasOnboarded=previous;overlayClose('helpOverlay')}));
 $('settingsOpen').addEventListener('click',()=>{paintTheme();overlayOpen('settingsOverlay')});$('helpFromSettings').addEventListener('click',openHelp);
 $('backgroundColor').addEventListener('input',e=>setThemeValue('background',e.target.value));$('accentColor').addEventListener('input',e=>setThemeValue('accent',e.target.value));
 $('resetBackground').addEventListener('click',()=>setThemeValue('background',null));$('resetAccent').addEventListener('click',()=>setThemeValue('accent',null));

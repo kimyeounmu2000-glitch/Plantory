@@ -6,7 +6,8 @@ await p.goto('file:///'+path.resolve(__dirname, '../app/Plantory_3D_Integrated_o
 const key='plantory_full_mvp_v2';
 const date=await p.evaluate(()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`});
 async function seed(n,done=0,growth={},awards={}){await p.evaluate(({key,date,n,done,growth,awards})=>localStorage.setItem(key,JSON.stringify({version:2,items:Array.from({length:n},(_,i)=>({id:String(i),type:'task',date,title:'Task '+i,done:i<done})),awards,growth,settings:{hasOnboarded:true}})),{key,date,n,done,growth,awards});await p.reload();await p.locator('#homeHeading').waitFor();}
-const state=()=>p.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
+// Read after the pending async write lock, including any failed-write rollback.
+const state=()=>p.evaluate(k=>navigator.locks.request(k+'-write',()=>JSON.parse(localStorage.getItem(k))),key);
 for(const n of [1,2,3,5,10]){
  await seed(n);
  for(let done=1;done<=n;done++){
