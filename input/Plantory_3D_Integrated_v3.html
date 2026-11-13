@@ -310,24 +310,30 @@ function normalize(input){const base=defaultData();if(!input||typeof input!=='ob
 let data=defaultData(),persistError=false,legacyMigrated=false,storageSnapshot=null;
 try{const latest=localStorage.getItem(STORE);storageSnapshot=latest;if(latest!==null)data=normalize(JSON.parse(latest));else {const old=localStorage.getItem(LEGACY);if(old){const source=JSON.parse(old);if(source&&Array.isArray(source.items)&&!source.isDemo){data.items=source.items.filter(x=>x&&validDate(x.date)&&['task','event'].includes(x.type)&&typeof x.title==='string').map(sanitizeItem);data.settings.hasOnboarded=true;legacyMigrated=true}}}}catch(e){persistError=true;console.warn('저장소 읽기 실패:',e)}
 let view='home',selected=today(),month=new Date(fromKey(today()).getFullYear(),fromKey(today()).getMonth(),1),editorType='task',editId=null,editingColor=null,focusReturn=null,toaster=null;
-function notify(s){const t=$('toast');t.textContent=s;t.hidden=false;clearTimeout(toaster);toaster=setTimeout(()=>t.hidden=true,3400)}
+function notify(s,persistent=false){const t=$('toast');t.textContent=s;t.hidden=false;clearTimeout(toaster);if(!persistent)toaster=setTimeout(()=>t.hidden=true,3400)}
+let failedEditorDraft=false;
+function storageWarning(message){
+ if(!$('editorOverlay').hidden)failedEditorDraft=true;
+ notify(message+(!$('editorOverlay').hidden?' 입력 내용은 아직 저장되지 않았어요. 새로고침 전에 제목·날짜·메모·색상을 따로 보관해 주세요.':''),true);
+}
+window.addEventListener('beforeunload',e=>{if(failedEditorDraft){e.preventDefault();e.returnValue=''}});
 // Writes are called only inside storageMutation's origin-wide lock.
 function persist(){
- if(persistError){notify('기존 기록을 읽지 못해 저장을 중단했어요. 원본은 보존됩니다.');return false}
+ if(persistError){storageWarning('기존 기록을 읽지 못해 저장을 중단했어요. 원본은 보존됩니다.');return false}
  try{
-  if(localStorage.getItem(STORE)!==storageSnapshot){notify('다른 탭에서 기록이 변경됐어요. 새로고침 후 다시 시도해 주세요.');return false}
-  const next=JSON.stringify(data);localStorage.setItem(STORE,next);storageSnapshot=next;return true;
- }catch(e){notify('저장하지 못했어요. 저장 공간 또는 브라우저 설정을 확인해 주세요.');console.warn(e);return false}
+  if(localStorage.getItem(STORE)!==storageSnapshot){storageWarning('다른 탭에서 기록이 변경되어 저장하지 않았어요. 다른 탭을 닫고 새로고침 후 다시 시도해 주세요.');return false}
+  const next=JSON.stringify(data);localStorage.setItem(STORE,next);storageSnapshot=next;failedEditorDraft=false;return true;
+ }catch(e){storageWarning('저장하지 못했어요. 저장 공간 또는 브라우저 설정을 확인한 뒤 다시 저장해 주세요.');console.warn(e);return false}
 }
 // Serialize the entire edit, including rollback, so async lock waits never share partial state.
 let storageQueue=Promise.resolve();
 function storageMutation(action){return function(...args){
  args[0]?.preventDefault?.();
  const run=async()=>{
-  if(persistError){notify('기존 기록을 읽지 못해 저장을 중단했어요. 원본은 보존됩니다.');return}
-  if(!navigator.locks){render();notify('안전한 저장을 지원하지 않는 환경이에요. 최신 브라우저의 HTTPS 주소로 열어 주세요.');return}
+  if(persistError){storageWarning('기존 기록을 읽지 못해 저장을 중단했어요. 원본은 보존됩니다.');return}
+  if(!navigator.locks){render();storageWarning('안전한 저장 잠금을 사용할 수 없어 저장하지 않았어요. 최신 브라우저의 HTTPS 주소에서 다시 시도해 주세요. 주소가 바뀌면 기존 기록은 자동 이동하지 않아요.');return}
   try{await navigator.locks.request(STORE+'-write',()=>action(...args))}
-  catch(e){render();notify('저장 작업을 완료하지 못했어요. 다시 시도해 주세요.');console.warn(e)}
+  catch(e){render();storageWarning('저장 작업을 완료하지 못했어요. 다시 시도해 주세요.');console.warn(e)}
  };
  storageQueue=storageQueue.then(run,run);return storageQueue;
 }}
@@ -379,7 +385,7 @@ function changeDay(step){selected=plusDays(selected,step);renderDay()}
 function rewardToday(){const k=today(),p=progress(k);if(!data.awards[k]&&p.count>0&&p.done===p.count){let idx=Math.floor(Math.random()*SPECIES.length);try{const a=new Uint32Array(1);crypto.getRandomValues(a);idx=a[0]%SPECIES.length}catch(e){}data.awards[k]=SPECIES[idx].id;notify(`오늘 꽃이 피었어요! ${SPECIES[idx].name}을(를) 획득했어요.`);return true}return false}
 function toggleDone(id,done){const item=data.items.find(i=>i.id===id);if(!item||item.type!=='task')return;const previous=item.done;item.done=done;if(item.date===today()&&done)rewardToday();if(!persist()){item.done=previous;render();return}render()}
 function overlayOpen(id){focusReturn=document.activeElement;$(id).hidden=false;document.body.style.overflow='hidden';const f=$(id).querySelector('input:not([type=file]),button');setTimeout(()=>f?.focus(),0)}
-function overlayClose(id){if(id==='plantPreviewOverlay')restoreHome3D();$(id).hidden=true;if($$('.overlay:not([hidden])').length===0)document.body.style.overflow='';focusReturn?.focus?.()}
+function overlayClose(id){if(id==='editorOverlay'&&failedEditorDraft){if(!confirm('저장하지 못한 입력 내용이 있어요. 따로 보관하지 않고 닫을까요?'))return;failedEditorDraft=false}if(id==='plantPreviewOverlay')restoreHome3D();$(id).hidden=true;if($$('.overlay:not([hidden])').length===0)document.body.style.overflow='';focusReturn?.focus?.()}
 function closeTop(){const open=$$('.overlay:not([hidden])');if(open.length)overlayClose(open[open.length-1].id)}
 function selectType(t){editorType=t;$('typeTask').setAttribute('aria-pressed',String(t==='task'));$('typeEvent').setAttribute('aria-pressed',String(t==='event'));$('itemTitle').placeholder=t==='task'?'예: 운동하기':'예: 치과 예약';if(!editId)editingColor=data.settings[t==='task'?'defaultTaskColor':'defaultEventColor'];renderPalette()}
 function renderPalette(){const pal=$('entryPalette');pal.replaceChildren();for(const color of PALETTE){const b=newEl('button','color-pick'+(editingColor.toLowerCase()===color.toLowerCase()?' selected':''));b.type='button';b.style.backgroundColor=color;b.title=color;b.setAttribute('aria-label',`${color} 색상`);b.setAttribute('aria-pressed',String(editingColor.toLowerCase()===color.toLowerCase()));b.addEventListener('click',()=>{editingColor=color;$('itemColor').value=color;renderPalette()});pal.append(b)}$('itemColor').value=editingColor}
@@ -394,6 +400,7 @@ function exportBackup(){
  try{raw=localStorage.getItem(STORE)}catch(e){notify('저장소를 읽을 수 없어 백업을 만들지 않았어요. 원본은 변경하지 않았어요.');return}
  if(!persistError&&raw!==storageSnapshot){notify('다른 탭에서 기록이 변경됐어요. 새로고침 후 백업해 주세요.');return}
  if(persistError&&raw===null){notify('보존할 원문을 읽지 못했어요. 저장소를 초기화하지 말고 복구 지원을 요청해 주세요.');return}
+ if(persistError&&new TextDecoder('utf-8',{ignoreBOM:true}).decode(new TextEncoder().encode(raw))!==raw){storageWarning('원문에 UTF-8로 보존할 수 없는 문자가 있어 파일을 만들지 않았어요. 저장소 원문을 유지한 채 복구 지원을 요청해 주세요.');return}
  // Recovery exports preserve the stored text exactly; they are not valid import backups.
  const content=persistError?raw:JSON.stringify({...data,exportedAt:new Date().toISOString()},null,2);
  const blob=new Blob([content],{type:persistError?'text/plain;charset=utf-8':'application/json'});
