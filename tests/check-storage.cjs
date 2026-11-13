@@ -1,5 +1,6 @@
 const assert = require('node:assert/strict');
 const path = require('node:path');
+const fs = require('node:fs/promises');
 const { pathToFileURL } = require('node:url');
 const { chromium } = require(process.env.PLANTORY_PLAYWRIGHT || 'playwright');
 
@@ -89,11 +90,29 @@ const { chromium } = require(process.env.PLANTORY_PLAYWRIGHT || 'playwright');
       await page.waitForFunction(() => document.querySelector('#toast').textContent.includes('원본은 보존'));
       assert.equal(await raw(page), damaged);
       await page.locator('[data-close="helpOverlay"]').click();
+      await page.locator('#settingsOpen').click();
+      const downloaded=page.waitForEvent('download');
+      await page.locator('#exportData').click();
+      const original=await downloaded;
+      assert.match(original.suggestedFilename(),/recovery-original.*\.txt$/);
+      assert.equal(await fs.readFile(await original.path(),'utf8'),damaged);
+      assert.equal(await raw(page),damaged);
+      await page.locator('[data-close="settingsOverlay"]').click();
       await prepare(page, 'Must not overwrite');
       await page.locator('#submitItem').click();
       assert.equal(await raw(page), damaged);
       await isolated.close();
     }
+    // Unsupported locking must fail closed and restore a toggled checkbox.
+    const unsupported=await browser.newContext();
+    await unsupported.addInitScript(()=>Object.defineProperty(navigator,'locks',{value:undefined}));
+    const blocked=await unsupported.newPage();await blocked.goto(url);
+    await blocked.evaluate(([k,v])=>localStorage.setItem(k,v),[key,preserved]);await blocked.reload();
+    await blocked.locator('#homeTasks .check').first().click();
+    await blocked.waitForFunction(()=>document.querySelector('#toast').textContent.includes('안전한 저장'));
+    assert.equal(await raw(blocked),preserved);
+    assert.equal(await blocked.locator('#homeTasks .check').first().isChecked(),false);
+    await unsupported.close();
     const migrated = await browser.newContext();
     const page = await migrated.newPage();
     await page.goto(url);

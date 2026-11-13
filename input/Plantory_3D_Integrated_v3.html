@@ -325,9 +325,9 @@ function storageMutation(action){return function(...args){
  args[0]?.preventDefault?.();
  const run=async()=>{
   if(persistError){notify('기존 기록을 읽지 못해 저장을 중단했어요. 원본은 보존됩니다.');return}
-  if(!navigator.locks){notify('안전한 저장을 지원하지 않는 환경이에요. 최신 브라우저의 HTTPS 주소로 열어 주세요.');return}
+  if(!navigator.locks){render();notify('안전한 저장을 지원하지 않는 환경이에요. 최신 브라우저의 HTTPS 주소로 열어 주세요.');return}
   try{await navigator.locks.request(STORE+'-write',()=>action(...args))}
-  catch(e){notify('저장 작업을 완료하지 못했어요. 다시 시도해 주세요.');console.warn(e)}
+  catch(e){render();notify('저장 작업을 완료하지 못했어요. 다시 시도해 주세요.');console.warn(e)}
  };
  storageQueue=storageQueue.then(run,run);return storageQueue;
 }}
@@ -389,7 +389,19 @@ if(!persist()){if(old)Object.assign(old,oldCopy);else data.items=data.items.filt
 function deleteEditor(){if(!editId||!confirm('이 기록을 삭제할까요?'))return;const copy=data.items.slice();data.items=data.items.filter(x=>x.id!==editId);if(!persist()){data.items=copy;return}overlayClose('editorOverlay');render();notify('기록을 삭제했어요.')}
 function setThemeValue(key,v){const prev=data.settings[key];data.settings[key]=v;if(!persist()){data.settings[key]=prev;return}paintTheme()}
 function openHelp(){if(!$('settingsOverlay').hidden)overlayClose('settingsOverlay');overlayOpen('helpOverlay')}
-function exportBackup(){const exported={...data,exportedAt:new Date().toISOString()};const blob=new Blob([JSON.stringify(exported,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`plantory-backup-${today()}.json`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);notify('백업 파일 다운로드를 시작했어요.')}
+function exportBackup(){
+ let raw;
+ try{raw=localStorage.getItem(STORE)}catch(e){notify('저장소를 읽을 수 없어 백업을 만들지 않았어요. 원본은 변경하지 않았어요.');return}
+ if(!persistError&&raw!==storageSnapshot){notify('다른 탭에서 기록이 변경됐어요. 새로고침 후 백업해 주세요.');return}
+ if(persistError&&raw===null){notify('보존할 원문을 읽지 못했어요. 저장소를 초기화하지 말고 복구 지원을 요청해 주세요.');return}
+ // Recovery exports preserve the stored text exactly; they are not valid import backups.
+ const content=persistError?raw:JSON.stringify({...data,exportedAt:new Date().toISOString()},null,2);
+ const blob=new Blob([content],{type:persistError?'text/plain;charset=utf-8':'application/json'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download=persistError?`plantory-recovery-original-${today()}.txt`:`plantory-backup-${today()}.json`;
+ document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+ notify(persistError?'복구용 원문을 내려받았어요. JSON 복원용 파일은 아니며, 기존 저장값은 유지됩니다.':'백업 파일 다운로드를 시작했어요.');
+}
 async function importBackup(e){const file=e.target.files?.[0];e.target.value='';if(!file)return;if(file.size>4*1024*1024){notify('백업 파일은 4MB 이하여야 해요.');return}let next;try{next=normalize(JSON.parse(await file.text()))}catch(err){notify('올바른 Plantory 백업 파일이 아니에요.');return}if(!confirm(`현재 기록 ${data.items.length}개를 백업 기록 ${next.items.length}개로 교체할까요? 기존 기록은 되돌릴 수 없어요.`))return;const old=data;data=next;data.settings.hasOnboarded=true;if(!persist()){data=old;return}selected=today();month=new Date(fromKey(today()).getFullYear(),fromKey(today()).getMonth(),1);overlayClose('settingsOverlay');go('home');notify('백업에서 기록을 복원했어요.')}
 // Swipe gestures: left/right cycles DAY-HOME-MONTH. Vertical swipe is month-only, within the month card.
 let start=null,suppressClickUntil=0;
