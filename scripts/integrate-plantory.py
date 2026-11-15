@@ -20,7 +20,7 @@ fallback = (original/'plant-fallback.js').read_text(encoding='utf-8').replace('e
 three = base64.b64encode((original/'vendor/three.module.js').read_bytes()).decode()
 adapter = '''
 // Adapter: preserve the supplied app's species IDs, growth stages and public API.
-// Add species here; preview buttons, collection and rewards share this registry.
+// Add species here; collection and rewards share this registry.
 const PLANT_SPECIES=[
  {id:'daisy',name:'데이지',color:'#f4d477',emoji:'🌼',description:'맑은 하루의 꽃'},
  {id:'tulip',name:'튤립',color:'#eea38c',emoji:'🌷',description:'반짝이는 하루의 꽃'},
@@ -30,10 +30,6 @@ const PLANT_SPECIES=[
  {id:'dandelion',name:'노란 민들레',color:'#f3c84d',emoji:'🌼',description:'노랗게 물드는 하루'}
 ];
 const COLORS=Object.fromEntries(PLANT_SPECIES.map(s=>[s.id,s.color]));
-const plantChoices=document.querySelector('[data-plant]').parentElement;
-plantChoices.replaceChildren(...PLANT_SPECIES.map(s=>{
- const button=document.createElement('button');button.type='button';button.dataset.plant=s.id;button.textContent=s.name;return button;
-}));
 const STAGES=[0,.2,.7,1];
 window.Plantory3D={create(){
  let canvas,dispose,parent,species='daisy',stage=0;
@@ -62,9 +58,8 @@ scripts = list(re.finditer(r'<script>([\s\S]*?)</script>', html))
 assert len(scripts)==2
 app=scripts[1].group(1)
 app=re.sub(r'const SPECIES=\[.*?\];', 'const SPECIES=PLANT_SPECIES;', app)
-app=re.sub(r'const previewNames=\{.*?\};', 'const previewNames=Object.fromEntries(SPECIES.map(s=>[s.id,s.name]));', app)
 # A gesture belongs to its starting region, including the touch fallback.
-app=app.replace("e.target.closest('input,textarea,select,button')", "e.target.closest('input,textarea,select,button,#plantGraphic,.preview-art')")
+app=app.replace("e.target.closest('input,textarea,select,button')", "e.target.closest('input,textarea,select,button,#plantGraphic')")
 app=runpy.run_path(str(root / 'scripts/growth-v2.py'))['apply_growth'](app)
 module='import * as THREE from "data:text/javascript;base64,'+three+'";\n'+fallback+'\n'+plant+'\n'+adapter+'\n'+app
 result=html[:scripts[0].start()]+'<script type="module">\n'+module+'\n</script>'+html[scripts[1].end():]

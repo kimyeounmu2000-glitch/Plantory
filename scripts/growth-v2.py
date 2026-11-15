@@ -13,7 +13,6 @@ def apply_growth(app):
     app=app.replace('return {version:2,items,awards,settings}', 'return {version:2,items,awards,settings,growth:normalizeGrowth(items,awards,input.growth)}')
     replace_function('stage', Path(__file__).with_name('growth-v2.js').read_text(encoding='utf-8').strip())
     app=app.replace('function restoreHome3D(){if(!plant3d)return;', 'function restoreHome3D(){if(!plant3d||growthPlaying)return;')
-    app=app.replace("function openPreview(kind='tulip',step=3){", "function openPreview(kind='tulip',step=3){cancelGrowth();")
     app=re.sub(r'(function go\([^)]*\)\{)', r'\1cancelGrowth();', app)
     app=app.replace("notify(`오늘 꽃이 피었어요! ${SPECIES[idx].name}을(를) 획득했어요.`);return true", 'return true')
     replace_function('toggleDone', """function toggleDone(id,done){

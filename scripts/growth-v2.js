@@ -27,7 +27,7 @@ let growthTimer = null, growthPlaying = false;
 function cancelGrowth() { clearTimeout(growthTimer); growthPlaying = false; }
 function animateGrowth(from, to) {
  cancelGrowth();
- if (!plant3d || view !== 'home' || !$('plantPreviewOverlay').hidden || from >= to || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+ if (!plant3d || view !== 'home' || from >= to || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
  const date = today(), species = data.awards[date] || 'daisy';
  growthPlaying = true;
  function step(value) {

@@ -41,13 +41,6 @@
 .plant-art{width:235px;max-width:90%;height:238px;position:relative;z-index:1;touch-action:none}
 .plant3d-canvas{width:100%;height:100%;display:block;touch-action:none;cursor:grab;outline:0}
 .plant3d-canvas:active{cursor:grabbing}
-.preview-trigger{position:relative;z-index:1;margin:12px 0 0;min-height:43px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:9px 13px;font-size:12px;font-weight:800}
-.preview-hero{background:linear-gradient(155deg,#f2f7f2,#e8f2ed);border-radius:22px;display:flex;align-items:center;justify-content:center;min-height:300px;margin-top:11px}
-.preview-art{width:270px;height:290px;max-width:100%;touch-action:none}
-.preview-controls{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
-.preview-controls button{background:#f6f7f7;border:1px solid #d9e0e3;border-radius:12px;min-height:44px;padding:9px 12px;font-size:12px;color:#344455;font-weight:800;flex:1}
-.preview-controls button[aria-pressed=true]{background:#e1f0e8;color:#225c44;border:2px solid #568d73}
-.preview-note{text-align:center;font-size:11px;color:#667d70;line-height:1.7;margin:9px 0 0}
 .species-3d{display:block;width:95px;height:96px;object-fit:contain;margin:0 auto}
 .garden-day img{display:block;width:45px;height:45px;object-fit:contain;margin:2px auto}
 @media(prefers-reduced-motion:reduce){.plant3d-canvas{scroll-behavior:auto}}
@@ -83,7 +76,7 @@
     </section>
     <section class="screen" data-screen="home" aria-label="홈: 오늘의 할 일">
       <div class="section-tag">HOME · 오늘의 정원</div><h1 id="homeHeading">오늘을 가꾸는 시간</h1><p class="subtitle" id="homeDate"></p>
-      <div class="card home-plant"><div class="plant-art" id="plantGraphic" role="img" aria-label="오늘의 3D 식물. 손가락으로 좌우 회전할 수 있어요"></div><div class="plant-title" id="plantStage">씨앗을 심을 준비가 됐어요</div><p class="plant-message" id="plantHint">할 일을 완료하면 식물이 자라요.</p><button class="preview-trigger" type="button" id="open3DPreview">3D 꽃 종류 · 성장 단계 미리보기 ↗</button></div>
+      <div class="card home-plant"><div class="plant-art" id="plantGraphic" role="img" aria-label="오늘의 3D 식물. 손가락으로 좌우 회전할 수 있어요"></div><div class="plant-title" id="plantStage">씨앗을 심을 준비가 됐어요</div><p class="plant-message" id="plantHint">할 일을 완료하면 식물이 자라요.</p></div>
       <div class="card"><div class="section-row"><h2>오늘의 목표</h2><span class="pill" id="homeRate">0 / 0</span></div><div class="progress-meter"><span id="homeBar"></span></div><div class="progress-copy" id="homeProgress">오늘의 할 일을 등록해 보세요.</div></div>
       <div class="card"><div class="section-row"><h2>오늘 할 일</h2><button class="subtle-btn" data-action="new-home">+ 추가</button></div><div class="entry-list" id="homeTasks"></div></div>
       <div class="card"><div class="section-row"><h2>오늘 약속·예약</h2><button class="plain-btn" data-action="new-event-home">+ 일정 추가</button></div><div class="entry-list" id="homeEvents"></div></div>
@@ -147,25 +140,6 @@
   <div class="divider"></div><div class="section-tag">DATA</div><h3 style="font-size:15px;margin:6px 0">기록 백업·복원</h3><p class="helper">기록은 현재 기기에 저장돼요. 브라우저 데이터를 삭제하거나 기기를 바꾸기 전에 백업 파일을 내려받아 보관하세요.</p><div class="backup-row"><button type="button" id="exportData" class="secondary">JSON 백업 내려받기</button><button type="button" id="importDataBtn" class="secondary">백업 복원</button></div><input id="importData" type="file" accept="application/json,.json" hidden>
   <div class="divider"></div><div class="section-tag">REMINDERS</div><p class="helper">현재 버전은 앱이 열려 있을 때만 시간 알림을 보여줄 수 있어요. 앱이 닫혔을 때의 푸시 알림은 서버 기능이 없어 아직 지원하지 않아요.</p><button type="button" id="helpFromSettings" class="small-outline">? 사용 방법 다시 보기</button>
 </section></div>
-<!-- development 3D preview; no collection rewards are modified -->
-<div class="overlay" id="plantPreviewOverlay" hidden>
- <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="plantPreviewHeading">
-  <div class="sheethead"><h2 id="plantPreviewHeading">3D 꽃 미리보기</h2><button class="close" type="button" data-close="plantPreviewOverlay" aria-label="닫기">×</button></div>
-  <p class="helper">개발 중 모든 꽃을 볼 수 있어요. 여기서 선택해도 실제 꽃 획득 기록은 바뀌지 않아요.</p>
-  <div class="preview-hero"><div class="preview-art" id="plant3DPreviewCanvas"></div></div>
-  <p class="preview-note" id="previewCaption">손가락이나 마우스로 3D 꽃을 회전해 보세요.</p>
-  <label class="field">꽃 종류</label>
-  <div class="preview-controls" id="previewSpeciesButtons" role="group" aria-label="3D 꽃 종류">
-    <button type="button" data-plant="tulip">튤립</button><button type="button" data-plant="daisy">데이지</button><button type="button" data-plant="sunflower">해바라기</button>
-  </div>
-  <label class="field">성장 단계</label>
-  <div class="preview-controls" id="previewStageButtons" role="group" aria-label="성장 단계">
-    <button type="button" data-stage="0">화분</button><button type="button" data-stage="1">새싹</button><button type="button" data-stage="2">잎</button><button type="button" data-stage="3">개화</button>
-  </div>
-  <div class="preview-controls"><button type="button" id="rotate3DPreview">↻ 꽃 90° 회전</button><button type="button" id="reset3DPreview">오늘의 식물로 돌아가기</button></div>
-  <p class="helper" style="margin-top:16px">실제 식물 획득은 오늘의 할 일을 모두 완료했을 때 하루 한 번만 발생해요.</p>
- </section>
-</div>
 <!-- help -->
 <div class="overlay" id="helpOverlay" hidden><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="helpHeading"><div class="sheethead"><h2 id="helpHeading">Plantory 사용 방법</h2><button class="close" data-close="helpOverlay" aria-label="닫기">×</button></div>
 <div class="helper"><p><strong>1. HOME</strong>은 오늘 할 일과 성장하는 식물을 보여줘요. 할 일은 개수 제한 없이 등록할 수 있어요.</p><p><strong>2. DAY</strong>에서는 날짜별 할 일·약속을 색상 카드로 확인해요.</p><p><strong>3. MONTH</strong>에서는 한 달의 일정을 확인해요. 좌우로 밀면 DAY → HOME → MONTH가 원형으로 연결되고, 월 달력 안에서 위·아래로 밀면 달을 바꿀 수 있어요. 화살표로도 이동할 수 있어요.</p><p><strong>4. 식물</strong>은 오늘 등록한 할 일을 모두 완료하면 꽃이 피고, 세 종류 중 하나를 하루에 한 번 획득해요. 약속은 식물 성장에 포함되지 않아요.</p><p><strong>5. 색상</strong>은 기록마다 선택할 수 있고 기본색으로 저장할 수 있어요. 계절 배경과 별개로 유지돼요.</p><p><strong>6. 백업</strong>은 설정에서 JSON 파일로 내보내거나 불러올 수 있어요.</p><p><strong>제한:</strong> WebGL 3D를 사용해 식물을 회전하고 성장 단계를 볼 수 있어요. 일부 브라우저에서 WebGL이 차단되면 2D 대체 그림이 표시돼요. 닫힌 앱에 보내는 푸시 알림과 여러 기기 자동 동기화도 아직 제공하지 않아요.</p></div><button class="primary" id="helpDone" style="width:100%">시작하기</button>
@@ -174,7 +148,7 @@
 <script>
 /* Plantory procedural low-poly 3D renderer. WebGL1, no CDN dependency.
    Copyright (c) 2026 Plantory prototype. Uses hand-built 3D meshes.
-   One WebGL canvas is reused between HOME and the development preview dialog. */
+   One WebGL canvas renders the actual HOME growth state. */
 (function(global){'use strict';
 const C={pot:[.76,.52,.38],rim:[.82,.61,.46],soil:[.36,.27,.22],stem:[.20,.47,.31],leaf:[.25,.60,.39],leaf2:[.39,.73,.48],shadow:[.82,.87,.85]};
 const rad=Math.PI/180;
@@ -284,17 +258,8 @@ const SPECIES=[{id:'daisy',name:'데이지',emoji:'🌼',description:'맑은 하
 let plant3d=null;
 try{plant3d=window.Plantory3D.create();plant3d.mount(document.getElementById('plantGraphic'))}
 catch(e){console.warn('3D 렌더러 미지원, SVG 대체 그림 표시:',e)}
-let previewKind='tulip',previewStep=3;
-const previewCaptions=['화분과 흙','새싹','잎 성장','완전 개화'];
-const previewNames={tulip:'튤립',daisy:'데이지',sunflower:'해바라기'};
 const plantThumbs=Object.create(null);
 function thumb(kind){if(plantThumbs[kind])return plantThumbs[kind];if(!plant3d)return null;try{return plantThumbs[kind]=plant3d.snapshot(kind,3)}catch(e){console.warn('3D 썸네일 실패:',e);return null}}
-function updatePreview(){if(plant3d)plant3d.set(previewKind,previewStep);
- document.querySelectorAll('[data-plant]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.plant===previewKind)));
- document.querySelectorAll('[data-stage]').forEach(el=>el.setAttribute('aria-pressed',String(Number(el.dataset.stage)===previewStep)));
- document.getElementById('previewCaption').textContent=previewNames[previewKind]+' · '+previewCaptions[previewStep]+' · 화면을 드래그해 360° 회전';
-}
-function openPreview(kind='tulip',step=3){previewKind=kind;previewStep=step;overlayOpen('plantPreviewOverlay');if(plant3d){plant3d.mount(document.getElementById('plant3DPreviewCanvas'));updatePreview()}else{document.getElementById('previewCaption').textContent='이 기기에서는 WebGL을 실행할 수 없어요.'}}
 function restoreHome3D(){if(!plant3d)return;plant3d.mount(document.getElementById('plantGraphic'));const k=today(),spec=data.awards[k]||'daisy';plant3d.set(spec,stage())}
 const SEASONS={spring:{name:'봄',background:'#FFF4EC',accent:'#A65F64'},summer:{name:'여름',background:'#E4FCF9',accent:'#446491'},autumn:{name:'가을',background:'#F1F2EF',accent:'#576D77'},winter:{name:'겨울',background:'#FFF1E2',accent:'#935A48'}};
 const pad=n=>String(n).padStart(2,'0');const dayKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
@@ -355,11 +320,11 @@ function stage(){const p=progress(today());if(!p.count||!p.done)return 0;if(p.do
 function renderEntries(target,arr,type){const root=$(target);root.replaceChildren();const content=type?arr.filter(x=>x.type===type):arr;if(!content.length){const empty=newEl('div','empty');empty.append(newEl('strong','',type==='task'?'오늘의 할 일이 없어요':type==='event'?'약속·예약이 없어요.':'등록한 기록이 없어요.'),newEl('span','','+ 버튼으로 간편하게 추가해 보세요.'));root.append(empty);return}
 for(const item of ordered(content)){const e=newEl('div','entry');e.dataset.id=item.id;const stripe=newEl('span','entry-tint');const entryColor=item.color||(item.type==='task'?data.settings.defaultTaskColor:data.settings.defaultEventColor);e.style.setProperty('--entry-color',entryColor);stripe.style.backgroundColor=entryColor;e.append(stripe);if(item.type==='task'){const checkbox=newEl('input','check');checkbox.type='checkbox';checkbox.checked=!!item.done;checkbox.setAttribute('aria-label',`${item.title} 완료 표시`);checkbox.addEventListener('change',()=>toggleDone(item.id,checkbox.checked));e.append(checkbox)}else e.append(newEl('span','entry-symbol','◷'));
 const body=newEl('div','entry-body');body.append(newEl('div','entry-title'+(item.done?' done':''),item.title));const d=[item.type==='task'?'할 일':'약속·예약'];if(item.time)d.unshift(item.time);body.append(newEl('div','entry-desc',d.join(' · ')));if(item.note)body.append(newEl('div','entry-desc',item.note));e.append(body);const edit=newEl('button','edit-item');edit.type='button';edit.setAttribute('aria-label',`${item.title} 수정`);edit.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m15 5 4 4M4 20l4-1 12-12a2.7 2.7 0 0 0-4-4L4 15l0 5Z"/></svg>';edit.addEventListener('click',()=>openEditor(item));e.append(edit);root.append(e)} }
-function renderHome(){const now=today(),p=progress(now),s=stage();$('homeDate').textContent=fromKey(now).toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'long'});if(plant3d){if($('plantPreviewOverlay').hidden)restoreHome3D()}else{$('plantGraphic').innerHTML=plantSvg(s)}$('plantStage').textContent=data.awards[now]?'오늘도 꽃을 피웠어요!':s===0?'작은 씨앗부터 시작해요':s===1?'새싹이 자라고 있어요':s===2?'잎이 풍성해졌어요':'오늘의 꽃이 활짝 피었어요';$('plantHint').textContent=p.count?`할 일 ${p.done}/${p.count}개 완료`:'할 일을 등록하면 식물이 자라요';$('homeRate').textContent=`${p.done} / ${p.count}`;$('homeProgress').textContent=p.count?`${Math.round(p.done/p.count*100)}% 달성 · ${p.count-p.done}개 남았어요`:'오늘은 어떤 일을 해볼까요?';$('homeBar').style.width=(p.count?`${p.done/p.count*100}%`:'0%');renderEntries('homeTasks',daily(now),'task');renderEntries('homeEvents',daily(now),'event')}
+function renderHome(){const now=today(),p=progress(now),s=stage();$('homeDate').textContent=fromKey(now).toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'long'});if(plant3d){restoreHome3D()}else{$('plantGraphic').innerHTML=plantSvg(s)}$('plantStage').textContent=data.awards[now]?'오늘도 꽃을 피웠어요!':s===0?'작은 씨앗부터 시작해요':s===1?'새싹이 자라고 있어요':s===2?'잎이 풍성해졌어요':'오늘의 꽃이 활짝 피었어요';$('plantHint').textContent=p.count?`할 일 ${p.done}/${p.count}개 완료`:'할 일을 등록하면 식물이 자라요';$('homeRate').textContent=`${p.done} / ${p.count}`;$('homeProgress').textContent=p.count?`${Math.round(p.done/p.count*100)}% 달성 · ${p.count-p.done}개 남았어요`:'오늘은 어떤 일을 해볼까요?';$('homeBar').style.width=(p.count?`${p.done/p.count*100}%`:'0%');renderEntries('homeTasks',daily(now),'task');renderEntries('homeEvents',daily(now),'event')}
 function renderDay(){const p=progress(selected);$('dayTitle').textContent=readable(selected);$('daySubtitle').textContent=selected===today()?'오늘의 할 일과 약속을 함께 확인해요.':`${selected}의 기록이에요.`;$('dayRate').textContent=`${p.done} / ${p.count}`;$('dayBar').style.width=(p.count?`${p.done/p.count*100}%`:'0%');$('dayProgressText').textContent=!p.count?'등록한 할 일이 없어요.':p.done===p.count?'등록한 할 일을 모두 완료했어요.':`${p.count-p.done}개의 할 일이 남았어요.`;renderEntries('dayEntries',daily(selected))}
 function renderMonth(){const y=month.getFullYear(),m=month.getMonth(),mo=month.getMonth()+1,k=`${y}-${pad(mo)}`;$('monthTitle').textContent=`${y}년 ${mo}월`;const relevant=data.items.filter(x=>x.date.startsWith(k));$('monthSubtitle').textContent=`기록 ${relevant.length}개`;$('monthTaskCount').textContent=relevant.filter(x=>x.type==='task').length;$('monthEventCount').textContent=relevant.filter(x=>x.type==='event').length;$('monthRewardCount').textContent=Object.keys(data.awards).filter(x=>x.startsWith(k)).length;const grid=$('monthGrid');grid.replaceChildren();for(const x of ['일','월','화','수','목','금','토'])grid.append(newEl('div','weekday',x));const dayOne=new Date(y,m,1),first=dayOne.getDay(),total=new Date(y,m+1,0).getDate(),cells=Math.ceil((first+total)/7)*7;for(let i=0;i<cells;i++){const n=i-first+1,d=new Date(y,m,n),date=dayKey(d),outside=d.getMonth()!==m,btn=newEl('button','calendar-day'+(outside?' outside':'')+(date===selected?' selected':'')+(date===today()?' today':''));btn.type='button';btn.setAttribute('aria-label',`${readable(date)} 기록 보기`);btn.append(newEl('span','number',String(d.getDate())));const dotbox=newEl('div','colors');const palette=[...new Set(daily(date).map(x=>x.color||(x.type==='task'?data.settings.defaultTaskColor:data.settings.defaultEventColor)))].slice(0,3);for(const color of palette){const dot=newEl('i');dot.style.backgroundColor=color;dotbox.append(dot)}btn.append(dotbox);btn.addEventListener('click',()=>{if(Date.now()<suppressClickUntil)return;selected=date;month=new Date(d.getFullYear(),d.getMonth(),1);go('day')});grid.append(btn)}}
 function renderGarden(){const holder=$('gardenDays');holder.replaceChildren();for(let n=6;n>=0;n--){const k=plusDays(today(),-n),p=progress(k),el=newEl('div','garden-day');const label=fromKey(k).toLocaleDateString('ko-KR',{weekday:'short'});el.append(newEl('small','',label));const award=data.awards[k];const gardenArt=newEl('span','',award?'':p.count===0?'·':p.done===0?'🌱':p.done<p.count?'🌿':'🌼');if(award){const url=thumb(award);if(url){const im=newEl('img');im.src=url;im.alt=(SPECIES.find(x=>x.id===award)?.name||'꽃')+' 3D 꽃';gardenArt.append(im)}else gardenArt.textContent=SPECIES.find(x=>x.id===award)?.emoji||'🌸'}el.append(gardenArt);el.append(newEl('b','',p.count?`${p.done}/${p.count}`:'쉬는 날'));holder.append(el)}const total=Object.keys(data.awards).length;$('gardenTotal').textContent=`${total}송이`;$('gardenPreviewCount').textContent=total?`모은 꽃 ${total}송이`:'최근 7일 기록';$('gardenSummary').textContent=total?`지금까지 꽃 ${total}송이를 피웠어요. 지난 꽃은 사라지지 않아요.`:'오늘의 할 일을 모두 완료하면 첫 꽃을 획득해요.'}
-function renderCollection(){const container=$('speciesGrid');container.replaceChildren();for(const s of SPECIES){const dates=Object.keys(data.awards).filter(k=>data.awards[k]===s.id).sort(),count=dates.length;const item=newEl('div','species-card'+(!count?' locked':''));const art=newEl('div','species-art');const url=thumb(s.id);if(url){const im=newEl('img','species-3d');im.src=url;im.alt=(count?s.name:'아직 발견하지 않은 꽃')+' 3D 모형';art.append(im)}else art.textContent=count?s.emoji:'❔';item.append(art);item.append(newEl('h3','',count?s.name:'아직 발견하지 않은 꽃'));item.append(newEl('p','',count?`${s.description}\n획득 ${count}회 · 첫 발견 ${dates[0]}`:'할 일을 완료해 만나보세요.'));const previewBtn=newEl('button','small-outline','3D 미리보기');previewBtn.type='button';previewBtn.setAttribute('aria-label',s.name+' 꽃의 3D 개발 미리보기');previewBtn.addEventListener('click',()=>openPreview(s.id,3));item.append(previewBtn);container.append(item)}$('collectionPreviewCount').textContent=`발견 ${SPECIES.filter(s=>Object.values(data.awards).includes(s.id)).length} / ${SPECIES.length}종`}
+function renderCollection(){const container=$('speciesGrid');container.replaceChildren();for(const s of SPECIES){const dates=Object.keys(data.awards).filter(k=>data.awards[k]===s.id).sort(),count=dates.length;const item=newEl('div','species-card'+(!count?' locked':''));const art=newEl('div','species-art');const url=count?thumb(s.id):null;if(url){const im=newEl('img','species-3d');im.src=url;im.alt=(count?s.name:'아직 발견하지 않은 꽃')+' 3D 모형';art.append(im)}else art.textContent=count?s.emoji:'❔';item.append(art);item.append(newEl('h3','',count?s.name:'아직 발견하지 않은 꽃'));item.append(newEl('p','',count?`${s.description}\n획득 ${count}회 · 첫 발견 ${dates[0]}`:'할 일을 완료해 만나보세요.'));container.append(item)}$('collectionPreviewCount').textContent=`발견 ${SPECIES.filter(s=>Object.values(data.awards).includes(s.id)).length} / ${SPECIES.length}종`}
 function render(){paintTheme();renderHome();renderDay();renderMonth();renderGarden();renderCollection()}
 function go(next){
  if(!['day','home','month','garden','collection'].includes(next))return;
@@ -385,7 +350,7 @@ function changeDay(step){selected=plusDays(selected,step);renderDay()}
 function rewardToday(){const k=today(),p=progress(k);if(!data.awards[k]&&p.count>0&&p.done===p.count){let idx=Math.floor(Math.random()*SPECIES.length);try{const a=new Uint32Array(1);crypto.getRandomValues(a);idx=a[0]%SPECIES.length}catch(e){}data.awards[k]=SPECIES[idx].id;notify(`오늘 꽃이 피었어요! ${SPECIES[idx].name}을(를) 획득했어요.`);return true}return false}
 function toggleDone(id,done){const item=data.items.find(i=>i.id===id);if(!item||item.type!=='task')return;const previous=item.done;item.done=done;if(item.date===today()&&done)rewardToday();if(!persist()){item.done=previous;render();return}render()}
 function overlayOpen(id){focusReturn=document.activeElement;$(id).hidden=false;document.body.style.overflow='hidden';const f=$(id).querySelector('input:not([type=file]),button');setTimeout(()=>f?.focus(),0)}
-function overlayClose(id){if(id==='editorOverlay'&&failedEditorDraft){if(!confirm('저장하지 못한 입력 내용이 있어요. 따로 보관하지 않고 닫을까요?'))return;failedEditorDraft=false}if(id==='plantPreviewOverlay')restoreHome3D();$(id).hidden=true;if($$('.overlay:not([hidden])').length===0)document.body.style.overflow='';focusReturn?.focus?.()}
+function overlayClose(id){if(id==='editorOverlay'&&failedEditorDraft){if(!confirm('저장하지 못한 입력 내용이 있어요. 따로 보관하지 않고 닫을까요?'))return;failedEditorDraft=false}$(id).hidden=true;if($$('.overlay:not([hidden])').length===0)document.body.style.overflow='';focusReturn?.focus?.()}
 function closeTop(){const open=$$('.overlay:not([hidden])');if(open.length)overlayClose(open[open.length-1].id)}
 function selectType(t){editorType=t;$('typeTask').setAttribute('aria-pressed',String(t==='task'));$('typeEvent').setAttribute('aria-pressed',String(t==='event'));$('itemTitle').placeholder=t==='task'?'예: 운동하기':'예: 치과 예약';if(!editId)editingColor=data.settings[t==='task'?'defaultTaskColor':'defaultEventColor'];renderPalette()}
 function renderPalette(){const pal=$('entryPalette');pal.replaceChildren();for(const color of PALETTE){const b=newEl('button','color-pick'+(editingColor.toLowerCase()===color.toLowerCase()?' selected':''));b.type='button';b.style.backgroundColor=color;b.title=color;b.setAttribute('aria-label',`${color} 색상`);b.setAttribute('aria-pressed',String(editingColor.toLowerCase()===color.toLowerCase()));b.addEventListener('click',()=>{editingColor=color;$('itemColor').value=color;renderPalette()});pal.append(b)}$('itemColor').value=editingColor}
@@ -417,7 +382,7 @@ surface.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!
 surface.addEventListener('pointerup',e=>{if(!start||e.pointerId!==start.id)return;const dx=e.clientX-start.x,dy=e.clientY-start.y,vertical=Math.abs(dy)>Math.abs(dx)*1.3,horizontal=Math.abs(dx)>Math.abs(dy)*1.3;if(['day','home','month'].includes(view)&&horizontal&&Math.abs(dx)>=65){suppressClickUntil=Date.now()+300;cyclic(dx<0?1:-1)}else if(view==='month'&&start.insideMonth&&vertical&&Math.abs(dy)>=65){suppressClickUntil=Date.now()+300;changeMonth(dy<0?1:-1)}start=null});surface.addEventListener('pointercancel',()=>start=null);
 // If a browser suppresses pointerup during a touch gesture, use touchstart/end as an accessibility fallback.
 let touch=null;surface.addEventListener('touchstart',e=>{if(!e.touches.length||e.target.closest('input,textarea,select,button'))return;touch={x:e.touches[0].clientX,y:e.touches[0].clientY,insideMonth:!!e.target.closest('#monthGesture')}},{passive:true});surface.addEventListener('touchend',e=>{if(!touch||!e.changedTouches.length)return;if(Date.now()<suppressClickUntil){touch=null;return}const dx=e.changedTouches[0].clientX-touch.x,dy=e.changedTouches[0].clientY-touch.y;if(['day','home','month'].includes(view)&&Math.abs(dx)>=65&&Math.abs(dx)>Math.abs(dy)*1.3){suppressClickUntil=Date.now()+300;cyclic(dx<0?1:-1)}else if(view==='month'&&touch.insideMonth&&Math.abs(dy)>=65&&Math.abs(dy)>Math.abs(dx)*1.3){suppressClickUntil=Date.now()+300;changeMonth(dy<0?1:-1)}touch=null},{passive:true});
-// Every mutation entry point shares the same lock; reads and previews remain unchanged.
+// Every mutation entry point shares the same lock; reads remain unchanged.
 toggleDone=storageMutation(toggleDone);
 saveEditor=storageMutation(saveEditor);
 deleteEditor=storageMutation(deleteEditor);
@@ -434,11 +399,6 @@ $('goToday').addEventListener('click',()=>{selected=today();month=new Date(fromK
 $('typeTask').addEventListener('click',()=>selectType('task'));$('typeEvent').addEventListener('click',()=>selectType('event'));
 $('itemColor').addEventListener('input',e=>{editingColor=e.target.value;renderPalette()});
 $('editorForm').addEventListener('submit',saveEditor);$('deleteItem').addEventListener('click',deleteEditor);
-$('open3DPreview').addEventListener('click',()=>openPreview(data.awards[today()]||'tulip',3));
-$$('[data-plant]').forEach(el=>el.addEventListener('click',()=>{previewKind=el.dataset.plant;updatePreview()}));
-$$('[data-stage]').forEach(el=>el.addEventListener('click',()=>{previewStep=Number(el.dataset.stage);updatePreview()}));
-$('rotate3DPreview').addEventListener('click',()=>plant3d?.rotate(Math.PI/2));
-$('reset3DPreview').addEventListener('click',()=>{previewKind=data.awards[today()]||'tulip';previewStep=stage();updatePreview()});
 $('helpOpen').addEventListener('click',openHelp);$('helpDone').addEventListener('click',storageMutation(()=>{const previous=data.settings.hasOnboarded;data.settings.hasOnboarded=true;if(!persist())data.settings.hasOnboarded=previous;overlayClose('helpOverlay')}));
 $('settingsOpen').addEventListener('click',()=>{paintTheme();overlayOpen('settingsOverlay')});$('helpFromSettings').addEventListener('click',openHelp);
 $('backgroundColor').addEventListener('input',e=>setThemeValue('background',e.target.value));$('accentColor').addEventListener('input',e=>setThemeValue('accent',e.target.value));

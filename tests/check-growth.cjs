@@ -31,8 +31,7 @@ assert.equal(await p.locator('#plantStage').textContent(),'작은 씨앗부터 �
 await seed(1);const before=await state();await p.evaluate(()=>{Storage.prototype.setItem=function(){throw Error('TEST storage failure')}});
 await p.locator('#homeTasks .check').click();assert.deepEqual(await state(),before);assert.equal(await p.locator('#homeTasks .check').isChecked(),false);assert.match(await p.locator('#toast').textContent(),/저장하지 못/);
 await p.reload();await p.locator('#homeTasks .check').check();assert((await state()).awards[date]);
-await p.locator('#open3DPreview').click();const prior=await state();await p.locator('[data-plant="cactus"]').click();await p.locator('[data-stage="1"]').click();assert.deepEqual(await state(),prior);
-assert.deepEqual(errors,[]);console.log('PASS growth 1/2/3/5/10, zero, uncheck, persistent maxima, reload, atomic storage failure, preview isolation');
+assert.deepEqual(errors,[]);console.log('PASS growth 1/2/3/5/10, zero, uncheck, persistent maxima, reload, atomic storage failure, actual HOME growth');
 }finally{await b.close()}})().catch(e=>{console.error(e);process.exit(1)});
 
 
