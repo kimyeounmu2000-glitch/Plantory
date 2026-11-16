@@ -30,11 +30,11 @@ def apply_growth(app):
   if($('saveDefault').checked)data.settings[editorType==='task'?'defaultTaskColor':'defaultEventColor']=editingColor;
  },editId?'기록을 수정했어요.':'기록을 저장했어요.'))return;
  selected=date;month=new Date(fromKey(date).getFullYear(),fromKey(date).getMonth(),1);
- overlayClose('editorOverlay');render();
+ overlayClose('editorOverlay',true);render();
 }""")
     replace_function('deleteEditor', """function deleteEditor(){
  if(!editId||!confirm('이 기록을 삭제할까요?'))return;
- if(commitTasks(()=>{data.items=data.items.filter(x=>x.id!==editId)},'기록을 삭제했어요.'))overlayClose('editorOverlay');
+ if(commitTasks(()=>{data.items=data.items.filter(x=>x.id!==editId)},'기록을 삭제했어요.'))overlayClose('editorOverlay',true);
 }""")
     app=app.replace("'오늘도 꽃을 피웠어요!'", "'오늘의 꽃 획득 완료'")
     app=app.replace("render();if(!data.settings.hasOnboarded)", """let renderedDate=today();

@@ -44,6 +44,43 @@
 .species-3d{display:block;width:95px;height:96px;object-fit:contain;margin:0 auto}
 .garden-day img{display:block;width:45px;height:45px;object-fit:contain;margin:2px auto}
 @media(prefers-reduced-motion:reduce){.plant3d-canvas{scroll-behavior:auto}}
+
+/* Editor-only layout and independent date/time dialogs. */
+#editorOverlay .field-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+#editorOverlay .field-row>div,#editorOverlay .control{min-width:0;max-width:100%}
+#editorOverlay .picker-trigger{width:100%;text-align:left;min-height:48px;color:var(--ink)}
+#editorOverlay .sheet{padding-bottom:calc(28px + env(safe-area-inset-bottom,0px));max-height:92vh;max-height:92dvh;overscroll-behavior:contain;transition:transform .18s ease;will-change:transform}
+#editorOverlay .sheethead,#editorDragHandle{touch-action:none;cursor:grab}
+#editorOverlay .sheethead{user-select:none}
+#editorDragHandle{display:block;width:64px;height:24px;border:0;background:transparent;margin:-14px auto 6px;padding:8px 12px}
+#editorDragHandle:before{content:"";display:block;height:4px;background:#a2abb2;border-radius:8px}
+#editorOverlay .sheet.is-dragging{transition:none}
+#editorOverlay .sheet.is-closing{transform:translateY(105%)}
+.picker-dialog{width:min(380px,calc(100% - 16px));max-height:calc(100dvh - 32px);overflow:auto;overscroll-behavior:contain;border:1px solid var(--line);border-radius:24px;padding:20px 14px;color:var(--ink);background:var(--surface);box-shadow:0 16px 60px #15202c40}
+.picker-dialog[open]{animation:picker-in .16s ease both}
+.picker-dialog::backdrop{background:#15202c80}
+.picker-dialog.is-closing{animation:picker-out .14s ease both}
+.picker-dialog h2{font-size:19px;margin:0 0 16px}
+.picker-month{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.picker-week,.picker-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+.picker-week span{text-align:center;font-size:12px;padding:8px 0;color:var(--muted)}
+.picker-days button{min-width:0;min-height:44px;padding:0;border:0;border-radius:12px;background:transparent;color:var(--ink);font-size:15px}
+.picker-days button[aria-pressed=true]{background:var(--accent);color:var(--on-accent);font-weight:800}
+.picker-days button[aria-current=date]{box-shadow:inset 0 0 0 1px var(--accent)}
+.time-wheel-labels,.time-wheels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;text-align:center}
+.time-wheel-labels{font-size:12px;color:var(--muted);margin-bottom:6px}
+.time-wheels{position:relative;border-radius:16px;background:var(--bg);isolation:isolate}
+.time-wheels:before{content:"";position:absolute;top:88px;left:4px;right:4px;height:44px;border-radius:10px;background:var(--soft);z-index:-1}
+.time-wheel{height:220px;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;scroll-snap-type:y mandatory;padding:88px 0;scrollbar-width:none;cursor:grab;user-select:none;min-width:0}
+.time-wheel::-webkit-scrollbar{display:none}
+.time-wheel:focus-visible{outline:3px solid #86a6c3;outline-offset:-3px;border-radius:12px}
+.time-wheel>div{height:44px;line-height:44px;scroll-snap-align:center;font-size:21px;color:var(--muted)}
+.time-wheel>div.selected{color:var(--ink);font-weight:800;font-size:25px}
+@keyframes picker-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes picker-out{to{opacity:0;transform:translateY(12px)}}
+@media(max-width:600px){#editorOverlay .editor-datetime{grid-template-columns:minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){.picker-dialog,#editorOverlay .sheet{animation:none!important;transition:none!important}.time-wheel{scroll-behavior:auto}}
+
 </style>
 </head>
 <body>
@@ -121,15 +158,32 @@
 
 </div>
 <!-- task/event editor -->
-<div class="overlay" id="editorOverlay" hidden><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="editorHeading"><div class="sheethead"><h2 id="editorHeading">새 기록 추가</h2><button class="close" type="button" data-close="editorOverlay" aria-label="닫기">×</button></div>
+<div class="overlay" id="editorOverlay" hidden><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="editorHeading"><button type="button" id="editorDragHandle" aria-label="기록 팝업 닫기"></button><div class="sheethead"><h2 id="editorHeading">새 기록 추가</h2><button class="close" type="button" data-close="editorOverlay" aria-label="닫기">×</button></div>
   <div class="type-group"><button id="typeTask" aria-pressed="true" type="button">✓ 할 일</button><button id="typeEvent" aria-pressed="false" type="button">◷ 약속·예약</button></div>
   <form id="editorForm"><label class="field" for="itemTitle">제목 *</label><input class="control" id="itemTitle" maxlength="90" placeholder="예: 운동하기" required autocomplete="off">
-  <div class="field-row"><div><label class="field" for="itemDate">날짜 *</label><input class="control" id="itemDate" type="date" required></div><div><label class="field" for="itemTime">시간 (선택)</label><input class="control" id="itemTime" type="time"></div></div>
+  <div class="field-row editor-datetime"><div><label class="field" for="chooseDate">날짜 *</label><input id="itemDate" type="hidden"><button class="control picker-trigger" id="chooseDate" type="button" aria-haspopup="dialog" aria-controls="datePicker">날짜 선택</button></div><div><label class="field" for="chooseTime">시간 (선택)</label><input id="itemTime" type="hidden"><button class="control picker-trigger" id="chooseTime" type="button" aria-haspopup="dialog" aria-controls="timePicker">시간 선택 안 함</button></div></div>
   <label class="field" for="itemNote">메모 (선택)</label><textarea class="control" id="itemNote" maxlength="500" placeholder="예약 장소, 준비물, 목표 등을 기록해 보세요."></textarea>
   <label class="field">일정 카드 색상</label><div class="palette" id="entryPalette"></div><div class="color-inline"><input type="color" id="itemColor" aria-label="사용자 지정 색상"><span class="minor">직접 색상 선택</span></div>
   <label style="display:flex;gap:9px;align-items:center;margin-top:13px;font-size:12px"><input type="checkbox" id="saveDefault" class="plain-check"> 이 색상을 같은 종류의 기본 색상으로 저장</label>
   <div class="action-row"><button type="button" id="deleteItem" class="danger" hidden>삭제</button><button class="primary" type="submit" id="submitItem">저장하기</button></div></form>
 </section></div>
+<!-- Separate draft pickers: values reach the editor only after confirmation. -->
+<dialog class="picker-dialog" id="datePicker" aria-labelledby="datePickerTitle" aria-describedby="datePickerHelp">
+ <h2 id="datePickerTitle">날짜 선택</h2>
+ <div class="picker-month"><button type="button" class="icon-btn" id="datePrevious" aria-label="이전 달">‹</button><strong id="dateMonth" aria-live="polite"></strong><button type="button" class="icon-btn" id="dateNext" aria-label="다음 달">›</button></div>
+ <div class="picker-week" aria-hidden="true"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+ <div class="picker-days" id="dateDays" role="group" aria-label="날짜"></div>
+ <p class="helper" id="datePickerHelp">방향키로 날짜, Page Up·Down으로 월을 이동해요.</p>
+ <div class="action-row"><button class="secondary" type="button" data-picker-cancel="datePicker">취소</button><button class="primary" type="button" id="confirmDate">선택 완료</button></div>
+</dialog>
+<dialog class="picker-dialog" id="timePicker" aria-labelledby="timePickerTitle" aria-describedby="timePickerHelp">
+ <h2 id="timePickerTitle">시간 선택</h2>
+ <div class="time-wheel-labels" aria-hidden="true"><span>오전·오후</span><span>시</span><span>분</span></div>
+ <div class="time-wheels"><div class="time-wheel" id="wheelPeriod" role="spinbutton" tabindex="0" aria-label="오전 또는 오후"></div><div class="time-wheel" id="wheelHour" role="spinbutton" tabindex="0" aria-label="시"></div><div class="time-wheel" id="wheelMinute" role="spinbutton" tabindex="0" aria-label="분"></div></div>
+ <p class="helper" id="timePickerHelp">위아래로 밀거나 방향키로 시간을 선택해요.</p>
+ <button class="small-outline" type="button" id="clearTime">시간 선택 안 함</button>
+ <div class="action-row"><button class="secondary" type="button" data-picker-cancel="timePicker">취소</button><button class="primary" type="button" id="confirmTime">선택 완료</button></div>
+</dialog>
 <!-- settings -->
 <div class="overlay" id="settingsOverlay" hidden><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="settingsHeading"><div class="sheethead"><h2 id="settingsHeading">설정</h2><button class="close" data-close="settingsOverlay" aria-label="닫기">×</button></div>
   <div class="section-tag">THEME</div><h3 style="font-size:15px;margin:5px 0 7px">계절 자동 테마</h3><p class="helper">봄·여름·가을·겨울의 기본 분위기가 날짜에 따라 자동 변경돼요. 사용자 지정 색상은 그대로 유지돼요.</p><div class="setting-line"><div><strong id="currentSeason">계절 테마</strong><br><span>배경색 및 강조색 개별 설정</span></div><span class="pill">자동</span></div>
@@ -350,14 +404,24 @@ function changeDay(step){selected=plusDays(selected,step);renderDay()}
 function rewardToday(){const k=today(),p=progress(k);if(!data.awards[k]&&p.count>0&&p.done===p.count){let idx=Math.floor(Math.random()*SPECIES.length);try{const a=new Uint32Array(1);crypto.getRandomValues(a);idx=a[0]%SPECIES.length}catch(e){}data.awards[k]=SPECIES[idx].id;notify(`오늘 꽃이 피었어요! ${SPECIES[idx].name}을(를) 획득했어요.`);return true}return false}
 function toggleDone(id,done){const item=data.items.find(i=>i.id===id);if(!item||item.type!=='task')return;const previous=item.done;item.done=done;if(item.date===today()&&done)rewardToday();if(!persist()){item.done=previous;render();return}render()}
 function overlayOpen(id){focusReturn=document.activeElement;$(id).hidden=false;document.body.style.overflow='hidden';const f=$(id).querySelector('input:not([type=file]),button');setTimeout(()=>f?.focus(),0)}
-function overlayClose(id){if(id==='editorOverlay'&&failedEditorDraft){if(!confirm('저장하지 못한 입력 내용이 있어요. 따로 보관하지 않고 닫을까요?'))return;failedEditorDraft=false}$(id).hidden=true;if($$('.overlay:not([hidden])').length===0)document.body.style.overflow='';focusReturn?.focus?.()}
+function overlayClose(id,saved=false){
+ if(id==='editorOverlay'){
+  if(editorClosing)return;
+  if(!saved&&(failedEditorDraft||editorDirty())&&!confirm(failedEditorDraft?'저장하지 못한 입력 내용이 있어요. 따로 보관하지 않고 닫을까요?':'저장하지 않은 변경 내용이 있어요. 버리고 닫을까요?'))return;
+  failedEditorDraft=false;editorClosing=true;
+  const sheet=$('editorOverlay').querySelector('.sheet');sheet.inert=true;sheet.style.transform='';sheet.classList.add('is-closing');
+  const finish=()=>{editorClosing=false;sheet.inert=false;sheet.classList.remove('is-closing');finishOverlayClose(id)};
+  if(reducedMotion())finish();else setTimeout(finish,180);
+ }else finishOverlayClose(id);
+}
+function finishOverlayClose(id){$(id).hidden=true;if($$('.overlay:not([hidden])').length===0)document.body.style.overflow='';focusReturn?.focus?.()}
 function closeTop(){const open=$$('.overlay:not([hidden])');if(open.length)overlayClose(open[open.length-1].id)}
 function selectType(t){editorType=t;$('typeTask').setAttribute('aria-pressed',String(t==='task'));$('typeEvent').setAttribute('aria-pressed',String(t==='event'));$('itemTitle').placeholder=t==='task'?'예: 운동하기':'예: 치과 예약';if(!editId)editingColor=data.settings[t==='task'?'defaultTaskColor':'defaultEventColor'];renderPalette()}
 function renderPalette(){const pal=$('entryPalette');pal.replaceChildren();for(const color of PALETTE){const b=newEl('button','color-pick'+(editingColor.toLowerCase()===color.toLowerCase()?' selected':''));b.type='button';b.style.backgroundColor=color;b.title=color;b.setAttribute('aria-label',`${color} 색상`);b.setAttribute('aria-pressed',String(editingColor.toLowerCase()===color.toLowerCase()));b.addEventListener('click',()=>{editingColor=color;$('itemColor').value=color;renderPalette()});pal.append(b)}$('itemColor').value=editingColor}
-function openEditor(item,kind){editId=item?.id||null;const t=item?.type||kind||'task';editingColor=item?.color||data.settings[t==='task'?'defaultTaskColor':'defaultEventColor'];$('editorHeading').textContent=item?'기록 수정':'새로운 기록';$('itemTitle').value=item?.title||'';$('itemDate').value=item?.date||(view==='day'?selected:today());$('itemTime').value=item?.time||'';$('itemNote').value=item?.note||'';$('deleteItem').hidden=!item;$('saveDefault').checked=false;selectType(t);if(item){editingColor=item.color||data.settings[t==='task'?'defaultTaskColor':'defaultEventColor'];renderPalette()}overlayOpen('editorOverlay')}
+function openEditor(item,kind){editId=item?.id||null;const t=item?.type||kind||'task';editingColor=item?.color||data.settings[t==='task'?'defaultTaskColor':'defaultEventColor'];$('editorHeading').textContent=item?'기록 수정':'새로운 기록';$('itemTitle').value=item?.title||'';$('itemDate').value=item?.date||(view==='day'?selected:today());$('itemTime').value=item?.time||'';$('itemNote').value=item?.note||'';$('deleteItem').hidden=!item;$('saveDefault').checked=false;selectType(t);if(item){editingColor=item.color||data.settings[t==='task'?'defaultTaskColor':'defaultEventColor'];renderPalette()}syncPickerLabels();editorBaseline=editorSnapshot();overlayOpen('editorOverlay')}
 function saveEditor(event){event.preventDefault();const title=$('itemTitle').value.trim(),date=$('itemDate').value,time=$('itemTime').value,note=$('itemNote').value.trim();if(!title||!validDate(date)){notify('제목과 날짜를 확인해 주세요.');return}const old=editId?data.items.find(x=>x.id===editId):null;const oldCopy=old?{...old}:null;const next={id:editId||makeId(),type:editorType,title,date,time,note,color:editingColor,done:old?.type==='task'&&editorType==='task'?old.done:false};if(old)Object.assign(old,next);else data.items.push(next);const previousDefault=data.settings[editorType==='task'?'defaultTaskColor':'defaultEventColor'];if($('saveDefault').checked)data.settings[editorType==='task'?'defaultTaskColor':'defaultEventColor']=editingColor;
-if(!persist()){if(old)Object.assign(old,oldCopy);else data.items=data.items.filter(x=>x.id!==next.id);data.settings[editorType==='task'?'defaultTaskColor':'defaultEventColor']=previousDefault;return}selected=date;month=new Date(fromKey(date).getFullYear(),fromKey(date).getMonth(),1);overlayClose('editorOverlay');render();notify(editId?'기록을 수정했어요.':'기록을 저장했어요.')}
-function deleteEditor(){if(!editId||!confirm('이 기록을 삭제할까요?'))return;const copy=data.items.slice();data.items=data.items.filter(x=>x.id!==editId);if(!persist()){data.items=copy;return}overlayClose('editorOverlay');render();notify('기록을 삭제했어요.')}
+if(!persist()){if(old)Object.assign(old,oldCopy);else data.items=data.items.filter(x=>x.id!==next.id);data.settings[editorType==='task'?'defaultTaskColor':'defaultEventColor']=previousDefault;return}selected=date;month=new Date(fromKey(date).getFullYear(),fromKey(date).getMonth(),1);overlayClose('editorOverlay',true);render();notify(editId?'기록을 수정했어요.':'기록을 저장했어요.')}
+function deleteEditor(){if(!editId||!confirm('이 기록을 삭제할까요?'))return;const copy=data.items.slice();data.items=data.items.filter(x=>x.id!==editId);if(!persist()){data.items=copy;return}overlayClose('editorOverlay',true);render();notify('기록을 삭제했어요.')}
 function setThemeValue(key,v){const prev=data.settings[key];data.settings[key]=v;if(!persist()){data.settings[key]=prev;return}paintTheme()}
 function openHelp(){if(!$('settingsOverlay').hidden)overlayClose('settingsOverlay');overlayOpen('helpOverlay')}
 function exportBackup(){
@@ -399,6 +463,108 @@ $('goToday').addEventListener('click',()=>{selected=today();month=new Date(fromK
 $('typeTask').addEventListener('click',()=>selectType('task'));$('typeEvent').addEventListener('click',()=>selectType('event'));
 $('itemColor').addEventListener('input',e=>{editingColor=e.target.value;renderPalette()});
 $('editorForm').addEventListener('submit',saveEditor);$('deleteItem').addEventListener('click',deleteEditor);
+
+// Picker drafts never write storage; the existing editor save owns persistence.
+const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+let editorBaseline='',editorClosing=false;
+function editorSnapshot(){return JSON.stringify([$('itemTitle').value,$('itemDate').value,$('itemTime').value,$('itemNote').value,editorType,editingColor,$('saveDefault').checked])}
+function editorDirty(){return !$('editorOverlay').hidden&&editorSnapshot()!==editorBaseline}
+function syncPickerLabels(){
+ $('chooseDate').textContent=$('itemDate').value||'날짜 선택';
+ const time=$('itemTime').value;
+ if(!time){$('chooseTime').textContent='시간 선택 안 함';return}
+ const [h,m]=time.split(':').map(Number);$('chooseTime').textContent=`${h<12?'오전':'오후'} ${h%12||12}:${pad(m)}`;
+}
+function trapEditorFocus(e,root=$('editorOverlay')){
+ const nodes=[...root.querySelectorAll('button,input:not([type=hidden]),textarea,[tabindex="0"]')].filter(n=>!n.disabled&&n.tabIndex>=0&&n.getClientRects().length);
+ const first=nodes[0],last=nodes[nodes.length-1];
+ if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+}
+function closePicker(dialog){
+ if(dialog.classList.contains('is-closing'))return;
+ const finish=()=>{dialog.close();dialog.classList.remove('is-closing')};
+ dialog.classList.add('is-closing');if(reducedMotion())finish();else setTimeout(finish,140);
+}
+$$('.picker-dialog').forEach(dialog=>{
+ dialog.addEventListener('cancel',e=>{e.preventDefault();closePicker(dialog)});
+ dialog.addEventListener('keydown',e=>{if(e.key==='Tab')trapEditorFocus(e,dialog)});
+ dialog.addEventListener('click',e=>{const r=dialog.getBoundingClientRect();if(e.target===dialog&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom))closePicker(dialog)});
+});
+$$('[data-picker-cancel]').forEach(b=>b.addEventListener('click',()=>closePicker($(b.dataset.pickerCancel))));
+let dateDraft='',dateMonthCursor;
+function renderDatePicker(focusDate=false){
+ const y=dateMonthCursor.getFullYear(),m=dateMonthCursor.getMonth();
+ $('dateMonth').textContent=`${y}년 ${m+1}월`;
+ $('datePrevious').disabled=y===100&&m===0;$('dateNext').disabled=y===9999&&m===11;
+ const grid=$('dateDays');grid.replaceChildren();
+ for(let i=0;i<dateMonthCursor.getDay();i++)grid.append(newEl('span'));
+ for(let day=1;day<=new Date(y,m+1,0).getDate();day++){
+  const date=dayKey(new Date(y,m,day)),b=newEl('button','',String(day));b.type='button';b.dataset.date=date;
+  b.setAttribute('aria-label',`${y}년 ${m+1}월 ${day}일`);b.setAttribute('aria-pressed',String(date===dateDraft));b.tabIndex=date===dateDraft?0:-1;
+  if(date===today())b.setAttribute('aria-current','date');
+  b.addEventListener('click',()=>{dateDraft=date;renderDatePicker(true)});grid.append(b);
+ }
+ if(focusDate)grid.querySelector('[tabindex="0"]')?.focus();
+}
+function movePickerMonth(delta){
+ const d=fromKey(dateDraft),next=new Date(d.getFullYear(),d.getMonth()+delta,1);
+ if(next.getFullYear()<100||next.getFullYear()>9999)return;
+ dateDraft=dayKey(new Date(next.getFullYear(),next.getMonth(),Math.min(d.getDate(),new Date(next.getFullYear(),next.getMonth()+1,0).getDate())));
+ dateMonthCursor=next;renderDatePicker();
+}
+$('chooseDate').addEventListener('click',()=>{
+ dateDraft=validDate($('itemDate').value)?$('itemDate').value:today();const d=fromKey(dateDraft);dateMonthCursor=new Date(d.getFullYear(),d.getMonth(),1);
+ renderDatePicker();$('datePicker').showModal();$('dateDays').querySelector('[tabindex="0"]').focus();
+});
+$('datePrevious').addEventListener('click',()=>movePickerMonth(-1));$('dateNext').addEventListener('click',()=>movePickerMonth(1));
+$('dateDays').addEventListener('keydown',e=>{
+ const deltas={ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7};let next;
+ if(e.key in deltas){next=plusDays(dateDraft,deltas[e.key])}
+ else if(e.key==='Home'||e.key==='End'){const day=fromKey(dateDraft).getDay();next=plusDays(dateDraft,e.key==='Home'?-day:6-day)}
+ else if(e.key==='PageUp'||e.key==='PageDown'){e.preventDefault();movePickerMonth((e.key==='PageUp'?-1:1)*(e.shiftKey?12:1));renderDatePicker(true);return}else return;
+ e.preventDefault();if(!validDate(next))return;dateDraft=next;const d=fromKey(next);dateMonthCursor=new Date(d.getFullYear(),d.getMonth(),1);renderDatePicker(true);
+});
+$('confirmDate').addEventListener('click',()=>{$('itemDate').value=dateDraft;syncPickerLabels();closePicker($('datePicker'))});
+const wheelHeight=44;
+function setupWheel(id,labels,minimum){
+ const el=$(id);el.setAttribute('aria-valuemin',minimum);el.setAttribute('aria-valuemax',minimum+labels.length-1);
+ labels.forEach(label=>{const row=newEl('div','',label);row.setAttribute('aria-hidden','true');el.append(row)});
+ const index=()=>Math.max(0,Math.min(labels.length-1,Math.round(el.scrollTop/wheelHeight)));
+ const update=()=>{const i=index();[...el.children].forEach((row,n)=>row.classList.toggle('selected',n===i));el.setAttribute('aria-valuenow',String(i+minimum));el.setAttribute('aria-valuetext',labels[i])};
+ const select=i=>{el.scrollTop=Math.max(0,Math.min(labels.length-1,i))*wheelHeight;update()};
+ el.addEventListener('scroll',update,{passive:true});
+ el.addEventListener('keydown',e=>{let i=index();if(e.key==='ArrowUp')i--;else if(e.key==='ArrowDown')i++;else if(e.key==='Home')i=0;else if(e.key==='End')i=labels.length-1;else if(e.key==='PageUp')i-=5;else if(e.key==='PageDown')i+=5;else return;e.preventDefault();select(i)});
+ let drag=null,suppressClick=false;
+ el.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'||e.button!==0)return;drag={id:e.pointerId,y:e.clientY,scroll:el.scrollTop,moved:false};el.setPointerCapture(e.pointerId);el.style.scrollSnapType='none';el.focus()});
+ el.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const delta=drag.y-e.clientY;if(Math.abs(delta)>4)drag.moved=true;el.scrollTop=drag.scroll+delta});
+ const end=e=>{if(!drag||drag.id!==e.pointerId)return;suppressClick=drag.moved;setTimeout(()=>suppressClick=false,0);drag=null;el.style.scrollSnapType='';select(index());if(el.hasPointerCapture(e.pointerId))el.releasePointerCapture(e.pointerId)};
+ el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+ el.addEventListener('click',e=>{if(suppressClick){suppressClick=false;return}const r=el.getBoundingClientRect();select(Math.floor((e.clientY-r.top+el.scrollTop-88)/wheelHeight))});
+ return {select,index};
+}
+const periodWheel=setupWheel('wheelPeriod',['오전','오후'],0),hourWheel=setupWheel('wheelHour',Array.from({length:12},(_,i)=>String(i+1)),1),minuteWheel=setupWheel('wheelMinute',Array.from({length:60},(_,i)=>pad(i)),0);
+$('chooseTime').addEventListener('click',()=>{
+ const [h,m]=($('itemTime').value||'09:00').split(':').map(Number);$('timePicker').showModal();periodWheel.select(h<12?0:1);hourWheel.select((h%12||12)-1);minuteWheel.select(m);$('wheelPeriod').focus();
+});
+$('confirmTime').addEventListener('click',()=>{$('itemTime').value=`${pad((hourWheel.index()+1)%12+periodWheel.index()*12)}:${pad(minuteWheel.index())}`;syncPickerLabels();closePicker($('timePicker'))});
+$('clearTime').addEventListener('click',()=>{$('itemTime').value='';syncPickerLabels();closePicker($('timePicker'))});
+// Only the handle/header owns the dismiss gesture. Form and picker scrolling remain native.
+const editorSheet=$('editorOverlay').querySelector('.sheet');let sheetDrag=null,ignoreHandleClick=false;
+for(const handle of [$('editorDragHandle'),editorSheet.querySelector('.sheethead')]){
+ handle.addEventListener('pointerdown',e=>{
+  if(e.button!==0||editorClosing||e.target.closest('button')&&e.target!==$('editorDragHandle'))return;
+  sheetDrag={id:e.pointerId,y:e.clientY,distance:0,target:handle};handle.setPointerCapture(e.pointerId);editorSheet.classList.add('is-dragging');
+ });
+ handle.addEventListener('pointermove',e=>{if(!sheetDrag||sheetDrag.id!==e.pointerId)return;sheetDrag.distance=Math.max(0,e.clientY-sheetDrag.y);editorSheet.style.transform=`translateY(${sheetDrag.distance}px)`});
+ const end=e=>{
+  if(!sheetDrag||sheetDrag.id!==e.pointerId)return;const d=sheetDrag.distance;sheetDrag=null;ignoreHandleClick=handle===$('editorDragHandle')&&d>4;setTimeout(()=>ignoreHandleClick=false,0);
+  editorSheet.classList.remove('is-dragging');editorSheet.style.transform='';if(handle.hasPointerCapture(e.pointerId))handle.releasePointerCapture(e.pointerId);
+  if(e.type!=='pointercancel'&&d>=Math.min(120,editorSheet.clientHeight*.22))overlayClose('editorOverlay');
+ };
+ handle.addEventListener('pointerup',end);handle.addEventListener('pointercancel',end);
+}
+$('editorDragHandle').addEventListener('click',()=>{if(ignoreHandleClick){ignoreHandleClick=false;return}overlayClose('editorOverlay')});
+
 $('helpOpen').addEventListener('click',openHelp);$('helpDone').addEventListener('click',storageMutation(()=>{const previous=data.settings.hasOnboarded;data.settings.hasOnboarded=true;if(!persist())data.settings.hasOnboarded=previous;overlayClose('helpOverlay')}));
 $('settingsOpen').addEventListener('click',()=>{paintTheme();overlayOpen('settingsOverlay')});$('helpFromSettings').addEventListener('click',openHelp);
 $('backgroundColor').addEventListener('input',e=>setThemeValue('background',e.target.value));$('accentColor').addEventListener('input',e=>setThemeValue('accent',e.target.value));
@@ -407,7 +573,7 @@ $('defaultTaskColor').addEventListener('input',e=>setThemeValue('defaultTaskColo
 $('exportData').addEventListener('click',exportBackup);$('importDataBtn').addEventListener('click',()=>$('importData').click());$('importData').addEventListener('change',importBackup);
 $$('[data-close]').forEach(b=>b.addEventListener('click',()=>overlayClose(b.dataset.close)));
 $$('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)overlayClose(el.id)}));
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeTop()});
+document.addEventListener('keydown',e=>{if(document.querySelector('.picker-dialog[open]'))return;if(e.key==='Escape')closeTop();else if(e.key==='Tab'&&!$('editorOverlay').hidden)trapEditorFocus(e)});
 render();if(!data.settings.hasOnboarded)setTimeout(openHelp,350);if(legacyMigrated)setTimeout(()=>notify('이전 캘린더 기록을 가져왔어요.'),650);if(persistError)setTimeout(()=>notify('기기 저장소에 접근하지 못해 기록 보존이 제한될 수 있어요.'),850);
 
 })();
