@@ -65,6 +65,7 @@
 .picker-week,.picker-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
 .picker-week span{text-align:center;font-size:12px;padding:8px 0;color:var(--muted)}
 .picker-days button{min-width:0;min-height:44px;padding:0;border:0;border-radius:12px;background:transparent;color:var(--ink);font-size:15px}
+.picker-months{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}.picker-months button{min-height:54px;border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink)}.picker-months button[aria-pressed=true]{background:var(--soft);border-color:var(--accent);font-weight:800}
 .picker-days button[aria-pressed=true]{background:var(--accent);color:var(--on-accent);font-weight:800}
 .picker-days button[aria-current=date]{box-shadow:inset 0 0 0 1px var(--accent)}
 .time-wheel-labels,.time-wheels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;text-align:center}
@@ -170,10 +171,11 @@
 <!-- Separate draft pickers: values reach the editor only after confirmation. -->
 <dialog class="picker-dialog" id="datePicker" aria-labelledby="datePickerTitle" aria-describedby="datePickerHelp">
  <h2 id="datePickerTitle">날짜 선택</h2>
- <div class="picker-month"><button type="button" class="icon-btn" id="datePrevious" aria-label="이전 달">‹</button><strong id="dateMonth" aria-live="polite"></strong><button type="button" class="icon-btn" id="dateNext" aria-label="다음 달">›</button></div>
+ <div id="dateMonthView"><div class="picker-month"><button type="button" class="icon-btn" id="yearPrevious" aria-label="이전 연도">‹</button><strong id="dateYear" aria-live="polite"></strong><button type="button" class="icon-btn" id="yearNext" aria-label="다음 연도">›</button></div><div id="dateMonths" class="picker-months" role="group" aria-label="월 선택"></div></div>
+ <div id="dateDayView" hidden><button type="button" class="small-outline" id="backToMonths">‹ 12개월 보기</button><div class="picker-month"><button type="button" class="icon-btn" id="datePrevious" aria-label="이전 달">‹</button><strong id="dateMonth" aria-live="polite"></strong><button type="button" class="icon-btn" id="dateNext" aria-label="다음 달">›</button></div>
  <div class="picker-week" aria-hidden="true"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
  <div class="picker-days" id="dateDays" role="group" aria-label="날짜"></div>
- <p class="helper" id="datePickerHelp">방향키로 날짜, Page Up·Down으로 월을 이동해요.</p>
+ </div><p class="helper" id="datePickerHelp">방향키로 날짜, Page Up·Down으로 월을 이동해요.</p>
  <div class="action-row"><button class="secondary" type="button" data-picker-cancel="datePicker">취소</button><button class="primary" type="button" id="confirmDate">선택 완료</button></div>
 </dialog>
 <dialog class="picker-dialog" id="timePicker" aria-labelledby="timePickerTitle" aria-describedby="timePickerHelp">
@@ -581,8 +583,23 @@ $$('.picker-dialog').forEach(dialog=>{
  dialog.addEventListener('click',e=>{const r=dialog.getBoundingClientRect();if(e.target===dialog&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom))closePicker(dialog)});
 });
 $$('[data-picker-cancel]').forEach(b=>b.addEventListener('click',()=>closePicker($(b.dataset.pickerCancel))));
-let dateDraft='',dateMonthCursor;
+let dateDraft='',dateMonthCursor,dateYearCursor;
+function renderMonthPicker(){
+ $('dateMonthView').hidden=false;$('dateDayView').hidden=true;$('confirmDate').hidden=true;
+ $('dateYear').textContent=`${dateYearCursor}년`;$('yearPrevious').disabled=dateYearCursor<=100;$('yearNext').disabled=dateYearCursor>=9999;
+ $('datePickerHelp').textContent='월을 선택한 뒤 날짜를 선택해 주세요.';
+ const grid=$('dateMonths');grid.replaceChildren();
+ for(let m=0;m<12;m++){
+  const b=newEl('button','',`${m+1}월`);b.type='button';b.dataset.month=m+1;
+  b.setAttribute('aria-pressed',String(dateDraft.startsWith(`${dateYearCursor}-${pad(m+1)}-`)));
+  b.addEventListener('click',()=>{const day=fromKey(dateDraft).getDate();dateMonthCursor=new Date(dateYearCursor,m,1);dateDraft=dayKey(new Date(dateYearCursor,m,Math.min(day,new Date(dateYearCursor,m+1,0).getDate())));renderDatePicker(true)});grid.append(b);
+ }
+}
+$('yearPrevious').addEventListener('click',()=>{dateYearCursor--;renderMonthPicker()});
+$('yearNext').addEventListener('click',()=>{dateYearCursor++;renderMonthPicker()});
+$('backToMonths').addEventListener('click',()=>{dateYearCursor=dateMonthCursor.getFullYear();renderMonthPicker();$('dateMonths').querySelector('button').focus()});
 function renderDatePicker(focusDate=false){
+ $('dateMonthView').hidden=true;$('dateDayView').hidden=false;$('confirmDate').hidden=false;$('datePickerHelp').textContent='방향키로 날짜, Page Up·Down으로 월을 이동해요.';
  const y=dateMonthCursor.getFullYear(),m=dateMonthCursor.getMonth();
  $('dateMonth').textContent=`${y}년 ${m+1}월`;
  $('datePrevious').disabled=y===100&&m===0;$('dateNext').disabled=y===9999&&m===11;
@@ -604,7 +621,7 @@ function movePickerMonth(delta){
 }
 $('chooseDate').addEventListener('click',()=>{
  dateDraft=validDate($('itemDate').value)?$('itemDate').value:today();const d=fromKey(dateDraft);dateMonthCursor=new Date(d.getFullYear(),d.getMonth(),1);
- renderDatePicker();$('datePicker').showModal();$('dateDays').querySelector('[tabindex="0"]').focus();
+ dateYearCursor=d.getFullYear();renderMonthPicker();$('datePicker').showModal();$('dateMonths button[aria-pressed=true]')?.focus();
 });
 $('datePrevious').addEventListener('click',()=>movePickerMonth(-1));$('dateNext').addEventListener('click',()=>movePickerMonth(1));
 $('dateDays').addEventListener('keydown',e=>{
@@ -616,12 +633,19 @@ $('dateDays').addEventListener('keydown',e=>{
 });
 $('confirmDate').addEventListener('click',()=>{$('itemDate').value=dateDraft;syncPickerLabels();closePicker($('datePicker'))});
 const wheelHeight=44;
-function setupWheel(id,labels,minimum){
+function setupWheel(id,labels,minimum,cyclic=false){
  const el=$(id);el.setAttribute('aria-valuemin',minimum);el.setAttribute('aria-valuemax',minimum+labels.length-1);
- labels.forEach(label=>{const row=newEl('div','',label);row.setAttribute('aria-hidden','true');el.append(row)});
- const index=()=>Math.max(0,Math.min(labels.length-1,Math.round(el.scrollTop/wheelHeight)));
- const update=()=>{const i=index();[...el.children].forEach((row,n)=>row.classList.toggle('selected',n===i));el.setAttribute('aria-valuenow',String(i+minimum));el.setAttribute('aria-valuetext',labels[i])};
- const select=i=>{el.scrollTop=Math.max(0,Math.min(labels.length-1,i))*wheelHeight;update()};
+ const count=labels.length,mod=i=>(i%count+count)%count,center=cyclic?count*2:0;
+ const rows=cyclic?Array.from({length:count*5},(_,i)=>labels[i%count]):labels;
+ rows.forEach(label=>{const row=newEl('div','',label);row.setAttribute('aria-hidden','true');el.append(row)});
+ const position=()=>Math.round(el.scrollTop/wheelHeight);
+ const index=()=>cyclic?mod(position()):Math.max(0,Math.min(count-1,position()));
+ const update=()=>{const i=index();[...el.children].forEach((row,n)=>row.classList.toggle('selected',(cyclic?n===position():n===i)));el.setAttribute('aria-valuenow',String(i+minimum));el.setAttribute('aria-valuetext',labels[i])};
+ const select=i=>{el.scrollTop=(cyclic?center+mod(i):Math.max(0,Math.min(count-1,i)))*wheelHeight;update()};
+ let settleTimer;
+ const settle=()=>{if(!cyclic||drag)return;const i=index();el.style.scrollSnapType='none';el.scrollTop=(center+i)*wheelHeight;update();el.style.scrollSnapType=''};
+ el.addEventListener('scroll',()=>{clearTimeout(settleTimer);settleTimer=setTimeout(settle,180)},{passive:true});
+ el.addEventListener('scrollend',settle);
  el.addEventListener('scroll',update,{passive:true});
  el.addEventListener('keydown',e=>{let i=index();if(e.key==='ArrowUp')i--;else if(e.key==='ArrowDown')i++;else if(e.key==='Home')i=0;else if(e.key==='End')i=labels.length-1;else if(e.key==='PageUp')i-=5;else if(e.key==='PageDown')i+=5;else return;e.preventDefault();select(i)});
  let drag=null,suppressClick=false;
@@ -632,7 +656,7 @@ function setupWheel(id,labels,minimum){
  el.addEventListener('click',e=>{if(suppressClick){suppressClick=false;return}const r=el.getBoundingClientRect();select(Math.floor((e.clientY-r.top+el.scrollTop-88)/wheelHeight))});
  return {select,index};
 }
-const periodWheel=setupWheel('wheelPeriod',['오전','오후'],0),hourWheel=setupWheel('wheelHour',Array.from({length:12},(_,i)=>String(i+1)),1),minuteWheel=setupWheel('wheelMinute',Array.from({length:60},(_,i)=>pad(i)),0);
+const periodWheel=setupWheel('wheelPeriod',['오전','오후'],0),hourWheel=setupWheel('wheelHour',Array.from({length:12},(_,i)=>String(i+1)),1),minuteWheel=setupWheel('wheelMinute',Array.from({length:60},(_,i)=>pad(i)),0,true);
 $('chooseTime').addEventListener('click',()=>{
  const [h,m]=($('itemTime').value||'09:00').split(':').map(Number);$('timePicker').showModal();periodWheel.select(h<12?0:1);hourWheel.select((h%12||12)-1);minuteWheel.select(m);$('wheelPeriod').focus();
 });
