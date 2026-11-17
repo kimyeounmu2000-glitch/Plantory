@@ -163,3 +163,13 @@ OpenAI 공식 문서의 [저장소별 Codex 코드 검토 규칙](https://develo
 - 개발 중 월 화면 복귀 포커스 대상 조회 오류를 발견해 수정하고 재실행했다. 320px 월 선택 스크린샷 확인. 실제 iPhone/Android/Safari, 스크린리더 및 OS 화면 키보드 실측은 미실시.
 - 별도 재생성 HTML과 실행본 SHA-256 일치: CCA222D6DE5F50F8D8EFAA5CB830E8ACABA63059249BC45D3FF1F2FA41FA6898. 모델·성장/보상·Web Locks·백업 구조 변경 없음. 신규 설치·업로드·main 병합·배포 없음.
 - 최종 회귀 통과: check-editor-pickers, check-growth, check-storage, check-backup, check-integrated, check-plant-gesture 및 Node legacy 6개. 실제 사용자 프로필과 기록은 사용하지 않았다. 구버전 탭 혼용의 기존 위험은 이번 변경의 해결 범위 밖에 남는다.
+
+## 2026-11-17 PR #5 정원 회상 보완
+
+- feature/garden-revisit-ux / 원본 23f4e9e, 원격 main e46a6cd. 원본 HTML을 격리 Chrome에서 실행해 회상 클릭 후 DAY만 표시되고 회상 캔버스가 없음을 재현했다. 꽃 획득 후 할 일이 없는 날에 '쉬는 날'이 함께 표시됨도 재현했다.
+- 기존 정원 카드 안에 획득 날짜·꽃 이름·기존 3D 렌더러·현재 남은 할 일 상태를 표시한다. DAY 이동은 별도 기존 화면 링크로 제공한다. 화면을 떠날 때 회상 렌더러를 해제한다. 삭제된 과거 할 일 원문은 복원/추정하지 않고 없음을 안내한다. 꽃 획득 기록만 있는 날은 '꽃 획득'으로 표시한다.
+- check-revisit-ux.cjs를 Node 내장 HTTP/WebSocket과 이미 설치된 Chrome/Edge의 CDP로 실행하도록 변경했다. 신규 패키지 설치 없음. Windows Actions의 기존 모델/재생성 검사를 유지하고 같은 브라우저 검사를 추가했다. 브라우저가 없으면 명시적으로 실패하며 설치하지 않는다.
+- Chrome·Edge 통과: 실제 획득 꽃 캔버스/이름/날짜/완료 기록, DAY 이동, 렌더러 해제, 삭제된 기록, 빈 상태와 미획득 이미지 비노출, 연말/연초·윤일, 320/375/390/430px, 저장 원문 불변. 의도적 assertion 실패가 종료 코드 1로 전파됨 확인. 원격 Actions 결과는 push 후 별도 확인.
+- Chrome 회귀: check-growth/storage/backup/integrated/plant-gesture 및 Node legacy 6개 통과. 생성 HTML 재생성 SHA-256 일치: 0021DA2CED723DF8C41EC378E0E09EE58775F125B8184CA4F3122C04EB247ABC.
+- 로컬 보상 브랜치는 존재하며 77e4b69 이후 최종 보완 8e06828까지 있다. merge-tree 읽기 비교에서 input/Plantory_3D_Integrated_v3.html 및 app/Plantory_3D_Integrated_original_models.html 충돌 확인. 실제 병합은 하지 않았다. PR #5 확정 후 입력 HTML에서 UI/이벤트를 통합하고 보상 저장 스크립트를 유지한 채 실행본을 재생성하는 순서를 권장한다.
+- iPhone Safari·Android Chrome 실기기 미실시. 신규 설치/실제 사용자 데이터 변경/main 병합/Pages 배포 없음.
