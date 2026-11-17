@@ -17,6 +17,13 @@ jobs:
           persist-credentials: false
       - name: Run model tests
         run: node --test tests/legacy/tests.mjs
+      - name: Run revisit browser tests with installed Chrome
+        shell: pwsh
+        run: |
+          $env:PLANTORY_CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
+          if (!(Test-Path -LiteralPath $env:PLANTORY_CHROME)) { throw 'Preinstalled Chrome is required; no package will be installed.' }
+          node tests/check-revisit-ux.cjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Verify generated HTML
         shell: pwsh
         run: |
