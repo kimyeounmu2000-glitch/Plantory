@@ -173,3 +173,14 @@ OpenAI 공식 문서의 [저장소별 Codex 코드 검토 규칙](https://develo
 - Chrome 회귀: check-growth/storage/backup/integrated/plant-gesture 및 Node legacy 6개 통과. 생성 HTML 재생성 SHA-256 일치: 0021DA2CED723DF8C41EC378E0E09EE58775F125B8184CA4F3122C04EB247ABC.
 - 로컬 보상 브랜치는 존재하며 77e4b69 이후 최종 보완 8e06828까지 있다. merge-tree 읽기 비교에서 input/Plantory_3D_Integrated_v3.html 및 app/Plantory_3D_Integrated_original_models.html 충돌 확인. 실제 병합은 하지 않았다. PR #5 확정 후 입력 HTML에서 UI/이벤트를 통합하고 보상 저장 스크립트를 유지한 채 실행본을 재생성하는 순서를 권장한다.
 - iPhone Safari·Android Chrome 실기기 미실시. 신규 설치/실제 사용자 데이터 변경/main 병합/Pages 배포 없음.
+
+## 2026-11-18 1단계 멘트 시스템 분리 후보 — main 반영 승인 필요
+
+- 기준 main b0587b1, feature/reward-messages-only. 기존 feature/daily-reward-celebration 최종 8e06828(최초 77e4b69)의 승인된 40쌍·Shuffle Bag·저장 성공 후 카드 표시를 재사용했다. 반짝임/꽃잎 DOM·CSS·타이머는 가져오지 않았다. 기존 정원 회상 구현 유지.
+- 추가 스키마: 기존 STORE/버전 2의 optional celebration={remaining:[ID],last:ID|null,days:{YYYY-MM-DD:ID}}. 꽃 지급과 같은 Web Locks/스냅샷에서 갱신해 실패 시 함께 롤백한다. 꽃 종류 추첨 코드는 변경하지 않는다.
+- 호환성: celebration 없는 기존 JSON은 빈 이력으로 읽고 기존 꽃·성장·일정 보존. 읽기만으로 저장하지 않으며 이후 정상 저장에 필드가 추가된다. 과거 보상에 멘트를 소급 배정/소비하지 않는다. 중복 ID 등 잘못된 메타데이터는 원본 쓰기 차단.
+- 복원: 후보 버전의 JSON 백업에는 전체 멘트 이력이 들어가며 후보 버전에서 복원 가능. 이전 백업에는 멘트 이력이 없어 복원 시 해당 이력도 되돌아간다. 구 main은 새 필드를 이해하지 못해 이후 저장 시 제거할 수 있다. 배포 전 기존 JSON 보관, 후보 사용 후 새 JSON 별도 보관, 구버전 탭 종료가 필요하다. 구버전으로 되돌릴 경우 최신 멘트 이력을 보존하려면 후보로 돌아온 뒤 그 백업을 복원해야 하며 백업 시점 이후 기록과 자동 병합하지 않는다.
+- Chrome 통과: 41회 지급에서 첫 40개 ID 유일·새 주기 경계 비반복, 매회 새로고침 이력/자동 재생 없음, 4개 모바일 너비, 실패 재시도 및 오류 안내 정리, JSON 멘트 이력 백업/복원, 0개·같은 날 재완료·동시 탭 중복 방지. reduced-motion 및 키보드 정원 이동 통과. 신규 check-message-compat로 과거 JSON 무변경 읽기/저장 호환 및 손상 이력 쓰기 차단 확인.
+- 기존 Chrome check-growth/storage/backup/integrated, Node legacy 6개, 정원 회상 native 검사 통과. Edge 중복 지급·접근성 검사 통과. 실제 iPhone Safari/Android Chrome·실제 스크린리더 검사 미실시.
+- 생성 HTML SHA-256 별도 출력 일치: 00AC0A857A1EC5550E96EA3929C53A386C0D8AAE003ED600E7CD277CE71E0D40.
+- 저장 스키마가 추가되므로 이번 사용자 지시와 운영 규칙에 따라 main 병합/배포 보류. 신규 패키지 설치·실제 사용자 기록 변경 없음. 기존 보상 연출 브랜치 자체를 병합하지 않았다.

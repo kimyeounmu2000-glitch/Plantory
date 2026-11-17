@@ -10,7 +10,7 @@ def apply_growth(app):
         app, count = re.subn(pattern, lambda _:replacement, app, count=1)
         assert count == 1, name
     app=app.replace('version:2,items:[],awards:{},settings:', 'version:2,items:[],awards:{},growth:{},settings:')
-    app=app.replace('return {version:2,items,awards,settings}', 'return {version:2,items,awards,settings,growth:normalizeGrowth(items,awards,input.growth)}')
+    app=app.replace('return {version:2,items,awards,settings}', 'return {version:2,items,awards,settings,growth:normalizeGrowth(items,awards,input.growth),celebration:normalizeCelebration(input.celebration,awards)}')
     replace_function('stage', Path(__file__).with_name('growth-v2.js').read_text(encoding='utf-8').strip())
     app=app.replace('function restoreHome3D(){if(!plant3d)return;', 'function restoreHome3D(){if(!plant3d||growthPlaying)return;')
     app=re.sub(r'(function go\([^)]*\)\{)', r'\1cancelGrowth();', app)

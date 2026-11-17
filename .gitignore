@@ -15,3 +15,5 @@ backups/
 downloads/
 profiles/
 work/
+
+!scripts/reward-messages.json
