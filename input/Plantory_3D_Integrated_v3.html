@@ -83,6 +83,8 @@
 @media(prefers-reduced-motion:reduce){.picker-dialog,#editorOverlay .sheet{animation:none!important;transition:none!important}.time-wheel{scroll-behavior:auto}}
 
 .revisit-hint{margin:12px 3px 0;color:var(--muted);font-size:12px;line-height:1.7}.garden-memory{border-top:1px solid var(--line);margin-top:12px;padding-top:12px}.garden-memory .plain-btn{min-height:44px}
+.reward-card{position:fixed;z-index:25;bottom:12px;left:50%;transform:translateX(-50%);width:min(420px,calc(100% - 24px));max-height:45dvh;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:0 8px 35px #26313d30;text-align:center}
+.reward-card h2{font-size:18px;line-height:1.5;margin:8px 0}.reward-card p{font-size:14px;line-height:1.6}.reward-card img{width:72px;height:74px;object-fit:contain}
 </style>
 </head>
 <body>
@@ -165,6 +167,7 @@
   <button class="fab" id="fab" aria-label="할 일 또는 약속 등록" title="할 일 또는 약속 등록"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.5"><path d="M12 4v16M4 12h16"/></svg></button>
 
 </div>
+<section id="rewardCelebration" class="reward-card" aria-label="오늘의 꽃 보상" hidden><img id="rewardFlower" alt=""><div id="rewardFlowerName"></div><div aria-live="polite"><h2 id="rewardMain"></h2><p id="rewardSub"></p></div><div class="action-row"><button id="rewardClose" type="button" class="secondary">확인</button><button id="rewardGarden" type="button" class="primary">정원 보기</button></div></section>
 <!-- task/event editor -->
 <div class="overlay" id="editorOverlay" hidden><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="editorHeading"><button type="button" id="editorDragHandle" aria-label="기록 팝업 닫기"></button><div class="sheethead"><h2 id="editorHeading">새 기록 추가</h2><button class="close" type="button" data-close="editorOverlay" aria-label="닫기">×</button></div>
   <div class="type-group"><button id="typeTask" aria-pressed="true" type="button">✓ 할 일</button><button id="typeEvent" aria-pressed="false" type="button">◷ 약속·예약</button></div>
@@ -684,6 +687,8 @@ for(const handle of [$('editorDragHandle'),editorSheet.querySelector('.sheethead
 }
 $('editorDragHandle').addEventListener('click',()=>{if(ignoreHandleClick){ignoreHandleClick=false;return}overlayClose('editorOverlay')});
 
+$('rewardClose').addEventListener('click',()=>{$('rewardCelebration').hidden=true});
+$('rewardGarden').addEventListener('click',()=>{$('rewardCelebration').hidden=true;go('garden')});
 setupMigration();
 $('helpOpen').addEventListener('click',openHelp);$('helpDone').addEventListener('click',storageMutation(()=>{const previous=data.settings.hasOnboarded;data.settings.hasOnboarded=true;if(!persist())data.settings.hasOnboarded=previous;overlayClose('helpOverlay')}));
 $('settingsOpen').addEventListener('click',()=>{paintTheme();overlayOpen('settingsOverlay')});$('helpFromSettings').addEventListener('click',openHelp);

@@ -44,9 +44,10 @@ function commitTasks(change, message) {
  change();
  const awarded = rewardToday(), k = today();
  data.growth[k] = stage(false);
+ if(awarded){data.celebration??=normalizeCelebration(undefined,data.awards);takeRewardMessage(data.celebration,k)}
  if (!persist()) { data = before; render(); return false; }
  render(); animateGrowth(previousStage, stage());
- if (awarded) notify(`오늘 꽃이 피었어요! ${SPECIES.find(s => s.id === data.awards[k]).name}을(를) 획득했어요.`);
+ if (awarded) showRewardCelebration(k);
  else if (message) notify(message);
  return true;
 }

@@ -215,3 +215,12 @@ OpenAI 공식 문서의 [저장소별 Codex 코드 검토 규칙](https://develo
 - 실제 기기 iPhone/Android, OS 강제 종료, 실제 용량 고갈은 미실시. 손상 v3 원문은 자동 교체하지 않으며 백업·별도 복구 검토 대상. 구버전의 v2 자체 수정과 사이트 데이터 전체 삭제는 보호할 수 없다. 구버전 종료/외부 백업 필요.
 
 - 최종 Edge 성장·백업·통합 3D·release 통과. 최종 Chrome/Edge 이전 및 저장 검사 재실행 통과(이미 열린 빈 탭의 pending 우회 차단 포함). 신규 설치 없음. 외부 사용자 기록은 테스트에 사용하지 않았다.
+
+## 2026-11-18 v3 격려 멘트 통합
+
+- 기준 main 5c4b78c, feature/reward-messages-v3-integration. 원본 7da6ab0의 40쌍 JSON과 Shuffle Bag 재사용. 문구 JSON 전체 동일 확인. 반짝임·꽃잎 이펙트 없음.
+- v3 normalize/명시적 이전/pending journal/Web Locks/추가 필드 보존을 그대로 유지하고 commitTasks의 꽃 지급 snapshot 안에서만 멘트 이력을 소비한다. persist 실패 시 꽃·성장·멘트 전체 rollback, 성공 후 카드 표시. 기존 보상에 소급 소비 없음.
+- scripts/reward-celebration.js의 normalizeCelebration은 초기 이력 생성에 사용하며 기존 필드는 v3 검증기가 보존한다. 후보 함수도 추가 필드를 유지하도록 보완. 멘트 테스트 4개는 v3 키로 변경하고 일반 저장 시 불필요하게 빈 이력을 생성하지 않는 동작을 확인한다.
+- 실제 기기 iPhone Safari/Android Chrome 미실시. 기존 설치 도구만 사용하고 모델/꽃 확률/성장 규칙은 변경하지 않았다.
+- Chrome/Edge 모두 통과: 41회 실제 보상 저장(첫40 ID 유일/주기 경계 연속 중복 없음), 새로고침/백업·복원 이력, 실패 rollback·재시도 안내, 0개/같은 날/다중 탭 중복 방지, 320·375·390·430px, reduced-motion/키보드, 기존 JSON 호환과 손상 이력 쓰기 차단, v3 이전/원본·추가필드·멘트 보존/실패·중단·동시이전, 저장·성장·백업·통합3D·정원 회귀.
+- Chrome release/날짜시간 CRUD·모의 터치·회전 회귀, Node legacy 6개 통과. 생성 HTML 별도 출력과 SHA-256 일치. 320px 카드 스크린샷 시각 확인.

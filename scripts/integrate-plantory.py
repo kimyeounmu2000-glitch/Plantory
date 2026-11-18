@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import re, base64
 import runpy, sys
@@ -60,6 +61,7 @@ app=scripts[1].group(1)
 app=re.sub(r'const SPECIES=\[.*?\];', 'const SPECIES=PLANT_SPECIES;', app)
 # A gesture belongs to its starting region, including the touch fallback.
 app=app.replace("e.target.closest('input,textarea,select,button')", "e.target.closest('input,textarea,select,button,#plantGraphic')")
+app=app.replace('const STORE=', 'const REWARD_MESSAGES='+json.dumps(json.loads((root/'scripts/reward-messages.json').read_text(encoding='utf-8')),ensure_ascii=False)+';\n'+(root/'scripts/reward-celebration.js').read_text(encoding='utf-8')+'\nconst STORE=')
 app=runpy.run_path(str(root / 'scripts/growth-v2.py'))['apply_growth'](app)
 module='import * as THREE from "data:text/javascript;base64,'+three+'";\n'+fallback+'\n'+plant+'\n'+adapter+'\n'+app
 result=html[:scripts[0].start()]+'<script type="module">\n'+module+'\n</script>'+html[scripts[1].end():]
