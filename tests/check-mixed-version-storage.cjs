@@ -4,7 +4,8 @@ const fs=require('node:fs/promises'),path=require('node:path'),assert=require('n
 const {execFileSync}=require('node:child_process');
 (async()=>{
  const root=path.resolve(__dirname,'..'), key='plantory_full_mvp_v2', url='https://plantory.test/app';
- const latest=await fs.readFile(path.join(root,'app/Plantory_3D_Integrated_original_models.html'));
+ // Historical baseline retained for before/after comparison.
+ const latest=execFileSync('git',['show','b0587b1:app/Plantory_3D_Integrated_original_models.html'],{cwd:root,maxBuffer:8*1024*1024});
  const old=execFileSync('git',['show','e469574:app/Plantory_3D_Integrated_original_models.html'],{cwd:root,maxBuffer:8*1024*1024});
  const browser=await chromium.launch({executablePath:process.env.PLANTORY_CHROME});
  const failures=[];

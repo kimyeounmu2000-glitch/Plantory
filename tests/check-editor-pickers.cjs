@@ -6,7 +6,7 @@ const {pathToFileURL}=require('node:url');
  try{
   const context=await browser.newContext({viewport:{width:390,height:844},hasTouch:true});
   const p=await context.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));
-  const key='plantory_full_mvp_v2',url=pathToFileURL(path.resolve(__dirname,'../app/Plantory_3D_Integrated_original_models.html')).href;
+  const key='plantory_full_mvp_v3',url=pathToFileURL(path.resolve(__dirname,'../app/Plantory_3D_Integrated_original_models.html')).href;
   await p.goto(url);await p.locator('#helpDone').click();await p.locator('#helpOverlay').waitFor({state:'hidden'});
   const raw=()=>p.evaluate(k=>localStorage.getItem(k),key);
   const baseline=await raw();await p.locator('#fab').click();

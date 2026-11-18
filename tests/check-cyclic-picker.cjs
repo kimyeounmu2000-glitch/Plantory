@@ -3,7 +3,7 @@ const assert=require('node:assert/strict'),path=require('node:path'),{pathToFile
 (async()=>{const b=await chromium.launch({executablePath:process.env.PLANTORY_CHROME});try{
  const c=await b.newContext({hasTouch:true,viewport:{width:390,height:844}}),p=await c.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));
  await p.goto(pathToFileURL(path.resolve(__dirname,'../app/Plantory_3D_Integrated_original_models.html')).href);await p.locator('#helpDone').click();await p.locator('#fab').click();
- const raw=()=>p.evaluate(()=>localStorage.getItem('plantory_full_mvp_v2')),before=await raw();
+ const raw=()=>p.evaluate(()=>localStorage.getItem('plantory_full_mvp_v3')),before=await raw();
  await p.evaluate(()=>document.querySelector('#itemDate').value='2026-01-31');
  for(const width of [320,375,390,430]){
   await p.setViewportSize({width,height:844});await p.locator('#chooseDate').click();assert.equal(await p.locator('#dateMonths button').count(),12);

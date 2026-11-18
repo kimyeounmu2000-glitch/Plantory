@@ -105,7 +105,12 @@
     <strong id="detailName">나의 정원</strong>
     <span aria-hidden="true" class="detail-spacer"></span>
   </div>
-  <main class="view-container" id="gestureSurface">
+  <section id="migrationNotice" class="card" hidden role="region" aria-label="기존 기록 이전">
+<h2>기존 기록을 안전하게 옮기기</h2><p>구버전 탭과 설치 앱을 모두 닫고 먼저 원본 백업을 보관해 주세요. 이전 후 구버전에서 수정한 기록은 자동 동기화되지 않아요. 구버전은 계속 사용하지 마세요.</p>
+<button id="migrationBackup" class="secondary" type="button">기존 원본 백업</button>
+<button id="migrationApply" class="secondary" type="button">기록 확인 후 이전</button>
+<p id="migrationStatus" role="status"></p></section>
+<main class="view-container" id="gestureSurface">
     <section class="screen" data-screen="day" hidden aria-label="일간 일정">
       <div class="section-tag">DAY · 나의 하루</div>
       <div class="day-top"><h1 id="dayTitle">오늘</h1><div class="arrow-pair"><button class="arrow-btn" id="prevDay" aria-label="이전 날짜"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m14 5-7 7 7 7"/></svg></button><button class="arrow-btn" id="nextDay" aria-label="다음 날짜"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10 5 7 7-7 7"/></svg></button></div></div>
@@ -331,7 +336,7 @@ window.Plantory3D={create(){
 
 
 (()=>{'use strict';
-const STORE='plantory_full_mvp_v2', LEGACY='plantory_calendar_prototype_v1';
+const STORE='plantory_full_mvp_v3', OLD_STORE='plantory_full_mvp_v2', LEGACY='plantory_calendar_prototype_v1', MIGRATION=STORE+'-migration-pending';
 const $=id=>document.getElementById(id), $$=sel=>Array.from(document.querySelectorAll(sel));
 const PALETTE=['#359E64','#4B89AC','#8B5BB7','#D98A36','#C85E65','#4A7A83','#A35A94','#687585'];
 const SPECIES=PLANT_SPECIES;
@@ -351,9 +356,45 @@ const validHex=s=>typeof s==='string'&&/^#[\da-fA-F]{6}$/.test(s);
 const validDate=s=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(s||''))return false;const d=fromKey(s);return Number.isFinite(d.getTime())&&dayKey(d)===s};
 const sanitizeItem=x=>({id:String(x.id||makeId()).slice(0,100),type:x.type==='event'?'event':'task',date:x.date,title:String(x.title||'').slice(0,90),time:/^([01]\d|2[0-3]):[0-5]\d$/.test(x.time||'')?x.time:'',note:String(x.note||'').slice(0,500),done:x.type==='task'?Boolean(x.done):false,color:validHex(x.color)?x.color:null});
 function makeId(){return globalThis.crypto?.randomUUID?.()||`id-${Date.now()}-${Math.random().toString(36).slice(2)}`}
-function normalize(input){const base=defaultData();if(!input||typeof input!=='object'||!Array.isArray(input.items))throw Error('백업 데이터 형식이 올바르지 않아요.');const items=input.items.filter(x=>x&&validDate(x.date)&&typeof x.title==='string'&&['task','event'].includes(x.type)).slice(0,15000).map(sanitizeItem);const rawAwards=(input.awards&&typeof input.awards==='object'&&!Array.isArray(input.awards))?input.awards:{};const awards={};for(const [k,v] of Object.entries(rawAwards)){if(validDate(k)&&SPECIES.some(s=>s.id===v))awards[k]=v}const inputSettings=input.settings||{};const settings={...base.settings,defaultTaskColor:validHex(inputSettings.defaultTaskColor)?inputSettings.defaultTaskColor:base.settings.defaultTaskColor,defaultEventColor:validHex(inputSettings.defaultEventColor)?inputSettings.defaultEventColor:base.settings.defaultEventColor,background:validHex(inputSettings.background)?inputSettings.background:null,accent:validHex(inputSettings.accent)?inputSettings.accent:null,hasOnboarded:!!inputSettings.hasOnboarded};return {version:2,items,awards,settings,growth:normalizeGrowth(items,awards,input.growth)}}
-let data=defaultData(),persistError=false,legacyMigrated=false,storageSnapshot=null;
-try{const latest=localStorage.getItem(STORE);storageSnapshot=latest;if(latest!==null)data=normalize(JSON.parse(latest));else {const old=localStorage.getItem(LEGACY);if(old){const source=JSON.parse(old);if(source&&Array.isArray(source.items)&&!source.isDemo){data.items=source.items.filter(x=>x&&validDate(x.date)&&['task','event'].includes(x.type)&&typeof x.title==='string').map(sanitizeItem);data.settings.hasOnboarded=true;legacyMigrated=true}}}}catch(e){persistError=true;console.warn('저장소 읽기 실패:',e)}
+function normalize(input){
+ const object=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
+ const reject=()=>{throw Error('지원하지 않거나 손상된 기록이 있어 원본을 보존했어요.')};
+ if(!object(input)||(input.version!==undefined&&input.version!==2)||!Array.isArray(input.items)||input.items.length>15000)reject();
+ const result=structuredClone(input),base=defaultData(),ids=new Set();
+ result.version=input.version??2;
+ result.items=input.items.map(x=>{
+  if(!object(x)||typeof x.id!=='string'||!x.id||ids.has(x.id)||!validDate(x.date)||!['task','event'].includes(x.type)||typeof x.title!=='string'||x.title.length>90)reject();
+  ids.add(x.id);
+  if(x.time!==undefined&&x.time!==''&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(x.time))reject();
+  if(x.note!==undefined&&(typeof x.note!=='string'||x.note.length>500))reject();
+  if(x.done!==undefined&&typeof x.done!=='boolean')reject();
+  if(x.color!==undefined&&x.color!==null&&!validHex(x.color))reject();
+  return {...x,time:x.time??'',note:x.note??'',done:x.done??false,color:x.color??null};
+ });
+ if(input.awards!==undefined&&!object(input.awards))reject();
+ result.awards=structuredClone(input.awards??{});
+ for(const [date,kind] of Object.entries(result.awards))if(!validDate(date)||!SPECIES.some(s=>s.id===kind))reject();
+ if(input.settings!==undefined&&!object(input.settings))reject();
+ result.settings={...base.settings,...input.settings};
+ for(const k of ['defaultTaskColor','defaultEventColor'])if(!validHex(result.settings[k]))reject();
+ for(const k of ['background','accent'])if(result.settings[k]!==null&&!validHex(result.settings[k]))reject();
+ if(typeof result.settings.hasOnboarded!=='boolean')reject();
+ if(input.growth!==undefined&&!object(input.growth))reject();
+ for(const [date,stage] of Object.entries(input.growth??{}))if(!validDate(date)||!Number.isInteger(stage)||stage<0||stage>3)reject();
+ result.growth=structuredClone(input.growth??normalizeGrowth(result.items,result.awards,{}));
+ if(input.celebration!==undefined){
+  const c=input.celebration,id=x=>Number.isInteger(x)&&x>=0&&x<40;
+  if(!object(c)||!Array.isArray(c.remaining)||c.remaining.some(x=>!id(x))||new Set(c.remaining).size!==c.remaining.length||!(c.last===null||id(c.last))||!object(c.days))reject();
+  for(const [date,value] of Object.entries(c.days))if(!validDate(date)||!id(value)||!result.awards[date])reject();
+ }
+ return result;
+}
+let data=defaultData(),persistError=false,storageSnapshot=null,migrationBlocked=false;
+try{
+ const latest=localStorage.getItem(STORE);storageSnapshot=latest;
+ if(latest!==null)data=normalize(JSON.parse(latest));
+ migrationBlocked=localStorage.getItem(MIGRATION)!==null||(latest===null&&(localStorage.getItem(OLD_STORE)!==null||localStorage.getItem(LEGACY)!==null));
+}catch(e){persistError=true;console.warn('저장소 읽기 실패:',e)}
 let view='home',selected=today(),month=new Date(fromKey(today()).getFullYear(),fromKey(today()).getMonth(),1),editorType='task',editId=null,editingColor=null,focusReturn=null,toaster=null;
 function notify(s,persistent=false){const t=$('toast');t.textContent=s;t.hidden=false;clearTimeout(toaster);if(!persistent)toaster=setTimeout(()=>t.hidden=true,3400)}
 let failedEditorDraft=false;
@@ -364,6 +405,8 @@ function storageWarning(message){
 window.addEventListener('beforeunload',e=>{if(failedEditorDraft){e.preventDefault();e.returnValue=''}});
 // Writes are called only inside storageMutation's origin-wide lock.
 function persist(){
+ try{if(localStorage.getItem(MIGRATION)!==null||(storageSnapshot===null&&(localStorage.getItem(OLD_STORE)!==null||localStorage.getItem(LEGACY)!==null)))migrationBlocked=true}catch(e){storageWarning('저장소를 읽을 수 없어 저장을 중단했어요.');return false}
+ if(migrationBlocked){storageWarning('이전 기록 확인을 먼저 완료해 주세요. 원본은 변경하지 않았어요.');return false}
  if(persistError){storageWarning('기존 기록을 읽지 못해 저장을 중단했어요. 원본은 보존됩니다.');return false}
  try{
   if(localStorage.getItem(STORE)!==storageSnapshot){storageWarning('다른 탭에서 기록이 변경되어 저장하지 않았어요. 다른 탭을 닫고 새로고침 후 다시 시도해 주세요.');return false}
@@ -375,6 +418,8 @@ let storageQueue=Promise.resolve();
 function storageMutation(action){return function(...args){
  args[0]?.preventDefault?.();
  const run=async()=>{
+  let pending;try{pending=localStorage.getItem(MIGRATION)}catch(e){storageWarning('저장소를 읽을 수 없어 저장을 중단했어요.');return}
+  if(migrationBlocked||pending!==null){migrationBlocked=true;storageWarning('이전 기록 확인을 먼저 완료해 주세요. 원본은 보존됩니다.');return}
   if(persistError){storageWarning('기존 기록을 읽지 못해 저장을 중단했어요. 원본은 보존됩니다.');return}
   if(!navigator.locks){render();storageWarning('안전한 저장 잠금을 사용할 수 없어 저장하지 않았어요. 최신 브라우저의 HTTPS 주소에서 다시 시도해 주세요. 주소가 바뀌면 기존 기록은 자동 이동하지 않아요.');return}
   try{await navigator.locks.request(STORE+'-write',()=>action(...args))}
@@ -528,6 +573,44 @@ function deleteEditor(){
 }
 function setThemeValue(key,v){const prev=data.settings[key];data.settings[key]=v;if(!persist()){data.settings[key]=prev;return}paintTheme()}
 function openHelp(){if(!$('settingsOverlay').hidden)overlayClose('settingsOverlay');overlayOpen('helpOverlay')}
+function setupMigration(){
+ const panel=$('migrationNotice'),status=$('migrationStatus');panel.hidden=!migrationBlocked;
+ const message=text=>{status.textContent=text};
+ $('migrationBackup').addEventListener('click',()=>{
+  try{
+   const raw=localStorage.getItem(OLD_STORE)??localStorage.getItem(LEGACY);
+   if(raw===null)throw Error('기존 원본을 찾을 수 없어요.');
+   if(new TextDecoder('utf-8',{ignoreBOM:true}).decode(new TextEncoder().encode(raw))!==raw)throw Error('원문을 파일로 정확히 보존할 수 없어 저장소 원문을 유지했어요.');
+   const url=URL.createObjectURL(new Blob([raw],{type:'text/plain;charset=utf-8'})),a=document.createElement('a');
+   a.href=url;a.download='plantory-v2-original-'+today()+'.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);
+   message('원문 백업을 시작했어요. 정상 JSON이면 복원에 사용할 수 있어요. 손상 원문은 복구 검토용이에요.');
+  }catch(e){message(e.message)}
+ });
+ $('migrationApply').addEventListener('click',async()=>{
+  try{
+   if(!navigator.locks)throw Error('안전한 저장 잠금이 없어 이전하지 않았어요. 최신 HTTPS 브라우저에서 다시 시도해 주세요.');
+   await navigator.locks.request(STORE+'-write',()=>{
+    const target=localStorage.getItem(STORE),pending=localStorage.getItem(MIGRATION),raw=localStorage.getItem(OLD_STORE);
+    if(target!==null&&pending===null)throw Error('새 기록이 이미 있어 덮어쓰지 않았어요. 새로고침해 주세요.');
+    if(raw===null)throw Error('이전 가능한 v2 기록이 없어요. 초기 프로토타입 기록은 자동 변환하지 않고 보존합니다.');
+    const source=normalize(JSON.parse(raw));
+    if(pending!==null&&pending!==raw)throw Error('이전 중 원본이 변경됐어요. 양쪽 기록을 보존했으며 자동 재이전하지 않아요. 백업 후 복구 검토가 필요해요.');
+    if(target!==null&&target!==raw)throw Error('이전 복사본이 원본과 달라 중단했어요. 두 기록을 그대로 보존합니다.');
+    if(!confirm(`할 일·일정 ${source.items.length}개와 꽃 ${Object.keys(source.awards).length}개를 옮길까요? 구버전 탭을 닫고 원본 백업을 보관했는지 확인해 주세요. 이후 구버전 변경은 동기화되지 않아요.`))return;
+    if(localStorage.getItem(OLD_STORE)!==raw)throw Error('확인 중 원본이 변경되어 이전하지 않았어요. 다시 확인해 주세요.');
+    // Journal is written first: interruption never turns an unverified copy into writable data.
+    if(pending===null)localStorage.setItem(MIGRATION,raw);
+    migrationBlocked=true;
+    if(target===null)localStorage.setItem(STORE,raw);
+    if(localStorage.getItem(STORE)!==raw||localStorage.getItem(OLD_STORE)!==raw)throw Error('이전 결과 확인이 필요해요. 원본과 복사본을 보존하고 저장을 중단했어요.');
+    localStorage.removeItem(MIGRATION);
+    message('이전과 원문 일치 확인을 완료했어요. 새 저장 공간을 엽니다.');
+    location.reload();
+   });
+  }catch(e){message('이전하지 못했거나 확인이 필요해요. 원본은 변경하지 않았어요. '+e.message)}
+ });
+}
+
 function exportBackup(){
  let raw;
  try{raw=localStorage.getItem(STORE)}catch(e){notify('저장소를 읽을 수 없어 백업을 만들지 않았어요. 원본은 변경하지 않았어요.');return}
@@ -556,7 +639,7 @@ saveEditor=storageMutation(saveEditor);
 deleteEditor=storageMutation(deleteEditor);
 setThemeValue=storageMutation(setThemeValue);
 importBackup=storageMutation(importBackup);
-if(legacyMigrated)storageMutation(persist)();
+
 $$('[data-nav]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.nav)));
  $('backHome').addEventListener('click',()=>go('home'));
 $('fab').addEventListener('click',()=>openEditor());
@@ -691,6 +774,7 @@ for(const handle of [$('editorDragHandle'),editorSheet.querySelector('.sheethead
 }
 $('editorDragHandle').addEventListener('click',()=>{if(ignoreHandleClick){ignoreHandleClick=false;return}overlayClose('editorOverlay')});
 
+setupMigration();
 $('helpOpen').addEventListener('click',openHelp);$('helpDone').addEventListener('click',storageMutation(()=>{const previous=data.settings.hasOnboarded;data.settings.hasOnboarded=true;if(!persist())data.settings.hasOnboarded=previous;overlayClose('helpOverlay')}));
 $('settingsOpen').addEventListener('click',()=>{paintTheme();overlayOpen('settingsOverlay')});$('helpFromSettings').addEventListener('click',openHelp);
 $('backgroundColor').addEventListener('input',e=>setThemeValue('background',e.target.value));$('accentColor').addEventListener('input',e=>setThemeValue('accent',e.target.value));
@@ -700,11 +784,7 @@ $('exportData').addEventListener('click',exportBackup);$('importDataBtn').addEve
 $$('[data-close]').forEach(b=>b.addEventListener('click',()=>overlayClose(b.dataset.close)));
 $$('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)overlayClose(el.id)}));
 document.addEventListener('keydown',e=>{if(document.querySelector('.picker-dialog[open]'))return;if(e.key==='Escape')closeTop();else if(e.key==='Tab'&&!$('editorOverlay').hidden)trapEditorFocus(e)});
-let renderedDate=today();
-function refreshDate(){if(today()!==renderedDate){renderedDate=today();cancelGrowth();render()}}
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshDate()});
-setInterval(refreshDate,30000);
-render();if(!data.settings.hasOnboarded)setTimeout(openHelp,350);if(legacyMigrated)setTimeout(()=>notify('이전 캘린더 기록을 가져왔어요.'),650);if(persistError)setTimeout(()=>notify('기기 저장소에 접근하지 못해 기록 보존이 제한될 수 있어요.'),850);
+render();if(!data.settings.hasOnboarded&&!migrationBlocked)setTimeout(openHelp,350);if(persistError)setTimeout(()=>notify('기기 저장소에 접근하지 못해 기록 보존이 제한될 수 있어요.'),850);
 
 })();
 

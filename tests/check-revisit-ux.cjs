@@ -17,7 +17,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('nod
  const load=async(method,params)=>{const loaded=new Promise(r=>{events.set('Page.loadEventFired',[r])});await send(method,params);await loaded};
  await send('Page.enable');await send('Runtime.enable');await load('Page.navigate',{url:`http://127.0.0.1:${server.address().port}`});
  // Pin only the synthetic test page's date, including year/month boundaries.
- const seed=async sample=>{await evaluate(`localStorage.setItem('plantory_full_mvp_v2',${JSON.stringify(JSON.stringify(sample))})`);await load('Page.reload',{})};
+ const seed=async sample=>{await evaluate(`localStorage.setItem('plantory_full_mvp_v3',${JSON.stringify(JSON.stringify(sample))})`);await load('Page.reload',{})};
  const sample=(awards,items=[])=>({version:2,items,awards,settings:{hasOnboarded:true}});
  const now=await evaluate("(()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')})()");
  const yesterday=await evaluate("(()=>{const d=new Date();d.setDate(d.getDate()-1);return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')})()");
@@ -25,10 +25,10 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('nod
  const garden=()=>evaluate("document.querySelector('[data-nav=garden]').click()");
  const item={id:'past',type:'task',date:yesterday,title:'Synthetic completed task',done:true};
  for(const width of [320,375,390,430]){
- await send('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:1,mobile:true});await seed(sample({[yesterday]:'tulip',[now]:'daisy'},[item]));const before=await evaluate("localStorage.getItem('plantory_full_mvp_v2')");await garden();await click('gardenMemoryOpen');
+ await send('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:1,mobile:true});await seed(sample({[yesterday]:'tulip',[now]:'daisy'},[item]));const before=await evaluate("localStorage.getItem('plantory_full_mvp_v3')");await garden();await click('gardenMemoryOpen');
  if(process.env.PLANTORY_REPRO_ONLY){console.log(JSON.stringify({dayVisible:await evaluate("!document.querySelector('[data-screen=day]').hidden"),memoryCanvas:await evaluate("!!document.querySelector('#memoryPlant canvas')")}));await seed(sample({[yesterday]:'tulip'}));await garden();console.log('reward-with-rest-label',await evaluate("[...document.querySelectorAll('#gardenDays .garden-day')].some(e=>e.querySelector('img')&&e.textContent.includes('쉬는 날'))"));break}
  assert.equal(await text('memoryFlower'),'튤립');assert.match(await text('memoryDate'),new RegExp(yesterday));assert.match(await text('memoryTasks'),/완료 · Synthetic/);assert(await evaluate("!!document.querySelector('#memoryPlant canvas')"));assert(await evaluate('document.documentElement.scrollWidth<=innerWidth'));
- await click('memoryDayOpen');assert.match(await text('dayEntries'),/Synthetic/);assert.equal(await evaluate("document.querySelectorAll('#memoryPlant canvas').length"),0);assert.equal(await evaluate("localStorage.getItem('plantory_full_mvp_v2')"),before);
+ await click('memoryDayOpen');assert.match(await text('dayEntries'),/Synthetic/);assert.equal(await evaluate("document.querySelectorAll('#memoryPlant canvas').length"),0);assert.equal(await evaluate("localStorage.getItem('plantory_full_mvp_v3')"),before);
  }
  if(!process.env.PLANTORY_REPRO_ONLY){
  await seed(sample({[yesterday]:'tulip'}));await garden();assert.equal(await evaluate("[...document.querySelectorAll('#gardenDays .garden-day')].filter(e=>e.querySelector('img')&&e.textContent.includes('쉬는 날')).length"),0);await click('gardenMemoryOpen');assert.match(await text('memorySummary'),/남아 있는 할 일 기록은 없어요/);

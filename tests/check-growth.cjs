@@ -3,7 +3,7 @@ const assert=require('node:assert/strict'),path=require('node:path');
 (async()=>{const b=await chromium.launch({executablePath:process.env.PLANTORY_CHROME});try{
 const p=await b.newPage();const errors=[];p.on('pageerror',e=>errors.push(e.message));
 await p.goto('file:///'+path.resolve(__dirname, '../app/Plantory_3D_Integrated_original_models.html').replaceAll('\\','/'));
-const key='plantory_full_mvp_v2';
+const key='plantory_full_mvp_v3';
 const date=await p.evaluate(()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`});
 async function seed(n,done=0,growth={},awards={}){await p.evaluate(({key,date,n,done,growth,awards})=>localStorage.setItem(key,JSON.stringify({version:2,items:Array.from({length:n},(_,i)=>({id:String(i),type:'task',date,title:'Task '+i,done:i<done})),awards,growth,settings:{hasOnboarded:true}})),{key,date,n,done,growth,awards});await p.reload();await p.locator('#homeHeading').waitFor();}
 // Read after the pending async write lock, including any failed-write rollback.

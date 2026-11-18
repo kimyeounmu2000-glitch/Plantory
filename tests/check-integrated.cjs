@@ -3,7 +3,7 @@ const path=require('node:path'),assert=require('node:assert/strict');const {path
 (async()=>{const browser=await chromium.launch({executablePath:process.env.PLANTORY_CHROME});try{
  const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
  const url=pathToFileURL(path.resolve(__dirname,'../app/Plantory_3D_Integrated_original_models.html')).href;
- const key='plantory_full_mvp_v2';await page.goto(url);await page.locator('#helpDone').click();await page.locator('#helpOverlay').waitFor({state:'hidden'});
+ const key='plantory_full_mvp_v3';await page.goto(url);await page.locator('#helpDone').click();await page.locator('#helpOverlay').waitFor({state:'hidden'});
  assert.equal(await page.locator('#open3DPreview,#plantPreviewOverlay,[data-plant],[data-stage]').count(),0);
  await page.locator('[data-nav="collection"]').click();assert.equal(await page.locator('#speciesGrid .species-card.locked').count(),6);assert.equal(await page.locator('#speciesGrid img,#speciesGrid button').count(),0);
  // Developer-only rendering exercise: no app preview UI or production test hook.

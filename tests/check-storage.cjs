@@ -6,7 +6,7 @@ const { chromium } = require(process.env.PLANTORY_PLAYWRIGHT || 'playwright');
 
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.PLANTORY_CHROME });
-  const key = 'plantory_full_mvp_v2';
+  const key = 'plantory_full_mvp_v3';
   const url = pathToFileURL(path.resolve(__dirname, '../app/Plantory_3D_Integrated_original_models.html')).href;
   try {
     const context = await browser.newContext();
@@ -118,8 +118,9 @@ const { chromium } = require(process.env.PLANTORY_PLAYWRIGHT || 'playwright');
     await page.goto(url);
     await page.evaluate(() => localStorage.setItem('plantory_calendar_prototype_v1',JSON.stringify({items:[{id:'legacy',type:'task',date:'2026-11-12',title:'Synthetic legacy',done:false}]})));
     await page.reload();
-    await page.waitForFunction(k => !!localStorage.getItem(k), key);
-    assert.equal(JSON.parse(await raw(page)).items[0].id, 'legacy');
+    assert.equal(await raw(page),null);
+    assert(await page.locator('#migrationNotice').isVisible());
+    assert(await page.evaluate(()=>localStorage.getItem('plantory_calendar_prototype_v1')));
     await migrated.close();
     console.log('PASS stale/concurrent tabs, refresh retry, stale completion rollback, corrupt/empty storage preservation');
   } finally { await browser.close(); }

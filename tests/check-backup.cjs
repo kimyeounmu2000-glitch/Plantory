@@ -7,7 +7,7 @@ const { chromium } = require(process.env.PLANTORY_PLAYWRIGHT || 'playwright');
   const browser = await chromium.launch({ executablePath: process.env.PLANTORY_CHROME });
   try {
     const url = pathToFileURL(path.resolve(__dirname, '../app/Plantory_3D_Integrated_original_models.html')).href;
-    const key = 'plantory_full_mvp_v2';
+    const key = 'plantory_full_mvp_v3';
     const sample = { version: 2, items: [{ id: 'test-1', type: 'task', date: '2025-01-04', title: 'Synthetic task', note: 'Synthetic memo', done: true }], awards: { '2025-01-04': 'tulip' }, growth: { '2025-01-04': 3 }, settings: { hasOnboarded: true } };
     const source = await browser.newPage({ acceptDownloads: true });
     await source.goto(url);
