@@ -224,3 +224,15 @@ OpenAI 공식 문서의 [저장소별 Codex 코드 검토 규칙](https://develo
 - 실제 기기 iPhone Safari/Android Chrome 미실시. 기존 설치 도구만 사용하고 모델/꽃 확률/성장 규칙은 변경하지 않았다.
 - Chrome/Edge 모두 통과: 41회 실제 보상 저장(첫40 ID 유일/주기 경계 연속 중복 없음), 새로고침/백업·복원 이력, 실패 rollback·재시도 안내, 0개/같은 날/다중 탭 중복 방지, 320·375·390·430px, reduced-motion/키보드, 기존 JSON 호환과 손상 이력 쓰기 차단, v3 이전/원본·추가필드·멘트 보존/실패·중단·동시이전, 저장·성장·백업·통합3D·정원 회귀.
 - Chrome release/날짜시간 CRUD·모의 터치·회전 회귀, Node legacy 6개 통과. 생성 HTML 별도 출력과 SHA-256 일치. 320px 카드 스크린샷 시각 확인.
+
+## 2026-11-18 P2 텍스트 대비 개선
+
+- 기준 main 2d29ba0, fix/p2-text-contrast. 생성 입력 CSS·paintTheme와 대비 계산 함수만 수정하고 실행 HTML 재생성. 저장 구조/키/데이터 변환/성장/보상/모델/폰트 크기/레이아웃/애니메이션 변경 없음.
+- W3C WCAG 2.2 SC 1.4.3 계산식 사용: sRGB 선형화 기준 0.04045, L=.2126R+.7152G+.0722B, (Lmax+.05)/(Lmin+.05). 일반 4.5:1, 24px 이상 또는 굵은 18.667px 이상 큰 글자 3:1, 반올림 전 기준 판정. 기준: https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html
+- 흰 배경 기준 기존 muted 3.962, 완료 기록 2.510, 요일 3.082, 외부 날짜 1.800 → #52606d 6.456. 취소선/날짜 상태는 유지. 일요일 색상은 같은 붉은 계열로 어둡게 조정.
+- 사용자 배경/강조색 저장값은 보존한다. 페이지/흰 표면/연한 강조 표면 각각의 글자색을 별도 계산하며, 버튼 배경과 글자색을 같은 변수로 사용하지 않는다. 버튼의 흰 글자도 대비가 낮으면 색조를 유지해 검정/흰 방향으로 조정. 흰 카드·13% 일정색 배경·빈 상태·선택 월/시간 강조는 각 실제 표면에 맞게 처리.
+- 상단 장식 glow는 사용자 배경에 섞고, 배경과 장식에서 공통 글자색을 확보할 수 없는 경우 장식만 배경색에 맞춘다. CSS 색만 바꾸며 모션이나 크기는 바꾸지 않는다.
+- tests/check-text-contrast.cjs: 설치된 Playwright/Chrome/Edge, 가짜 데이터/격리 context, 계산된 CSS 색과 알파 배경 합성/그라데이션 끝점/선택시간 강조를 판정. 모든 화면·계절 4종·기본 및 사용자 조합·완료/설명/달력/격려/편집/달력선택/시간선택/빈기록/placeholder/4너비, 저장 문자열 불변을 검사.
+- 범위 한계: 표본 사용자 색 조합을 검증하며 모든 24비트 색 조합을 브라우저에서 전수 검사한 것은 아니다. 실제 iPhone Safari/Android Chrome, 운영체제 고대비/강제색/사용자 스타일과 실제 시각장애 사용자 평가는 미실시. P3 모달/포커스 개선과 전체 WCAG 인증을 의미하지 않는다.
+- 최종 Chrome/Edge 실제 계산 스타일 검사 통과: 계절 4종×7 기본/사용자 배경·강조색 조합×5화면, 빈 상태/편집/월·시간 선택/placeholder/멘트 카드. 일반 4.5:1 및 큰 글자 3:1 판정 통과. 320/375/390/430px 가로 넘침 없음, 데이터 원문 불변. Edge에서는 각 너비의 5화면 대비도 재검사. 320px HOME 시각 확인.
+- 핵심 회귀 통과: Chrome check-celebration(40/41 주기), check-reward-duplicates, check-storage-migration, check-storage, check-growth, check-backup, check-integrated, check-editor-pickers. Node legacy 6개. 생성 HTML 별도 재생성 결과 일치. 신규 패키지/실제 사용자 기록 사용 없음.
