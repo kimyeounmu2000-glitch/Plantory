@@ -173,3 +173,24 @@ OpenAI 공식 문서의 [저장소별 Codex 코드 검토 규칙](https://develo
 - Chrome 회귀: check-growth/storage/backup/integrated/plant-gesture 및 Node legacy 6개 통과. 생성 HTML 재생성 SHA-256 일치: 0021DA2CED723DF8C41EC378E0E09EE58775F125B8184CA4F3122C04EB247ABC.
 - 로컬 보상 브랜치는 존재하며 77e4b69 이후 최종 보완 8e06828까지 있다. merge-tree 읽기 비교에서 input/Plantory_3D_Integrated_v3.html 및 app/Plantory_3D_Integrated_original_models.html 충돌 확인. 실제 병합은 하지 않았다. PR #5 확정 후 입력 HTML에서 UI/이벤트를 통합하고 보상 저장 스크립트를 유지한 채 실행본을 재생성하는 순서를 권장한다.
 - iPhone Safari·Android Chrome 실기기 미실시. 신규 설치/실제 사용자 데이터 변경/main 병합/Pages 배포 없음.
+
+## 2026-11-18 구버전 혼용 저장 안전성 — 배포 중단
+
+- 원격 main b0587b19b191156c29898c0a5b3ceb75581a6ca0 재확인. 원격 feature/reward-messages-only 없음. 로컬 7da6ab0은 변경 없이 보존하고 main에서 test/mixed-version-storage-safety를 생성했다.
+- tests/check-mixed-version-storage.cjs 추가. 기존 설치된 브라우저의 격리 context에서 실제 e469574 HTML과 현재 main HTML을 동일 HTTPS origin에 제공한다. 외부 요청은 로컬 HTML로 가로채고 가짜 기록만 사용한다.
+- Chrome/Edge 재현 실패: 구버전 탭을 먼저 열고 최신 탭에서 오늘 할 일을 등록·완료하여 꽃/성장을 저장한 뒤 구버전 탭에서 등록하면 최신 할 일과 완료 상태, 꽃·성장 기록이 사라진다. 새로고침 후에도 손실 확인. 별도 다운로드한 JSON은 보존된다.
+- 미래 celebration 필드를 가짜 fixture로 주입한 뒤 main에서 저장하면 해당 필드가 제거됨을 Chrome/Edge에서 확인했다. 멘트 브랜치나 앱 저장 구조는 수정하지 않았다.
+- 기존 check-release는 알려진 손실을 재현해도 종료 코드 0이다. 신규 검사는 손실이 있으면 명시적으로 종료 코드 1을 반환한다. 현재 안전성 gate는 실패이며 CI에 성공 검사처럼 연결하거나 main에 병합하지 않는다.
+- 원인: e469574 writer는 Web Locks 및 최신 raw 비교를 하지 않는다. 최신 코드의 잠금은 비협조 구버전 writer를 막지 못한다. main normalize 역시 미지원 필드를 유지하지 않는다. storage 이벤트는 쓰기 이후 도착하므로 자동 덮어쓰기 복구는 원자적 보호가 아니고 다른 정상 변경을 다시 잃을 수 있다.
+- 최소 제안(미구현/승인 필요): 향후 안전 버전은 별도 저장 키를 사용하고, 모든 구버전 탭 종료·JSON 백업 후 명시적 1회 가져오기로 이전한다. 이전 완료 후 구 키를 자동 재수입/동기화하지 않고 원본을 남긴다. 이동 순간의 일관성은 사용자가 구 탭을 닫고 확보한 백업에 달려 있다. 같은 origin의 별도 경로만 바꾸면 저장소는 분리되지 않는다. 새 키/이전 방식은 사용자 승인 대상이다.
+- 운영상 임시 완화: 모든 기존 탭·설치 앱 종료, 백업, 최신 단일 탭 사용. 사용자가 구버전을 다시 열면 위험이 재발하므로 기술적 해결 완료로 판정하지 않는다. 원본 또는 최신 JSON 백업에서 복원 가능하나 백업 이후 손실 기록의 자동 복구는 보장할 수 없다.
+- 이번 앱/생성기/모델 변경 없음. 별도 생성 HTML은 main 실행본과 SHA-256 일치(0021DA2CED723DF8C41EC378E0E09EE58775F125B8184CA4F3122C04EB247ABC).
+- 실행 통과: Node legacy 6개; Chrome check-storage, check-growth, check-backup, check-integrated; Chrome/Edge check-release의 저장 거절 안내·초안 보존·실패 재시도·복구 원문 파일 검사. check-release 내부 구버전 손실은 별도 실패로 분류한다. 실제 iPhone Safari/Android Chrome 미실시.
+- 병합·원격 업로드·Pages 배포 안 함. 실제 사용자 데이터/기존 백업 사용·수정 안 함. 새 패키지 설치 없음.
+
+### P2~P4 후속 계획 (구현하지 않음)
+1. P2: #76818e/흰 배경 계산 대비 3.96:1로 일반 텍스트 4.5:1 미달. 계절별 실제 배경, 사용자 색상의 카드 혼합 배경까지 계산하고 미달 요소만 수정하는 안을 준비한다. 디자인 일괄 교체 없음.
+2. P3: HOME부터 Tab 순서, 각 모달 진입/순환/ESC/원래 버튼 복귀와 중첩 달력·시간 휠을 검사한다. 3D 캔버스는 조작 필요 여부와 대체 설명을 확인하며 불필요한 Tab 정지를 추가하지 않는다. 이번에는 전체 접근성 검사 완료로 간주하지 않는다.
+3. P4: 실제 사용자 5명에게 기존 A와 안내 문구만 바꾼 B로 첫 등록→완료→성장→꽃→정원 과제를 주되 순서를 교차 배정한다. 도움 없이 성공/막힌 위치/보상 조건 설명 여부를 기록하고 다음 날 자발 재방문과 이해를 확인한다. 소규모 정성 결과이며 통계적 우월성이나 가상 반응을 실제 사용자 결과로 보고하지 않는다. 목업·사용자 검증은 아직 미실시.
+
+- 추가 Chrome 회귀 통과: check-editor-pickers(등록/수정/삭제/시간 없음/재실행/실패 재시도/모바일 4너비/모의 터치), check-plant-gesture(마우스·모의 터치 3D 회전과 화면 전환 분리).
