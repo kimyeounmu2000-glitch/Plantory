@@ -40,14 +40,14 @@ function animateGrowth(from, to) {
 }
 // Commit one snapshot: a failed write rolls back tasks, settings, growth and rewards.
 function commitTasks(change, message) {
- const before = structuredClone(data), previousStage = stage();
+ const before = structuredClone(data), previousStage = stage(),rewardSource=document.activeElement.closest('.entry')?.dataset.id,wasCheck=document.activeElement.matches('.check');
  change();
  const awarded = rewardToday(), k = today();
  data.growth[k] = stage(false);
  if(awarded){data.celebration??=normalizeCelebration(undefined,data.awards);takeRewardMessage(data.celebration,k)}
- if (!persist()) { data = before; render(); return false; }
- render(); animateGrowth(previousStage, stage());
- if (awarded) showRewardCelebration(k);
+ if (!persist()) { data = before; render();if(wasCheck)focusTaskCheck(rewardSource); return false; }
+ render();if(wasCheck)focusTaskCheck(rewardSource); animateGrowth(previousStage, stage());
+ if (awarded) showRewardCelebration(k,rewardSource);
  else if (message) notify(message);
  return true;
 }

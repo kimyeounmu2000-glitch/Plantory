@@ -15,9 +15,15 @@ function takeRewardMessage(state,date){
  }
  const id=state.remaining.pop();state.last=id;state.days[date]=id;return id;
 }
-function showRewardCelebration(date){
+function focusTaskCheck(id){const entry=[...document.querySelectorAll('.screen:not([hidden]) .entry')].find(e=>e.dataset.id===id);focusSafely(entry?.querySelector('.check'))}
+let rewardReturn=null;
+function closeReward(restore=true){
+ $('rewardCelebration').hidden=true;
+ if(restore)focusTaskCheck(rewardReturn);
+}
+function showRewardCelebration(date,source){
  const id=data.celebration?.days[date],species=SPECIES.find(s=>s.id===data.awards[date]);if(id===undefined||!species)return;
  const box=$('rewardCelebration');$('rewardMain').textContent=REWARD_MESSAGES[id][0];$('rewardSub').textContent=REWARD_MESSAGES[id][1];$('rewardFlowerName').textContent=species.name+' 획득';
  const image=$('rewardFlower');const url=thumb(species.id);image.hidden=!url;if(url){image.src=url;image.alt=species.name}
- clearTimeout(toaster);$('toast').hidden=true;box.hidden=false;
+ clearTimeout(toaster);$('toast').hidden=true;box.hidden=false;rewardReturn=source;setTimeout(()=>{if(!box.hidden&&!modalStack.length)$('rewardClose').focus({preventScroll:true})},0);
 }

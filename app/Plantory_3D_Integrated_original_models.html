@@ -105,6 +105,7 @@
 .color-pick:after{color:var(--swatch-ink,#000)}
 .shell:before{background:radial-gradient(circle,var(--page-glow),transparent 70%)}
 
+canvas:focus-visible{outline:3px solid var(--surface-accent-text);outline-offset:2px}
 </style>
 </head>
 <body>
@@ -187,7 +188,7 @@
   <button class="fab" id="fab" aria-label="할 일 또는 약속 등록" title="할 일 또는 약속 등록"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.5"><path d="M12 4v16M4 12h16"/></svg></button>
 
 </div>
-<section id="rewardCelebration" class="reward-card" aria-label="오늘의 꽃 보상" hidden><img id="rewardFlower" alt=""><div id="rewardFlowerName"></div><div aria-live="polite"><h2 id="rewardMain"></h2><p id="rewardSub"></p></div><div class="action-row"><button id="rewardClose" type="button" class="secondary">확인</button><button id="rewardGarden" type="button" class="primary">정원 보기</button></div></section>
+<section id="rewardCelebration" class="reward-card" role="region" aria-labelledby="rewardMain" hidden><img id="rewardFlower" alt=""><div id="rewardFlowerName"></div><div aria-live="polite"><h2 id="rewardMain"></h2><p id="rewardSub"></p></div><div class="action-row"><button id="rewardClose" type="button" class="secondary">확인</button><button id="rewardGarden" type="button" class="primary">정원 보기</button></div></section>
 <!-- task/event editor -->
 <div class="overlay" id="editorOverlay" hidden><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="editorHeading"><button type="button" id="editorDragHandle" aria-label="기록 팝업 닫기"></button><div class="sheethead"><h2 id="editorHeading">새 기록 추가</h2><button class="close" type="button" data-close="editorOverlay" aria-label="닫기">×</button></div>
   <div class="type-group"><button id="typeTask" aria-pressed="true" type="button">✓ 할 일</button><button id="typeEvent" aria-pressed="false" type="button">◷ 약속·예약</button></div>
@@ -228,7 +229,7 @@
 </section></div>
 <!-- help -->
 <div class="overlay" id="helpOverlay" hidden><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="helpHeading"><div class="sheethead"><h2 id="helpHeading">Plantory 사용 방법</h2><button class="close" data-close="helpOverlay" aria-label="닫기">×</button></div>
-<div class="helper"><p><strong>1. HOME</strong>은 오늘 할 일과 성장하는 식물을 보여줘요. 할 일은 개수 제한 없이 등록할 수 있어요.</p><p><strong>2. DAY</strong>에서는 날짜별 할 일·약속을 색상 카드로 확인해요.</p><p><strong>3. MONTH</strong>에서는 한 달의 일정을 확인해요. 좌우로 밀면 DAY → HOME → MONTH가 원형으로 연결되고, 월 달력 안에서 위·아래로 밀면 달을 바꿀 수 있어요. 화살표로도 이동할 수 있어요.</p><p><strong>4. 식물</strong>은 오늘 등록한 할 일을 모두 완료하면 꽃이 피고, 세 종류 중 하나를 하루에 한 번 획득해요. 약속은 식물 성장에 포함되지 않아요.</p><p><strong>5. 색상</strong>은 기록마다 선택할 수 있고 기본색으로 저장할 수 있어요. 계절 배경과 별개로 유지돼요.</p><p><strong>6. 백업</strong>은 설정에서 JSON 파일로 내보내거나 불러올 수 있어요.</p><p><strong>제한:</strong> WebGL 3D를 사용해 식물을 회전하고 성장 단계를 볼 수 있어요. 일부 브라우저에서 WebGL이 차단되면 2D 대체 그림이 표시돼요. 닫힌 앱에 보내는 푸시 알림과 여러 기기 자동 동기화도 아직 제공하지 않아요.</p></div><button class="primary" id="helpDone" style="width:100%">시작하기</button>
+<div class="helper"><p><strong>1. HOME</strong>은 오늘 할 일과 성장하는 식물을 보여줘요. 할 일은 개수 제한 없이 등록할 수 있어요.</p><p><strong>2. DAY</strong>에서는 날짜별 할 일·약속을 색상 카드로 확인해요.</p><p><strong>3. MONTH</strong>에서는 한 달의 일정을 확인해요. 좌우로 밀면 DAY → HOME → MONTH가 원형으로 연결되고, 월 달력 안에서 위·아래로 밀면 달을 바꿀 수 있어요. 화살표로도 이동할 수 있어요.</p><p><strong>4. 식물</strong>은 오늘 등록한 할 일을 모두 완료하면 꽃이 피고, 여섯 종류 중 하나를 하루에 한 번 획득해요. 약속은 식물 성장에 포함되지 않아요.</p><p><strong>5. 색상</strong>은 기록마다 선택할 수 있고 기본색으로 저장할 수 있어요. 계절 배경과 별개로 유지돼요.</p><p><strong>6. 백업</strong>은 설정에서 JSON 파일로 내보내거나 불러올 수 있어요.</p><p><strong>제한:</strong> WebGL 3D를 사용해 식물을 회전하고 성장 단계를 볼 수 있어요. 일부 브라우저에서 WebGL이 차단되면 2D 대체 그림이 표시돼요. 닫힌 앱에 보내는 푸시 알림과 여러 기기 자동 동기화도 아직 제공하지 않아요.</p></div><button class="primary" id="helpDone" style="width:100%">시작하기</button>
 </section></div>
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <script type="module">
@@ -377,11 +378,17 @@ function takeRewardMessage(state,date){
  }
  const id=state.remaining.pop();state.last=id;state.days[date]=id;return id;
 }
-function showRewardCelebration(date){
+function focusTaskCheck(id){const entry=[...document.querySelectorAll('.screen:not([hidden]) .entry')].find(e=>e.dataset.id===id);focusSafely(entry?.querySelector('.check'))}
+let rewardReturn=null;
+function closeReward(restore=true){
+ $('rewardCelebration').hidden=true;
+ if(restore)focusTaskCheck(rewardReturn);
+}
+function showRewardCelebration(date,source){
  const id=data.celebration?.days[date],species=SPECIES.find(s=>s.id===data.awards[date]);if(id===undefined||!species)return;
  const box=$('rewardCelebration');$('rewardMain').textContent=REWARD_MESSAGES[id][0];$('rewardSub').textContent=REWARD_MESSAGES[id][1];$('rewardFlowerName').textContent=species.name+' 획득';
  const image=$('rewardFlower');const url=thumb(species.id);image.hidden=!url;if(url){image.src=url;image.alt=species.name}
- clearTimeout(toaster);$('toast').hidden=true;box.hidden=false;
+ clearTimeout(toaster);$('toast').hidden=true;box.hidden=false;rewardReturn=source;setTimeout(()=>{if(!box.hidden&&!modalStack.length)$('rewardClose').focus({preventScroll:true})},0);
 }
 
 const STORE='plantory_full_mvp_v3', OLD_STORE='plantory_full_mvp_v2', LEGACY='plantory_calendar_prototype_v1', MIGRATION=STORE+'-migration-pending';
@@ -443,7 +450,7 @@ try{
  if(latest!==null)data=normalize(JSON.parse(latest));
  migrationBlocked=localStorage.getItem(MIGRATION)!==null||(latest===null&&(localStorage.getItem(OLD_STORE)!==null||localStorage.getItem(LEGACY)!==null));
 }catch(e){persistError=true;console.warn('저장소 읽기 실패:',e)}
-let view='home',selected=today(),month=new Date(fromKey(today()).getFullYear(),fromKey(today()).getMonth(),1),editorType='task',editId=null,editingColor=null,focusReturn=null,toaster=null;
+let view='home',selected=today(),month=new Date(fromKey(today()).getFullYear(),fromKey(today()).getMonth(),1),editorType='task',editId=null,editingColor=null,toaster=null;
 function notify(s,persistent=false){const t=$('toast');t.textContent=s;t.hidden=false;clearTimeout(toaster);if(!persistent)toaster=setTimeout(()=>t.hidden=true,3400)}
 let failedEditorDraft=false;
 function storageWarning(message){
@@ -544,14 +551,14 @@ function animateGrowth(from, to) {
 }
 // Commit one snapshot: a failed write rolls back tasks, settings, growth and rewards.
 function commitTasks(change, message) {
- const before = structuredClone(data), previousStage = stage();
+ const before = structuredClone(data), previousStage = stage(),rewardSource=document.activeElement.closest('.entry')?.dataset.id,wasCheck=document.activeElement.matches('.check');
  change();
  const awarded = rewardToday(), k = today();
  data.growth[k] = stage(false);
  if(awarded){data.celebration??=normalizeCelebration(undefined,data.awards);takeRewardMessage(data.celebration,k)}
- if (!persist()) { data = before; render(); return false; }
- render(); animateGrowth(previousStage, stage());
- if (awarded) showRewardCelebration(k);
+ if (!persist()) { data = before; render();if(wasCheck)focusTaskCheck(rewardSource); return false; }
+ render();if(wasCheck)focusTaskCheck(rewardSource); animateGrowth(previousStage, stage());
+ if (awarded) showRewardCelebration(k,rewardSource);
  else if (message) notify(message);
  return true;
 }
@@ -589,7 +596,7 @@ function go(next){cancelGrowth();if(next!=='garden')clearGardenMemory();
   $('detailName').textContent=next==='garden'?'7일의 정원':'식물 도감';
  }
  $('fab').hidden=!main;
- render();document.querySelector('.shell').scrollLeft=0;window.scrollTo({left:0,top:0,behavior:'instant'});
+ render();const heading=document.querySelector('.screen:not([hidden]) h1');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true})}document.querySelector('.shell').scrollLeft=0;window.scrollTo({left:0,top:0,behavior:'instant'});
 }
 let swipeFlashTimer;
 function cyclic(direction){const order=['day','home','month'];if(!order.includes(view))return;go(order[(order.indexOf(view)+direction+3)%3]);const bar=$('compactNav');bar.classList.remove('recent-swipe');void bar.offsetWidth;bar.classList.add('recent-swipe');clearTimeout(swipeFlashTimer);swipeFlashTimer=setTimeout(()=>bar.classList.remove('recent-swipe'),1100)}
@@ -600,7 +607,26 @@ function toggleDone(id,done){
  const item=data.items.find(i=>i.id===id);
  if(item?.type==='task') commitTasks(()=>{item.done=done});
 }
-function overlayOpen(id){focusReturn=document.activeElement;$(id).hidden=false;document.body.style.overflow='hidden';const f=$(id).querySelector('input:not([type=file]),button');setTimeout(()=>f?.focus(),0)}
+const modalStack=[],modalReturns=new Map();
+function focusSafely(node){
+ const eligible=n=>n?.isConnected&&!n.disabled&&n.getClientRects().length&&!n.closest('[hidden],[inert]')&&getComputedStyle(n).visibility!=='hidden';
+ const focus=n=>{if(!eligible(n)||n===document.body||n===document.documentElement)return false;n.focus({preventScroll:true});return document.activeElement===n};
+ if(focus(node))return;
+ const top=modalStack.at(-1),candidates=top?[...$(top).querySelectorAll('button,input,textarea,[tabindex]')]:[$('fab'),$('backHome'),$('helpOpen')];
+ candidates.some(focus);
+}
+function syncModalState(){
+ const top=modalStack.at(-1);
+ for(const el of document.body.children)if(el instanceof HTMLElement&&!el.matches('script,style,.picker-dialog'))el.inert=!!top&&el.id!==top;
+ document.body.style.overflow=top?'hidden':'';
+}
+function overlayOpen(id){
+ if(modalStack.includes(id))return;
+ modalReturns.set(id,document.activeElement);modalStack.push(id);$(id).hidden=false;syncModalState();
+ const f=id==='editorOverlay'?$('itemTitle'):$(id).querySelector('h2');if(f?.tagName==='H2')f.tabIndex=-1;
+ $(id).querySelector('.sheet').scrollTop=0;
+ f?.focus({preventScroll:true});
+}
 function overlayClose(id,saved=false){
  if(id==='editorOverlay'){
   if(editorClosing)return;
@@ -611,8 +637,8 @@ function overlayClose(id,saved=false){
   if(reducedMotion())finish();else setTimeout(finish,180);
  }else finishOverlayClose(id);
 }
-function finishOverlayClose(id){$(id).hidden=true;if($$('.overlay:not([hidden])').length===0)document.body.style.overflow='';focusReturn?.focus?.()}
-function closeTop(){const open=$$('.overlay:not([hidden])');if(open.length)overlayClose(open[open.length-1].id)}
+function finishOverlayClose(id){$(id).hidden=true;const i=modalStack.indexOf(id);if(i>=0)modalStack.splice(i,1);syncModalState();focusSafely(modalReturns.get(id));modalReturns.delete(id)}
+function closeTop(){const id=modalStack.at(-1);if(id)overlayClose(id)}
 function selectType(t){editorType=t;$('typeTask').setAttribute('aria-pressed',String(t==='task'));$('typeEvent').setAttribute('aria-pressed',String(t==='event'));$('itemTitle').placeholder=t==='task'?'예: 운동하기':'예: 치과 예약';if(!editId)editingColor=data.settings[t==='task'?'defaultTaskColor':'defaultEventColor'];renderPalette()}
 function renderPalette(){const pal=$('entryPalette');pal.replaceChildren();for(const color of PALETTE){const b=newEl('button','color-pick'+(editingColor.toLowerCase()===color.toLowerCase()?' selected':''));b.type='button';b.style.backgroundColor=color;b.style.setProperty('--swatch-ink',readableColor('#FFFFFF',color));b.title=color;b.setAttribute('aria-label',`${color} 색상`);b.setAttribute('aria-pressed',String(editingColor.toLowerCase()===color.toLowerCase()));b.addEventListener('click',()=>{editingColor=color;$('itemColor').value=color;renderPalette()});pal.append(b)}$('itemColor').value=editingColor}
 function openEditor(item,kind){editId=item?.id||null;const t=item?.type||kind||'task';editingColor=item?.color||data.settings[t==='task'?'defaultTaskColor':'defaultEventColor'];$('editorHeading').textContent=item?'기록 수정':'새로운 기록';$('itemTitle').value=item?.title||'';$('itemDate').value=item?.date||(view==='day'?selected:today());$('itemTime').value=item?.time||'';$('itemNote').value=item?.note||'';$('deleteItem').hidden=!item;$('saveDefault').checked=false;selectType(t);if(item){editingColor=item.color||data.settings[t==='task'?'defaultTaskColor':'defaultEventColor'];renderPalette()}syncPickerLabels();editorBaseline=editorSnapshot();overlayOpen('editorOverlay')}
@@ -634,7 +660,7 @@ function deleteEditor(){
  if(commitTasks(()=>{data.items=data.items.filter(x=>x.id!==editId)},'기록을 삭제했어요.'))overlayClose('editorOverlay',true);
 }
 function setThemeValue(key,v){const prev=data.settings[key];data.settings[key]=v;if(!persist()){data.settings[key]=prev;return}paintTheme()}
-function openHelp(){if(!$('settingsOverlay').hidden)overlayClose('settingsOverlay');overlayOpen('helpOverlay')}
+function openHelp(){overlayOpen('helpOverlay')}
 function setupMigration(){
  const panel=$('migrationNotice'),status=$('migrationStatus');panel.hidden=!migrationBlocked;
  const message=text=>{status.textContent=text};
@@ -727,7 +753,7 @@ function syncPickerLabels(){
 function trapEditorFocus(e,root=$('editorOverlay')){
  const nodes=[...root.querySelectorAll('button,input:not([type=hidden]),textarea,[tabindex="0"]')].filter(n=>!n.disabled&&n.tabIndex>=0&&n.getClientRects().length);
  const first=nodes[0],last=nodes[nodes.length-1];
- if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+ if(!nodes.includes(document.activeElement)){e.preventDefault();(e.shiftKey?last:first)?.focus()}else if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
 }
 function closePicker(dialog){
  if(dialog.classList.contains('is-closing'))return;
@@ -836,8 +862,8 @@ for(const handle of [$('editorDragHandle'),editorSheet.querySelector('.sheethead
 }
 $('editorDragHandle').addEventListener('click',()=>{if(ignoreHandleClick){ignoreHandleClick=false;return}overlayClose('editorOverlay')});
 
-$('rewardClose').addEventListener('click',()=>{$('rewardCelebration').hidden=true});
-$('rewardGarden').addEventListener('click',()=>{$('rewardCelebration').hidden=true;go('garden')});
+$('rewardClose').addEventListener('click',()=>closeReward());
+$('rewardGarden').addEventListener('click',()=>{closeReward(false);go('garden')});
 setupMigration();
 $('helpOpen').addEventListener('click',openHelp);$('helpDone').addEventListener('click',storageMutation(()=>{const previous=data.settings.hasOnboarded;data.settings.hasOnboarded=true;if(!persist())data.settings.hasOnboarded=previous;overlayClose('helpOverlay')}));
 $('settingsOpen').addEventListener('click',()=>{paintTheme();overlayOpen('settingsOverlay')});$('helpFromSettings').addEventListener('click',openHelp);
@@ -847,7 +873,7 @@ $('defaultTaskColor').addEventListener('input',e=>setThemeValue('defaultTaskColo
 $('exportData').addEventListener('click',exportBackup);$('importDataBtn').addEventListener('click',()=>$('importData').click());$('importData').addEventListener('change',importBackup);
 $$('[data-close]').forEach(b=>b.addEventListener('click',()=>overlayClose(b.dataset.close)));
 $$('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)overlayClose(el.id)}));
-document.addEventListener('keydown',e=>{if(document.querySelector('.picker-dialog[open]'))return;if(e.key==='Escape')closeTop();else if(e.key==='Tab'&&!$('editorOverlay').hidden)trapEditorFocus(e)});
+document.addEventListener('keydown',e=>{if(document.querySelector('.picker-dialog[open]'))return;if(e.key==='Escape'){if(modalStack.length){e.preventDefault();closeTop()}else if(!$('rewardCelebration').hidden){e.preventDefault();closeReward()}}else if(e.key==='Tab'&&modalStack.length)trapEditorFocus(e,$(modalStack.at(-1)))});
 render();if(!data.settings.hasOnboarded&&!migrationBlocked)setTimeout(openHelp,350);if(persistError)setTimeout(()=>notify('기기 저장소에 접근하지 못해 기록 보존이 제한될 수 있어요.'),850);
 
 })();
