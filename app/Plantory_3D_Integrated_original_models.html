@@ -105,6 +105,10 @@
 .color-pick:after{color:var(--swatch-ink,#000)}
 .shell:before{background:radial-gradient(circle,var(--page-glow),transparent 70%)}
 
+.day-top{flex-wrap:wrap}.day-top h1{min-width:0;word-break:keep-all;overflow-wrap:anywhere}
+@media(max-width:360px){.day-top h1{flex-basis:100%}}
+.shell{height:calc(100dvh - 80px - env(safe-area-inset-bottom,0px));min-height:0;overflow-y:auto;overscroll-behavior-y:contain}
+.fab{bottom:calc(12px + env(safe-area-inset-bottom,0px))}
 canvas:focus-visible{outline:3px solid var(--surface-accent-text);outline-offset:2px}
 </style>
 </head>
@@ -596,7 +600,7 @@ function go(next){cancelGrowth();if(next!=='garden')clearGardenMemory();
   $('detailName').textContent=next==='garden'?'7일의 정원':'식물 도감';
  }
  $('fab').hidden=!main;
- render();const heading=document.querySelector('.screen:not([hidden]) h1');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true})}document.querySelector('.shell').scrollLeft=0;window.scrollTo({left:0,top:0,behavior:'instant'});
+ render();const heading=document.querySelector('.screen:not([hidden]) h1');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true})}document.querySelector('.shell').scrollTop=0;document.querySelector('.shell').scrollLeft=0;window.scrollTo({left:0,top:0,behavior:'instant'});
 }
 let swipeFlashTimer;
 function cyclic(direction){const order=['day','home','month'];if(!order.includes(view))return;go(order[(order.indexOf(view)+direction+3)%3]);const bar=$('compactNav');bar.classList.remove('recent-swipe');void bar.offsetWidth;bar.classList.add('recent-swipe');clearTimeout(swipeFlashTimer);swipeFlashTimer=setTimeout(()=>bar.classList.remove('recent-swipe'),1100)}

@@ -4,6 +4,8 @@
 
 1~9절은 Sprint 1 종료 당시 기록이다. 이후 전문가 검토와 안전한 통합 결과는 10절에 이어 기록한다. 이전 미커밋/초점 미해결 상태를 최신 상태로 오해하지 않는다.
 
+최신 재개 상태는 11절을 우선 확인한다. 1~10절의 미커밋·배포 예정 표현은 당시 기록이다.
+
 ## 1. 복구한 프로젝트 상태
 
 | 대상 | 확인 상태 |
@@ -178,3 +180,66 @@ Node `node --test tests/legacy/tests.mjs`: 6/6 통과. 구형 모델 단위 검�
 7절의 세 과제를 유지한다. (1) 첫 목표 안내 한 문장, (2) 좁은 DAY 날짜 가독성, (3) 보상 조건과 브라우저 저장·백업 이해. 각각 문구/최소 CSS 수준의 낮은~보통 난도, 추가 네트워크·렌더링 비용 예상 없음(실측 아님), 저장 구조 영향 없음이며 적용 후 관련 화면·키보드·데이터 회귀를 확인한다. 날짜 줄바꿈은 관찰 사실이고 이해/이탈 문제는 가설이다. 실제 과제 성공·도움 요청·오조작을 보고 필요한 변경만 승인받는다.
 
 새 UX/레이아웃 적용 및 실제 사람 조사 동의·보관 조건은 별도 결정 사항이다. 신규 라이브러리·클라우드·게임 규칙·모델·30/100 AI 세션·정식 출시는 EXCLUDED. 이미 승인된 접근성 오류 보완의 개발용 배포에 새 승인을 요구하지 않는다.
+
+## 11. 최종 통합 재개 기록 — 2026-11-22
+
+- 중단 직전 완료: 수정 커밋 `b8d08504af5d08666aa9d607edd81e21bca6b3d9`와 별도 브랜치 push. PR 생성은 사용량 제한으로 실행되지 않았다. 재개 시 clean 후보와 원격 동일 SHA, 기존 Chrome/Edge PASS 로그 30개·Node6·HTML SHA를 확인해 전체 검사를 반복하지 않았다.
+- 재개 후 완료: [PR #6](https://github.com/kimyeounmu2000-glitch/Plantory/pull/6) 생성, [GitHub 검사](https://github.com/kimyeounmu2000-glitch/Plantory/actions/runs/44987607265) 성공, 승인된 merge 방식으로 main `19594c25b8fed0212224b7bfc0f74d223b5b644e` 반영. 후보와 main 파일 diff 없음. 로컬 main fast-forward fetch 완료, 원본 dirty P3/V3 작업 폴더 보존. 강제 push 없음.
+- 앱 변경: 자동 Help 종료 후 등록 버튼 복귀, 모달 초기 focus 경쟁 제거, 기존 V4 모달·중첩·보상 focus와 식물 6종 안내 보완. 저장 구조·키·이전·성장·보상·40쌍·원본 모델 변경 없음.
+- 실제 병합 파일 15개: `.gitignore`; `app/Plantory_3D_Integrated_original_models.html`; `input/Plantory_3D_Integrated_v3.html`; `scripts/growth-v2.js`; `scripts/reward-celebration.js`; `docs/tech-review.md`; `docs/review-v4/human-storage-protocol.md`; `docs/review-v4/observations.csv`; `docs/review-v4/sprint-1-report.md`; `docs/review-v4/storage-guidance-mockups.html`; `tests/check-deployed-smoke.cjs`; `tests/check-initial-help-focus.cjs`; `tests/check-integrated-accessibility.cjs`; `tests/check-mobile-journey.cjs`; `tests/check-security-restart.cjs`.
+- 배포 상태 VERIFIED: [Pages 실행 44987693409](https://github.com/kimyeounmu2000-glitch/Plantory/actions/runs/44987693409) success, 배포 커밋 `19594c25b8fed0212224b7bfc0f74d223b5b644e`. [개발 사이트](https://kimyeounmu2000-glitch.github.io/Plantory/app/Plantory_3D_Integrated_original_models.html).
+- 배포 후 VERIFIED: `check-deployed-smoke.cjs`를 Chrome 158.0.8127.36 / Edge 158.0.4370.33에서 각각 실행해 통과했다. 앱 응답 대체 없이 실제 HTTP 본문의 SHA `91bfd4afab47386e621d651416dc284a07925e717edfc14e2e9f5ce801572cfa` 일치. 초기 Help→키보드 등록→꽃/멘트→초점 복귀, 같은 날 재완료 중복 없음, 오래된 탭 저장 거절·입력 유지, 재실행 raw 동일, 5너비·화면·도감6종·3D canvas, JSON 백업, 손상 원문 txt 바이트 보존 확인. 새 격리 context와 가짜 데이터만 사용했다.
+- 증거: `outputs/expert-audit/deployed/chrome.log`, `edge.log`, `completion.json`. 전체 기존 회귀와 AI 세션은 반복하지 않았다. 브라우저 스크립트 finally/close 완료 및 정상 종료 확인. 기존 Alt+Tab 원인 조사로 확대하지 않았다.
+- 정확한 다음 미완료 작업: 안정화 통합·배포는 완료. 별도 실기기 Safari/Android·스크린리더 체크리스트 검증이 남아 있다. 다음 UX는 기존 3개 제안 중 첫 목표 발견/완료 과제를 우선 검토하되 승인 없이 문구·레이아웃 변경 또는 실제 사람 모집을 시작하지 않는다.
+- 남은 제한: iPhone Safari/Android 실기기·스크린리더·실제 사람 조사 미실시. Alt+Tab 문제는 새 재현 없이 재조사하지 않음. 이 재개 기록만 로컬 문서에 갱신하며 불필요한 문서 전용 재배포를 만들지 않는다.
+
+## 12. Sprint 2 — 맥락 색인 및 실제 화면 검토 (2026-11-22)
+
+- 기준 main: 19594c25b8fed0212224b7bfc0f74d223b5b644e. 작업 브랜치 docs/sprint2-context-review. 기존 11절 미커밋 완료 기록을 보존해 이어갔다.
+- LOW-RISK IMPROVEMENT 적용: README에 작은 작업 색인, AGENTS에 점진적 자료 조회/단계 기록 규칙 추가. 기록 중복 없이 본 절로 이어간다. 토큰 절감량은 미측정.
+- 앱/생성본/모델/데이터/보상 변경 없음. 기존 Chrome15·Edge15·Node6과 실제 배포 검사 증거 재사용. 신규 전체 회귀·AI 세션·패키지 설치 없음.
+- 실제 실행: 새 격리 Chrome context 3개(320/510/1280×840), 실제 Pages HOME/DAY/MONTH 9화면 관찰/캡처. 각 응답 SHA 91bfd4afab47386e621d651416dc284a07925e717edfc14e2e9f5ce801572cfa 일치. pageerror 0, 가로 넘침 없음(측정 scrollWidth-innerWidth=-15는 스크롤바 여유이며 넘침 아님). finally browser.close 정상 종료. 증거 outputs/sprint2/audit.json 및 너비-화면.png. 결정론적 화면 점검이며 자율 AI 세션으로 세지 않는다.
+
+### 관찰과 우선순위 — 세 개만 유지
+
+| 우선 | 관찰 / 분류 | 최소 제안·영향 | 난도·위험·검증 |
+|---|---|---|---|
+| 1 HOME | 실제 화면에서 화분이 먼저 크게 보이고 할 일 추가는 아래에 있다. 고정 +가 +추가 일부와 겹치는 위치를 캡처함. 첫 행동 혼란은 가설 | PROPOSED PRODUCT CHANGE: 기존 빈 상태 안내 한 문장 비교 또는 겹침을 피하는 최소 위치안. 모델/카드 전체 재배치 제외 | 낮음~보통. 위치 변경은 다른 화면 겹침/키보드 회귀 위험. 320~1280px, 여러 스크롤 위치에서 버튼 hit-test 및 첫 등록 발견 과제 확인 후 승인 필요 |
+| 2 DAY | 320px 날짜의 ‘일요일’ 마지막 글자가 다음 줄로 감. 앞/뒤 버튼은 보임. 기존 합성 목표/약속 편집·색상 검사는 통과 | PROPOSED PRODUCT CHANGE: 날짜와 이동 버튼 사이 공간/줄바꿈의 국소 수정안. 날짜 탐색 자체 오류로 단정하지 않음 | 낮음. 긴 날짜·확대 글꼴·계절·다국어 가능성 점검, 기존 시간/달력/저장 유지. 시각 변경 승인 필요 |
+| 3 MONTH 및 기록 이해 | 7열 날짜와 월 이동 표시, 320px에서 고정 +가 이번 달 요약 일부 위에 놓임. 날짜 선택→DAY 안내는 있음. 빈 기록만 신규 관찰 | PROPOSED PRODUCT CHANGE: 공통 고정 버튼 겹침 방지안을 HOME과 함께 비교. 보상/저장 설명은 기존 목업을 재사용 | 보통. 스크롤·안전 영역·날짜 선택 hit-test, 기록 있는/없는 달·완료/미완료 구분 확인. 새로운 월 화면 설계 금지 |
+
+새 VERIFIED DEFECT(기능 실패)는 이번 제한된 점검에서 확정하지 않았다. 겹침은 시각 관찰 사실이며 클릭 차단 여부는 미검증이다. 정상 세로 스크롤은 결함이 아니다. HOME·DAY·MONTH의 공통 둥근 카드/버튼과 타이포 역할은 유지되어 있고 데스크톱 중앙 좁은 앱 폭은 기존 의도적 구성으로 취급한다. 대비는 기존 P2 결과를 재사용했으며 이번에 전체 색 조합을 재측정하지 않았다. 정원/도감과 완료→꽃→기록은 앞선 실제 배포 통과 근거를 재사용한다. 인간의 이해·감정 만족·재방문·독창성은 검증되지 않았다.
+
+### 성능·구조
+
+- 이번 3회 탐색의 DOMContentLoaded는 약 837/281/277ms. JS heap 표본은 약 12.8~13.9MB. 단일 데스크톱 Chrome 실행이며 캐시/네트워크 차이가 있고 모바일 성능이나 개선 전후 비교가 아니다. 누수/성능 개선을 결론 내리지 않는다. FPS·GPU·배터리·긴 작업·실제 모바일 지연은 미측정.
+- 기존 render()가 테마와 5개 화면을 함께 갱신하고, 생성기가 기본 핸들러 일부를 치환하는 의존성은 확인돼 있다. 낭비 비용이 측정되지 않아 화면별 렌더링 분리/구조 리팩터링은 DEFERRED. 모션/reduced-motion 기존 검사 재사용, 애니메이션 전 프레임 시각 품질은 미검증.
+
+### 실기기 확인과 정확한 다음 작업
+
+실제 기기/스크린리더는 미실시. 10절의 체크리스트를 재사용한다: 별도 가짜 기록으로 사이트 열기→3화면 이동→등록/수정/날짜·시간→완료·꽃·정원→스크롤/가독성→새로고침→내보내기·별도 환경 복원. 실제 데이터 삭제나 사람 모집을 하지 않는다.
+
+다음 미완료 작업은 고정 +와 화면 요소의 겹침을 여러 스크롤 위치에서 hit-test로 좁혀 확인하고, 세 제안 중 적용할 최소 UI안을 사용자와 결정하는 것이다. 승인 전 앱 수정 없음. 문서만 로컬 수정 상태이며 새 커밋·병합·배포는 하지 않았다. 현재 개발 사이트는 검증된 19594c2 그대로다. 이전 완료 기록/원본 P3/V3/증거는 유지했다.
+
+## 13. Sprint 3 Batch A 진행 체크포인트
+
+- 기준 main 19594c2 재확인. 문서 3개는 기존 승인/보안/보존 규칙을 약화하지 않는 색인·기록 추가임을 확인하고 ddb0893으로 분리 커밋. 현재 fix/sprint3-layout. 원본 P3/V3 보존.
+- VERIFIED DEFECT: 320/375/390/430/510/1280×840의 HOME 맨 위에서 고정 +와 +추가 교차 영역 elementFromPoint가 fab를 반환한다. +추가 일부 클릭 가림 확인. 중간/끝에서는 해당 가림 없음. MONTH 버튼 가림은 이 표본에서 없었으나 요약 텍스트 가림은 별도 미완료. 근거 outputs/sprint3/before.json 및 layout-check.cjs.
+- AUTHORIZED MINIMAL CORRECTION: 입력 HTML의 day-top에 flex-wrap, 제목의 단어 단위 줄바꿈과 최소 너비 제한, 360px 이하 제목 전체 행 배치 적용. 320px 제목 높이 62.5→31.25px, 전체 날짜 유지. 6너비와 제목48px 확대에서 가로 넘침 없음. after.json 보존. 실행 HTML 재생성 완료.
+- 미커밋 앱 변경: input/Plantory_3D_Integrated_v3.html, app/Plantory_3D_Integrated_original_models.html. CSS만 수정, 데이터/모델/규칙 변경 없음. 날짜 선택·키보드·회귀 전체 검사는 아직 미실시. 성능 개선 주장은 없음.
+- 정확한 다음 작업: 고정 +의 공통 위치/공간 최소 해결책 구현 후 여러 높이·스크롤 위치에서 HOME 추가·MONTH 요약/달력 접근성 재검증. 기존 layout-check를 정식 회귀 검사로 정리. 이어서 Batch B의 날짜/시간·초점 및 Batch C 핵심 회귀, 생성본 일치, 허용된 병합·배포. 현재 필수 검사가 끝나지 않아 앱 커밋·main 병합·배포 안 함. 실제 폰/스크린리더 미실시. 새로운 승인 요청 없이 기존 승인 범위로 이어갈 수 있다.
+
+## 14. Sprint 3 자율 계속 — 공통 배치 후보
+
+- 현재 fix/sprint3-layout, HEAD ddb0893, 기준 main 19594c2. 문서 커밋과 앱 변경 분리, 기존 P3/V3 보존.
+- IMPLEMENTED: 기존 DAY 수정 유지. 공통 shell 스크롤 영역을 하단 80px+safe-area 위로 제한하고 기존 고정 fab를 하단12px+safe-area에 둔다. 단순 y좌표 이동은 다른 스크롤 위치에서 다시 가리므로 선택하지 않았다. 버튼/모델/카드/화면 순서/동작은 유지. go()의 화면 전환에서 shell.scrollTop=0도 처리한다. 대가로 본문 가시 높이가 버튼 공간만큼 줄어들며 실제 폰 가상 키보드 검증은 남는다.
+- VERIFIED: tests/check-shared-layout.cjs에서 6너비×3화면×5스크롤 위치의 본문/버튼 영역 분리 및 버튼 hit-test, HOME 추가와 fab 실제 tap 통과. DAY 320 한줄 유지·48px 확대 넘침 없음. MONTH 요약도 본문 영역 안에서 스크롤되므로 fab와 영역이 분리된다.
+- 진행 중: Chrome 17종 전부 통과. Edge shared-layout 통과 후 도구 연결 변경으로 실행 세션43708이 사라짐. 활성 테스트 프로세스 없음과 빈 다음 로그 확인 후 나머지만 세션2134에서 재개. 로그 outputs/sprint3/regression. Node는 최종 단계에서 실행 예정. 완료를 추정하지 말고 로그/세션 결과 확인.
+- 소스 변경은 입력 CSS와 go의 scrollTop, 생성 HTML. 모델은 850ms 성장 애니메이션 후 추가 프레임을 예약하지 않고 dispose에서 frame/observer/listener/resource 정리함을 재확인. 성능 문제/개선 주장은 없음; 실제 heap/GPU 비교는 미실시.
+- 다음 작업: 실행 중 검사 결과 수집→실패 원인 보완→짧은 높이와 실제 후보 시각 검증→전체 diff/생성본 확인→승인 범위 커밋/PR/병합/Pages→실제 배포 검사. 현재 앱 미커밋·미배포. 실기기/스크린리더/새 UX 제안은 별도이며 신규 기능·데이터 변경 없음.
+
+- 추가 VERIFIED: 높이568px에서도 6너비·3화면·5스크롤 위치 분리, 요약 값 가시성, 이전/다음 날짜 Enter/Space, 두 등록 버튼 tap 통과(outputs/sprint3/short-height.log). 실제 폰 검증 아님. Chrome 계절4×색상7×화면5 대비 검사, 날짜/시간 저장·재시도·모의 터치와 정원/도감/40멘트 검사는 통과. 보안/외부 전송 로직 변경 없음. 생성/실행 SHA AC4DF6BB85074B0091621A41DC512575EA77FF3A9E55E4F151B515D58525C817 동일.
+
+- Batch A/B/C 최종 VERIFIED: Chrome17/17·Edge17/17·Node6/6 통과. 로그 outputs/sprint3/regression, 짧은 높이 추가검사 short-height.log. 발생한 실행 연결 중단은 미완료 Edge부터 재개했으며 제품 테스트 실패는 없음. 날짜/시간·키보드·계절4×색상7×화면5 대비·CRUD·v3/손상/백업/추가필드·성장·중복보상·41회멘트·원본6종·정원 회귀 포함. 기존 시각 요소/데이터 보존. 형식검사 CRLF 허용 diff-check 통과.
+- Batch D 시작: 최종 후보 소스/생성본 SHA AC4DF6BB85074B0091621A41DC512575EA77FF3A9E55E4F151B515D58525C817 동일. 앱/input와 tests/check-shared-layout.cjs, 이 기록만 앱 수정 커밋에 포함한다. ddb0893 문서 커밋은 별도 유지. 비밀·개인 데이터·outputs는 제외. 다음은 push/PR CI/병합/실제 Pages 해시 및 shared-layout+deployed-smoke 검사다.
+- DEFERRED: 실기기 Safari/Android·스크린리더·가상 키보드/safe-area 실측, GPU/전체 메모리·FPS·성능 전후 측정. CSS/스크롤 수정으로 새 3D 루프·할당·이벤트 등록 없음. 리소스 문제가 측정되지 않아 성능 리팩터링 제외. 별도 AI/인간 세션 확대 없음. 향후 제안 최대3: 첫 목표 문구 이해, 좁은 화면 기록 탐색, 보상/브라우저 백업 이해. 신규 UX는 승인 후 진행하며 현재 승인된 결함 수정 외 적용 없음.
