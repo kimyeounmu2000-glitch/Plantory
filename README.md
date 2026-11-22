@@ -1,5 +1,17 @@
 # Plantory
 
+## 작업 시작 색인
+
+- 규칙·승인 범위: [AGENTS.md](AGENTS.md). 제품 규칙은 이곳에만 유지한다.
+- 최신 상태·다음 작업: [이어가기 기록](docs/review-v4/sprint-1-report.md)의 마지막 절부터 읽는다. 11절은 배포 완료, 12절은 Sprint 2다.
+- 과거 결정·실패 원인: [기술 검토 기록](docs/tech-review.md). 현재 기능과 연결되는 항목만 조회한다.
+- 화면·모달·테마: `input/Plantory_3D_Integrated_v3.html`; 성장/저장 후 렌더링: `scripts/growth-v2.js`와 생성 치환 `scripts/growth-v2.py`; 보상 표시: `scripts/reward-celebration.js`.
+- 생성 경로: `scripts/integrate-plantory.py` → `app/Plantory_3D_Integrated_original_models.html`. `models/`와 멘트 JSON은 승인 원본이다.
+- 관련 검사: `tests/check-initial-help-focus.cjs`, `check-integrated-accessibility.cjs`, `check-mobile-journey.cjs`; 저장 변경 영향은 `check-storage*`, `check-backup`, 성장/보상은 `check-growth`, `check-reward-duplicates`, `check-celebration`, 3D는 `check-integrated`.
+- 배포 확인: `tests/check-deployed-smoke.cjs`. 설치된 도구와 격리 데이터만 사용한다. 과거 결과는 동일 소스/의존성인 경우 재사용한다.
+- 원본 P3/V3 미완료 작업은 다른 worktree에 남아 있다. reset/clean/덮어쓰기 금지. 로컬 증거 `outputs/`는 Git 제외다.
+
+
 Open app/Plantory_3D_Integrated_original_models.html in a browser. Keep using the existing browser profile and file address for existing records. Export a local JSON backup before moving to a new address.
 
 Python 3 is sufficient for the build. Run python scripts/integrate-plantory.py with a separate output directory argument to compare its HTML with the committed app. The generator reads input/, models/, and scripts/growth-v2.js. Make changes to the corresponding sources and verify the generated HTML.
