@@ -15,5 +15,6 @@ backups/
 downloads/
 profiles/
 work/
+/outputs/
 
 !scripts/reward-messages.json
