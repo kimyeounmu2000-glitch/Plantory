@@ -243,3 +243,22 @@ Node `node --test tests/legacy/tests.mjs`: 6/6 통과. 구형 모델 단위 검�
 - Batch A/B/C 최종 VERIFIED: Chrome17/17·Edge17/17·Node6/6 통과. 로그 outputs/sprint3/regression, 짧은 높이 추가검사 short-height.log. 발생한 실행 연결 중단은 미완료 Edge부터 재개했으며 제품 테스트 실패는 없음. 날짜/시간·키보드·계절4×색상7×화면5 대비·CRUD·v3/손상/백업/추가필드·성장·중복보상·41회멘트·원본6종·정원 회귀 포함. 기존 시각 요소/데이터 보존. 형식검사 CRLF 허용 diff-check 통과.
 - Batch D 시작: 최종 후보 소스/생성본 SHA AC4DF6BB85074B0091621A41DC512575EA77FF3A9E55E4F151B515D58525C817 동일. 앱/input와 tests/check-shared-layout.cjs, 이 기록만 앱 수정 커밋에 포함한다. ddb0893 문서 커밋은 별도 유지. 비밀·개인 데이터·outputs는 제외. 다음은 push/PR CI/병합/실제 Pages 해시 및 shared-layout+deployed-smoke 검사다.
 - DEFERRED: 실기기 Safari/Android·스크린리더·가상 키보드/safe-area 실측, GPU/전체 메모리·FPS·성능 전후 측정. CSS/스크롤 수정으로 새 3D 루프·할당·이벤트 등록 없음. 리소스 문제가 측정되지 않아 성능 리팩터링 제외. 별도 AI/인간 세션 확대 없음. 향후 제안 최대3: 첫 목표 문구 이해, 좁은 화면 기록 탐색, 보상/브라우저 백업 이해. 신규 UX는 승인 후 진행하며 현재 승인된 결함 수정 외 적용 없음.
+
+- Batch D 체크포인트: 문서 ddb0893·앱207671c 커밋/push 완료, PR #7 CI45033903784 성공 후 merge 완료. main 4b739078b5764355473abc7fe9afa5635ddd1e9e. 후보와 main tree 동일. Pages45033966696 진행 중. 다음: 배포 성공 확인→실제 URL의 shared-layout(Chrome/Edge·568/840) 및 deployed-smoke(Chrome/Edge). 아직 배포 검증 통과로 보고하지 않음. 완료 기록은 로컬 문서에 남기며 문서 전용 재배포는 만들지 않는다.
+
+- Batch D 최종 VERIFIED: PR #7 병합 main 4b739078b5764355473abc7fe9afa5635ddd1e9e, Pages 실행45033966696 success. 실제 배포 HTML SHA ac4df6bb85074b0091621a41dc512575ea77ff3a9e55e4f151b515d58525c817 동일. Chrome/Edge deployed-smoke 각각 PASS, 실제 URL shared-layout 각각568/840 높이 PASS(6너비·3화면·5위치, 날짜 키보드·월요약·등록 tap). 증거 outputs/sprint3/deployed/{chrome,edge}-smoke.log 및 *-layout-*.log. 테스트 정상 종료·cleanup.json 기록. 원본 P3/V3 dirty 작업 보존, main 모델/멘트 JSON diff 없음.
+- 최종 변경 파일6: AGENTS.md, README.md, docs/review-v4/sprint-1-report.md, input/Plantory_3D_Integrated_v3.html, app/Plantory_3D_Integrated_original_models.html, tests/check-shared-layout.cjs. 문서 ddb0893 / 앱207671c 분리. 배포 뒤 완료 기록만 로컬 문서에 미커밋으로 추가하여 불필요한 재배포 없음.
+- 완료: 승인된 Batch A 공통 가림/날짜 보완, B 입력/대비/접근성, C 기능·저장·보안 회귀 및 제한된 리소스 코드 검토, D 통합/실제 배포 검사. 최종 테스트 실패0. 실행도구 세션 단절은 미완료 Edge부터 복구했으며 제품 실패로 집계하지 않음. AI 세션/새 패키지/사람 모집 없음.
+- 정확한 다음 작업: 현행 실기기 체크리스트로 iPhone Safari/Android의 가상키보드·safe-area·스크롤/터치 확인(미실시), 이어 첫 목표 이해와 보상/백업 설명의 향후 UX 제안 검토. 새 문구·상호작용·디자인 확대는 승인 필요. 지금 추가 승인 대기 때문에 중단된 필수 수정은 없음. 성능 개선률·토큰 절감량·정식 출시 준비 완료를 주장하지 않는다.
+
+## 15. Sprint 4 복구 — 2026-11-23
+
+- 기준 main/HEAD 4b739078b5764355473abc7fe9afa5635ddd1e9e, 브랜치 maintenance/sprint4. 원격 main 재확인 동일. 아직 커밋/푸시/병합/배포 없음.
+- 재현 A: 잠금 대기 중 연속 submit으로 2개 생성. B: 대기 중 A 취소→B 열기 후 A가 B 미저장 초안을 저장(outputs/sprint4/rapid-before.json, pending-cancel.json). 추가 재현: 대기 삭제 A가 새 편집창 B의 ID를 삭제(delete-race-before.log). 모두 격리된 가짜 기록.
+- 후보 FIXED: 요청별 고정 generation/id/snapshot, 동일 세션·내용 검증 후 기존 동기 저장 실행. 중복 submit 차단, 요청 소유자만 버튼 pending 해제. 취소 확인 즉시 요청 무효화(닫힘 애니메이션 완료 전). 새로운 편집창 저장 가능, 오래된 완료가 새 초점/초안/버튼 상태를 변경하지 않음. 삭제도 generation/id 검사. 키/스키마/이전/보상/모델 코드 변경 없음.
+- 변경: input/Plantory_3D_Integrated_v3.html, 재생성 app/Plantory_3D_Integrated_original_models.html, 신규 tests/check-save-submission.cjs, 이 기록. 원본 P3/V3 작업 보존.
+- 현재 최종 후보 Chrome 경쟁검사 통과. tests/check-save-submission.cjs는 R1/2/3/4/5/6/8 및 편집중 내용 변경·애니메이션 취소·지연 삭제를 확인. R7은 기존 저장/백업/이전 검사로 별도 실행. 테스트 전용 완료 barrier만 local HTML에 주입하며 제품 코드에 포함하지 않음.
+- 이전 중간 검사는 후보 변경 때문에 최종 판정에 사용하지 않음. 실행 세션98127/3105/45991은 보완을 위해 중단(제품 실패 아님). 테스트 자체 storageQueue 접근 오류는 test-only barrier로 수정. 이전 실패 증거 보존. 45회 이동/15취소 DOM838 canvas1 안정 결과는 반복하지 않음; 누수 없음 또는 성능 개선 주장 없음.
+- 진행 중 세션39697: 최종 Chrome/Edge 각10종, Node6. 로그 outputs/sprint4/final. 다음: 실제 종료 결과 확인→diff/재생성/보존 검사→검증된 파일만 커밋/PR/CI/승인된 개발 배포→실제 URL 해시·저장 경쟁·회귀 확인. 실패 시 병합 중단. 실제 폰/스크린리더 미실시.
+- 테스트 barrier 후속 개선: 앱 원문 주입을 제거하고 navigator.locks.request의 실제 Promise 완료만 관찰한다. 배포 URL에서는 응답 바이트를 로컬 실행본과 비교하며 동일 경쟁 검사를 실행할 수 있다. Chrome native-race 및 Edge 경쟁 검사 통과. 최종 앱 SHA BBB8DECC403DC4D14B7C8B35C80BB4183C21FF27F5BF11B58A01222B47313BC6.
+- 최종 VERIFIED: 세션39697 종료0, Chrome10/10·Edge10/10·Node6/6. R1–R8 통과(기존 R7 저장/이전/백업 별도 포함), 지연 삭제/닫힘 애니메이션 취소 통과. 모델6종×성장4단계·보상 중복·키보드·날짜/시간·공통배치 회귀 통과. scripts/models/40멘트 원본 diff 없음, 원본 P3 앱 SHA 및 V3 dirty 목록 유지. 실패 재현은 보완 전 증거이며 최종 회귀 실패0. 실기기/스크린리더 미실시. 다음은 커밋/PR CI/병합/Pages/배포 검사.
